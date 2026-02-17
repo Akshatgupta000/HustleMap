@@ -58,7 +58,7 @@ export default function Landing() {
             Start Using
           </Link>
           <a
-            href="https://github.com"
+            href="https://github.com/Akshatgupta000/HustleMap"
             target="_blank"
             rel="noopener noreferrer"
             className="px-4 py-2 text-black hover:underline"
@@ -84,7 +84,8 @@ export default function Landing() {
               <h3 className="subtitle mb-2">Interview Summary & History</h3>
               <p className="helper-text text-gray-300">
                 Log interview difficulty and real questions asked in each round.
-                Review past interviews to improve performance and prepare smarter.
+                Review past interviews to improve performance and prepare
+                smarter.
               </p>
             </div>
             <div>
@@ -175,7 +176,8 @@ export default function Landing() {
               </h3>
               <p className="helper-text text-gray-700 mb-3">
                 Log interview difficulty and real questions asked in each round.
-                Review past interviews to improve performance and prepare smarter:
+                Review past interviews to improve performance and prepare
+                smarter:
               </p>
               <ul className="space-y-1.5 helper-text text-gray-700">
                 <li className="flex items-start gap-2">
@@ -233,7 +235,9 @@ export default function Landing() {
               </p>
             </div>
             <div className="border-l-2 border-black pl-4">
-              <h3 className="subtitle mb-1.5">3. Track progress & build Interview Summary</h3>
+              <h3 className="subtitle mb-1.5">
+                3. Track progress & build Interview Summary
+              </h3>
               <p className="helper-text text-black">
                 Update status as you move through interviews. Rate difficulty,
                 log questions by round, and build your Interview Summary to
