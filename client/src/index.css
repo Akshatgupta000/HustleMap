@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    font-family: "Comic Neue", "Comic Sans MS", cursive, sans-serif;
+  }
+
+  body {
+    @apply bg-white text-black;
+    font-family: "Comic Neue", "Comic Sans MS", cursive, sans-serif;
+  }
+
+  /* Ensure all text elements inherit the comic font */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  span,
+  div,
+  a,
+  button,
+  input,
+  textarea,
+  select,
+  label {
+    font-family: "Comic Neue", "Comic Sans MS", cursive, sans-serif;
+  }
+}
+
+@layer components {
+  /* Page Title / Main Heading */
+  .page-title {
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    @apply font-bold leading-tight;
+  }
+
+  /* Section Heading / Subtitle */
+  .section-heading {
+    font-size: clamp(1.25rem, 3.5vw, 1.5rem);
+    @apply font-bold leading-snug;
+  }
+
+  /* Subtitle / Subheading */
+  .subtitle {
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    @apply font-semibold leading-snug;
+  }
+
+  /* Form Label / Field Names */
+  .form-label {
+    font-size: clamp(0.875rem, 2vw, 1rem);
+    @apply font-semibold;
+  }
+
+  /* Body Text / Regular Content */
+  .body-text {
+    font-size: clamp(0.875rem, 1.75vw, 0.9375rem);
+    @apply leading-relaxed;
+  }
+
+  /* Small Helper Text / Instructions */
+  .helper-text {
+    font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+    @apply leading-relaxed;
+  }
+
+  /* Badge / Small Label */
+  .badge-text {
+    font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+    @apply font-medium;
+  }
+}
+
+/* Custom scrollbar styling for Interview Questions */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(156, 163, 175) rgb(243, 244, 246);
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  @apply bg-gray-400 rounded;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-600;
+}
