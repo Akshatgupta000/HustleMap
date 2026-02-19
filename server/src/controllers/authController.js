@@ -10,6 +10,11 @@ export const register = async (req, res) => {
       return res.status(400).json({ error: 'Email, password, and name are required' });
     }
 
+    if (!process.env.JWT_SECRET?.trim()) {
+      console.error('Register: JWT_SECRET is not configured');
+      return res.status(503).json({ error: 'Server configuration error' });
+    }
+
     // Check if user exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -50,6 +55,11 @@ export const login = async (req, res) => {
 
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required' });
+    }
+
+    if (!process.env.JWT_SECRET?.trim()) {
+      console.error('Login: JWT_SECRET is not configured');
+      return res.status(503).json({ error: 'Server configuration error' });
     }
 
     // Find user (include password for comparison)

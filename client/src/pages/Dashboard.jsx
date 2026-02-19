@@ -68,7 +68,7 @@ export default function Dashboard() {
 
   // Filter and sort jobs
   const filteredAndSortedJobs = useMemo(() => {
-    if (!jobs) return [];
+    if (!jobs || !Array.isArray(jobs)) return [];
 
     let filtered = jobs.filter((job) => {
       // Search filter
@@ -150,7 +150,9 @@ export default function Dashboard() {
             statusFilter={statusFilter}
             onFilterClick={handleFilterClick}
             showDetails={showAnalyticsDetails}
-            onToggleDetails={() => setShowAnalyticsDetails(!showAnalyticsDetails)}
+            onToggleDetails={() =>
+              setShowAnalyticsDetails(!showAnalyticsDetails)
+            }
           />
         </div>
 
@@ -292,7 +294,6 @@ export default function Dashboard() {
             </div>
           </div>
         )}
-
       </div>
 
       {/* Job Details Modal */}

@@ -13,6 +13,12 @@ import JobForm from "./pages/JobForm";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
 
+// React Router v7 future flags
+const futureFlags = {
+  v7_startTransition: true,
+  v7_relativeSplatPath: true,
+};
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -37,7 +43,7 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
+      <BrowserRouter future={futureFlags}>
         <div
           className="min-h-screen"
           style={{

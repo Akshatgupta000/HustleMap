@@ -10,6 +10,11 @@ import mongoose from 'mongoose';
 
 dotenv.config();
 
+// Prevent unhandled rejections from crashing the process (log instead)
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
 // Validate required env vars before starting (fail fast in production)
 const requiredEnv = ['JWT_SECRET', 'MONGO_URI'];
 const missing = requiredEnv.filter((key) => !(process.env[key] || "").trim());
@@ -49,16 +54,25 @@ app.get('/api/health', healthCheck);
 app.use('/api/auth', authRoutes);
 app.use('/api/jobs', jobRoutes);
 
-// Error handling middleware
+// Error handling middleware (must have 4 args for Express to recognize)
 app.use((err, req, res, next) => {
   console.error('Error:', err);
   res.status(500).json({ error: 'Internal server error' });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+// Start server only after DB is connected (prevents 500s from early requests)
+const startServer = async () => {
+  try {
+    await connectDB();
+    app.listen(PORT, () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
+  } catch (err) {
+    console.error('Failed to start server:', err);
+    process.exit(1);
+  }
+};
+startServer();
 
 // Graceful shutdown
 process.on('SIGINT', async () => {

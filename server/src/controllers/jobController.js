@@ -1,39 +1,25 @@
 import Job from "../models/Job.js";
 import mongoose from "mongoose";
+import { formatJobForResponse, formatDate } from "../utils/formatJob.js";
+
+const safeUserId = (id) => {
+  if (!id || typeof id !== "string") return null;
+  return mongoose.Types.ObjectId.isValid(id) ? id : null;
+};
 
 // Get all jobs for authenticated user
 export const getAllJobs = async (req, res) => {
   try {
-    const jobs = await Job.find({ user: req.user.id })
+    const userId = safeUserId(req.user?.id);
+    if (!userId) {
+      return res.status(401).json({ error: "Invalid or missing user context" });
+    }
+
+    const jobs = await Job.find({ user: userId })
       .sort({ dateApplied: -1, createdAt: -1 })
       .lean();
 
-    // Convert MongoDB format to match frontend expectations
-    const formattedJobs = jobs.map((job) => ({
-      id: job._id.toString(),
-      user_id: job.user.toString(),
-      company: job.company,
-      position: job.position,
-      location: job.location || null,
-      status: job.status,
-      application_type: job.applicationType || "off_campus",
-      date_applied: job.dateApplied.toISOString().split("T")[0],
-      interview_date: job.interviewDate
-        ? job.interviewDate.toISOString().split("T")[0]
-        : null,
-      application_source: job.applicationSource || null,
-      notes: job.notes || null,
-      resume_link: job.resumeLink || null,
-      portfolio_link: job.portfolioLink || null,
-      interview_rounds: job.interviewRounds || [],
-      interview_questions: job.interviewQuestions || [],
-      preparation_notes: job.preparationNotes || null,
-      interview_difficulty: job.interviewDifficulty || null,
-      interview_status: job.interviewStatus || "pending",
-      created_at: job.createdAt,
-      updated_at: job.updatedAt,
-    }));
-
+    const formattedJobs = jobs.map((job) => formatJobForResponse(job));
     res.json(formattedJobs);
   } catch (error) {
     console.error("Get jobs error:", error);
@@ -44,7 +30,11 @@ export const getAllJobs = async (req, res) => {
 // Get job stats
 export const getStats = async (req, res) => {
   try {
-    const userId = new mongoose.Types.ObjectId(req.user.id);
+    const userIdStr = safeUserId(req.user?.id);
+    if (!userIdStr) {
+      return res.status(401).json({ error: "Invalid or missing user context" });
+    }
+    const userId = new mongoose.Types.ObjectId(userIdStr);
 
     // Total count
     const total = await Job.countDocuments({ user: userId });
@@ -71,30 +61,7 @@ export const getStats = async (req, res) => {
       .limit(5)
       .lean();
 
-    const recent = recentJobs.map((job) => ({
-      id: job._id.toString(),
-      user_id: job.user.toString(),
-      company: job.company,
-      position: job.position,
-      location: job.location || null,
-      status: job.status,
-      application_type: job.applicationType || "off_campus",
-      date_applied: job.dateApplied.toISOString().split("T")[0],
-      interview_date: job.interviewDate
-        ? job.interviewDate.toISOString().split("T")[0]
-        : null,
-      application_source: job.applicationSource || null,
-      notes: job.notes || null,
-      resume_link: job.resumeLink || null,
-      portfolio_link: job.portfolioLink || null,
-      interview_rounds: job.interviewRounds || [],
-      interview_questions: job.interviewQuestions || [],
-      preparation_notes: job.preparationNotes || null,
-      interview_difficulty: job.interviewDifficulty || null,
-      interview_status: job.interviewStatus || "pending",
-      created_at: job.createdAt,
-      updated_at: job.updatedAt,
-    }));
+    const recent = recentJobs.map((job) => formatJobForResponse(job));
 
     // Weekly stats (last 7 days)
     const sevenDaysAgo = new Date();
@@ -197,14 +164,12 @@ export const getStats = async (req, res) => {
       .lean();
 
     const upcoming = upcomingInterviews
-      .filter((job) => job.interviewDate) // Filter out null interview dates
+      .filter((job) => job.interviewDate)
       .map((job) => ({
         id: job._id.toString(),
         company: job.company,
         position: job.position,
-        interview_date: job.interviewDate
-          ? job.interviewDate.toISOString().split("T")[0]
-          : null,
+        interview_date: formatDate(job.interviewDate),
       }));
 
     // Calculate conversion rates
@@ -305,37 +270,18 @@ export const getJobById = async (req, res) => {
       return res.status(400).json({ error: "Invalid job ID" });
     }
 
-    const job = await Job.findOne({ _id: id, user: req.user.id }).lean();
+    const userId = safeUserId(req.user?.id);
+    if (!userId) {
+      return res.status(401).json({ error: "Invalid or missing user context" });
+    }
+
+    const job = await Job.findOne({ _id: id, user: userId }).lean();
 
     if (!job) {
       return res.status(404).json({ error: "Job not found" });
     }
 
-    // Format to match frontend expectations
-    res.json({
-      id: job._id.toString(),
-      user_id: job.user.toString(),
-      company: job.company,
-      position: job.position,
-      location: job.location || null,
-      status: job.status,
-      application_type: job.applicationType || "off_campus",
-      date_applied: job.dateApplied.toISOString().split("T")[0],
-      interview_date: job.interviewDate
-        ? job.interviewDate.toISOString().split("T")[0]
-        : null,
-      application_source: job.applicationSource || null,
-      notes: job.notes || null,
-      resume_link: job.resumeLink || null,
-      portfolio_link: job.portfolioLink || null,
-      interview_rounds: job.interviewRounds || [],
-      interview_questions: job.interviewQuestions || [],
-      preparation_notes: job.preparationNotes || null,
-      interview_difficulty: job.interviewDifficulty || null,
-      interview_status: job.interviewStatus || "pending",
-      created_at: job.createdAt,
-      updated_at: job.updatedAt,
-    });
+    res.json(formatJobForResponse(job));
   } catch (error) {
     console.error("Get job error:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -411,7 +357,7 @@ export const createJob = async (req, res) => {
       .filter((q) => q && q.question && q.question.trim())
       .map((q) => ({
         question: q.question.trim(),
-        answer: q.answer || null,
+        notes_or_answer: q.notes_or_answer ?? q.answer ?? null,
         round: q.round || null,
       }));
 
@@ -446,32 +392,7 @@ export const createJob = async (req, res) => {
     const job = await Job.create(jobData);
 
     console.log("CreateJob: Job created successfully:", job._id.toString());
-
-    // Format response
-    res.status(201).json({
-      id: job._id.toString(),
-      user_id: job.user.toString(),
-      company: job.company,
-      position: job.position,
-      location: job.location || null,
-      status: job.status,
-      application_type: job.applicationType || "off_campus",
-      date_applied: job.dateApplied.toISOString().split("T")[0],
-      interview_date: job.interviewDate
-        ? job.interviewDate.toISOString().split("T")[0]
-        : null,
-      application_source: job.applicationSource || null,
-      notes: job.notes || null,
-      resume_link: job.resumeLink || null,
-      portfolio_link: job.portfolioLink || null,
-      interview_rounds: job.interviewRounds || [],
-      interview_questions: job.interviewQuestions || [],
-      preparation_notes: job.preparationNotes || null,
-      interview_difficulty: job.interviewDifficulty || null,
-      interview_status: job.interviewStatus || "pending",
-      created_at: job.createdAt,
-      updated_at: job.updatedAt,
-    });
+    res.status(201).json(formatJobForResponse(job));
   } catch (error) {
     console.error("CreateJob: Error creating job:", {
       error: error.message,
@@ -544,7 +465,7 @@ export const updateJob = async (req, res) => {
       .filter((q) => q && q.question && q.question.trim())
       .map((q) => ({
         question: q.question.trim(),
-        answer: q.answer || null,
+        notes_or_answer: q.notes_or_answer ?? q.answer ?? null,
         round: q.round || null,
       }));
 
@@ -567,8 +488,13 @@ export const updateJob = async (req, res) => {
       interviewStatus: interview_status || "pending",
     };
 
+    const userId = safeUserId(req.user?.id);
+    if (!userId) {
+      return res.status(401).json({ error: "Invalid or missing user context" });
+    }
+
     const job = await Job.findOneAndUpdate(
-      { _id: id, user: req.user.id },
+      { _id: id, user: userId },
       updateData,
       { new: true, runValidators: true },
     ).lean();
@@ -577,31 +503,7 @@ export const updateJob = async (req, res) => {
       return res.status(404).json({ error: "Job not found" });
     }
 
-    // Format response
-    res.json({
-      id: job._id.toString(),
-      user_id: job.user.toString(),
-      company: job.company,
-      position: job.position,
-      location: job.location || null,
-      status: job.status,
-      application_type: job.applicationType || "off_campus",
-      date_applied: job.dateApplied.toISOString().split("T")[0],
-      interview_date: job.interviewDate
-        ? job.interviewDate.toISOString().split("T")[0]
-        : null,
-      application_source: job.applicationSource || null,
-      notes: job.notes || null,
-      resume_link: job.resumeLink || null,
-      portfolio_link: job.portfolioLink || null,
-      interview_rounds: job.interviewRounds || [],
-      interview_questions: job.interviewQuestions || [],
-      preparation_notes: job.preparationNotes || null,
-      interview_difficulty: job.interviewDifficulty || null,
-      interview_status: job.interviewStatus || "pending",
-      created_at: job.createdAt,
-      updated_at: job.updatedAt,
-    });
+    res.json(formatJobForResponse(job));
   } catch (error) {
     console.error("Update job error:", error);
     if (error.name === "ValidationError") {
@@ -620,7 +522,12 @@ export const deleteJob = async (req, res) => {
       return res.status(400).json({ error: "Invalid job ID" });
     }
 
-    const job = await Job.findOneAndDelete({ _id: id, user: req.user.id });
+    const userId = safeUserId(req.user?.id);
+    if (!userId) {
+      return res.status(401).json({ error: "Invalid or missing user context" });
+    }
+
+    const job = await Job.findOneAndDelete({ _id: id, user: userId });
 
     if (!job) {
       return res.status(404).json({ error: "Job not found" });
