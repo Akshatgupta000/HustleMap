@@ -1,31 +1,32 @@
 import axios from "axios";
 
-// Require VITE_API_URL for all environments so we never silently fall back
-// to localhost in production. This must include the `/api` prefix.
-const API_URL = import.meta.env.VITE_API_URL;
+// VITE_API_URL must point to backend base; ensure it ends with /api (server mounts at /api/auth, /api/jobs)
+const rawUrl = import.meta.env.VITE_API_URL;
+const API_URL =
+  typeof rawUrl === "string"
+    ? (() => {
+        const base = rawUrl.replace(/\/+$/, "");
+        return base.endsWith("/api") ? base : `${base}/api`;
+      })()
+    : rawUrl;
 
 if (!API_URL) {
-  // Surface a clear warning for misconfiguration without attempting
-  // to infer a fallback URL (which would break production SSL).
   // eslint-disable-next-line no-console
   console.warn(
     "[api] VITE_API_URL is not defined. " +
-      "Set VITE_API_URL in your environment (e.g. http://localhost:5000/api for dev, https://your-domain.com/api for prod)."
+      "Set VITE_API_URL in your environment (e.g. http://localhost:5000/api for dev, https://your-backend.onrender.com/api for prod)."
   );
 }
 
-// Warn if the frontend is served over HTTPS but the API URL is HTTP,
-// as this would cause mixed-content or blocked requests in browsers.
+// Warn if frontend is HTTPS but API is HTTP (mixed-content blocked by browsers)
 if (
   typeof window !== "undefined" &&
   window.location.protocol === "https:" &&
   typeof API_URL === "string" &&
   API_URL.startsWith("http://")
-  // eslint-disable-next-line no-console
 ) {
   console.warn(
-    `[api] Potential mixed-content configuration: frontend is https but VITE_API_URL is http (${API_URL}). ` +
-      "Use an https API URL in production."
+    `[api] Mixed-content: frontend is https but VITE_API_URL is http (${API_URL}). Use https in production.`
   );
 }
 

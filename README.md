@@ -567,8 +567,10 @@ npm start  # Node production server
 
 ### Environment Setup
 
-- Frontend: `.env.local` for `VITE_API_URL`
-- Backend: `.env` for `PORT`, `MONGO_URI`, `JWT_SECRET`, `NODE_ENV`
+- Frontend: `.env.local` or `.env.production` for `VITE_API_URL` (must end with `/api`)
+- Backend: `.env` for `PORT`, `MONGO_URI`, `JWT_SECRET`, `CLIENT_URL` (frontend origin for CORS)
+
+> See [DEPLOYMENT.md](DEPLOYMENT.md) for Vercel + Render production deployment.
 
 ## 🗺️ Future Roadmap
 

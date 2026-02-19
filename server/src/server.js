@@ -10,17 +10,34 @@ import mongoose from 'mongoose';
 
 dotenv.config();
 
+// Validate required env vars before starting (fail fast in production)
+const requiredEnv = ['JWT_SECRET', 'MONGO_URI'];
+const missing = requiredEnv.filter((key) => !(process.env[key] || "").trim());
+if (missing.length > 0) {
+  console.error(`[FATAL] Missing required env vars: ${missing.join(', ')}`);
+  if (process.env.NODE_ENV === 'production') {
+    process.exit(1);
+  }
+}
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Connect to MongoDB
-connectDB();
-
-// Middleware
-app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
-  credentials: true
-}));
+// CORS: CLIENT_URL = frontend origin(s), comma-separated for multiple (e.g. Vercel + preview deploys)
+const clientOrigins = process.env.CLIENT_URL
+  ? process.env.CLIENT_URL.split(',').map((u) => u.trim()).filter(Boolean)
+  : ['http://localhost:5173'];
+app.use(
+  cors({
+    origin: (origin, cb) => {
+      if (!origin) return cb(null, true); // server-to-server, curl, Postman
+      if (clientOrigins.includes(origin)) return cb(null, true);
+      cb(null, false); // reject unsupported origins
+    },
+    credentials: true,
+    optionsSuccessStatus: 200,
+  })
+);
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
