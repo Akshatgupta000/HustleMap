@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth.js";
 import jobRoutes from "./routes/jobs.js";
 import { healthCheck } from "./utils/healthCheck.js";
 import mongoose from "mongoose";
+import http from "http";
 
 dotenv.config();
 
@@ -80,14 +81,52 @@ app.use((err, req, res, next) => {
 });
 
 // Start server only after DB is connected (prevents 500s from early requests)
+let server;
+// Attempt to listen on PORT or next available ports (fallback)
+const attemptListen = (startPort, maxAttempts = 10) =>
+  new Promise((resolve, reject) => {
+    let attempts = 0;
+
+    const tryPort = (port) => {
+      server = http.createServer(app);
+
+      server.once("error", (err) => {
+        if (err && err.code === "EADDRINUSE") {
+          attempts += 1;
+          if (attempts >= maxAttempts) {
+            return reject(
+              new Error(
+                `Port ${startPort} to ${startPort + maxAttempts - 1} all in use`,
+              ),
+            );
+          }
+          console.warn(`Port ${port} in use, trying port ${port + 1}...`);
+          // cleanup listener and try next port
+          server.close(() => tryPort(port + 1));
+          return;
+        }
+        return reject(err);
+      });
+
+      server.listen(port, () => {
+        // remove the temporary error listener
+        server.removeAllListeners("error");
+        console.log(`Server running on http://localhost:${port}`);
+        resolve(port);
+      });
+    };
+
+    tryPort(startPort);
+  });
+
 const startServer = async () => {
   try {
     await connectDB();
-    app.listen(PORT, () => {
-      console.log(`Server running on http://localhost:${PORT}`);
-    });
+    const usedPort = await attemptListen(Number(PORT), 10);
+    // update process.env.PORT to reflect the actual port if needed elsewhere
+    process.env.PORT = String(usedPort);
   } catch (err) {
-    console.error("Failed to start server:", err);
+    console.error("Failed to start server:", err.message || err);
     process.exit(1);
   }
 };
@@ -96,11 +135,18 @@ startServer();
 // Graceful shutdown
 process.on("SIGINT", async () => {
   try {
+    if (server) {
+      await new Promise((resolve, reject) => {
+        server.close((err) => (err ? reject(err) : resolve()));
+      });
+      console.log("HTTP server closed");
+    }
+
     await mongoose.connection.close();
     console.log("MongoDB connection closed");
     process.exit(0);
   } catch (error) {
-    console.error("Error closing MongoDB connection:", error);
+    console.error("Error closing server or MongoDB connection:", error);
     process.exit(1);
   }
 });
