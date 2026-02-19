@@ -11,8 +11,8 @@ const connectDB = async () => {
   } catch (error) {
     console.error("MongoDB connection error:", error.message);
     console.error("Make sure:");
-    console.error("1. Your IP is whitelisted in MongoDB Atlas");
-    console.error("2. MONGO_URI is correct in your .env file");
+    console.error("1. Your IP is whitelisted in MongoDB Atlas (use 0.0.0.0/0 for Render)");
+    console.error("2. MONGO_URI / MONGODB_URI is set in Render Environment (use your Atlas mongodb+srv://... string)");
     process.exit(1);
   }
 };
