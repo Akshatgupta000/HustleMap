@@ -11,6 +11,28 @@ import http from "http";
 
 dotenv.config();
 
+// Allow common alternate env var names for Mongo connection strings
+const mongoCandidates = [
+  "MONGO_URI",
+  "MONGODB_URI",
+  "DATABASE_URL",
+  "MONGO_URL",
+  "ATLAS_URI",
+  "RENDER_DATABASE_URL",
+  "MONGO_CONNECTION_STRING",
+];
+let _mongoUriName = null;
+for (const name of mongoCandidates) {
+  if (process.env[name] && process.env[name].trim()) {
+    _mongoUriName = name;
+    process.env.MONGO_URI = process.env[name].trim();
+    break;
+  }
+}
+if (_mongoUriName) {
+  console.log(`[ENV] Using Mongo connection from env var: ${_mongoUriName}`);
+}
+
 // Prevent unhandled rejections from crashing the process (log instead)
 process.on("unhandledRejection", (reason, promise) => {
   console.error("Unhandled Rejection at:", promise, "reason:", reason);
