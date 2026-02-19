@@ -31,17 +31,6 @@ for (const name of mongoCandidates) {
 }
 if (_mongoUriName) {
   console.log(`[ENV] Using Mongo connection from env var: ${_mongoUriName}`);
-  // Fail fast in production if URI points to localhost (common mistake when deploying)
-  const uri = process.env.MONGO_URI || "";
-  if (
-    process.env.NODE_ENV === "production" &&
-    (uri.includes("localhost") || uri.includes("127.0.0.1"))
-  ) {
-    console.error(
-      "[FATAL] MONGO_URI points to localhost. On Render, use your MongoDB Atlas connection string (mongodb+srv://...)."
-    );
-    process.exit(1);
-  }
 }
 
 // Prevent unhandled rejections from crashing the process (log instead)
