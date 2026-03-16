@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { jobsAPI } from "../lib/api";
 import toast from "react-hot-toast";
@@ -22,6 +22,7 @@ const APPLICATION_TYPE_OPTIONS = [
 
 export default function JobForm() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { id } = useParams();
   const queryClient = useQueryClient();
   const isEdit = !!id;
@@ -35,6 +36,7 @@ export default function JobForm() {
     date_applied: new Date().toISOString().split("T")[0],
     interview_date: "",
     notes: "",
+    job_url: "",
     resume_link: "",
     portfolio_link: "",
     interview_rounds: [],
@@ -52,16 +54,17 @@ export default function JobForm() {
 
   useEffect(() => {
     if (job) {
+      const fromCaptured = location.state?.fromCaptured && job.is_captured;
       setFormData({
-        company: job.company || "",
-        position: job.position || "",
+        company: fromCaptured ? "" : job.company || "",
+        position: fromCaptured ? "" : job.position || "",
         location: job.location || "",
         application_type: job.application_type || "off_campus",
         status: job.status || "applied",
         date_applied:
           job.date_applied || new Date().toISOString().split("T")[0],
         interview_date: job.interview_date || "",
-        notes: job.notes || "",
+        notes: fromCaptured ? "Imported from screenshot" : job.notes || "",
         resume_link: job.resume_link || "",
         portfolio_link: job.portfolio_link || "",
         interview_rounds: job.interview_rounds || [],
@@ -69,9 +72,10 @@ export default function JobForm() {
         preparation_notes: job.preparation_notes || "",
         interview_difficulty: job.interview_difficulty || null,
         interview_status: job.interview_status || "pending",
+        job_url: job.job_url || "",
       });
     }
-  }, [job]);
+  }, [job, location.state]);
 
   const createMutation = useMutation({
     mutationFn: (data) => jobsAPI.create(data),
@@ -95,6 +99,7 @@ export default function JobForm() {
         interview_questions: [],
         preparation_notes: "",
         interview_difficulty: null,
+        job_url: "",
       });
       // Redirect to Dashboard
       navigate("/dashboard");
@@ -283,6 +288,22 @@ export default function JobForm() {
                   className="w-full px-3 py-1.5 body-text border border-black focus:border-gray-500 focus:outline-none"
                 />
               </div>
+            </div>
+
+            {/* Row 3.5: Job URL */}
+            <div>
+              <label className="block form-label text-black mb-1">
+                Job URL (optional)
+              </label>
+              <input
+                type="url"
+                value={formData.job_url}
+                onChange={(e) =>
+                  setFormData({ ...formData, job_url: e.target.value })
+                }
+                className="w-full px-3 py-1.5 body-text border border-black focus:border-gray-500 focus:outline-none"
+                placeholder="https://company.com/careers/role"
+              />
             </div>
 
             {/* Row 4: Interview Date */}

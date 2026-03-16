@@ -1,9 +1,11 @@
-import Job from "../models/Job.js";
-import mongoose from "mongoose";
-import { formatJobForResponse, formatDate } from "../utils/formatJob.js";
+import Job from '../models/Job.js';
+import User from '../models/User.js';
+import mongoose from 'mongoose';
+import { createWorker } from 'tesseract.js';
+import { formatJobForResponse, formatDate } from '../utils/formatJob.js';
 
 const safeUserId = (id) => {
-  if (!id || typeof id !== "string") return null;
+  if (!id || typeof id !== 'string') return null;
   return mongoose.Types.ObjectId.isValid(id) ? id : null;
 };
 
@@ -12,7 +14,7 @@ export const getAllJobs = async (req, res) => {
   try {
     const userId = safeUserId(req.user?.id);
     if (!userId) {
-      return res.status(401).json({ error: "Invalid or missing user context" });
+      return res.status(401).json({ error: 'Invalid or missing user context' });
     }
 
     const jobs = await Job.find({ user: userId })
@@ -22,8 +24,28 @@ export const getAllJobs = async (req, res) => {
     const formattedJobs = jobs.map((job) => formatJobForResponse(job));
     res.json(formattedJobs);
   } catch (error) {
-    console.error("Get jobs error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error('Get jobs error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+// Get captured jobs (screenshot-based) for authenticated user
+export const getCapturedJobs = async (req, res) => {
+  try {
+    const userId = safeUserId(req.user?.id);
+    if (!userId) {
+      return res.status(401).json({ error: 'Invalid or missing user context' });
+    }
+
+    const jobs = await Job.find({ user: userId, isCaptured: true })
+      .sort({ dateApplied: -1, createdAt: -1 })
+      .lean();
+
+    const formattedJobs = jobs.map((job) => formatJobForResponse(job));
+    res.json(formattedJobs);
+  } catch (error) {
+    console.error('Get captured jobs error:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -32,7 +54,7 @@ export const getStats = async (req, res) => {
   try {
     const userIdStr = safeUserId(req.user?.id);
     if (!userIdStr) {
-      return res.status(401).json({ error: "Invalid or missing user context" });
+      return res.status(401).json({ error: 'Invalid or missing user context' });
     }
     const userId = new mongoose.Types.ObjectId(userIdStr);
 
@@ -44,7 +66,7 @@ export const getStats = async (req, res) => {
       { $match: { user: userId } },
       {
         $group: {
-          _id: "$status",
+          _id: '$status',
           count: { $sum: 1 },
         },
       },
@@ -77,7 +99,7 @@ export const getStats = async (req, res) => {
       {
         $group: {
           _id: {
-            $dateToString: { format: "%Y-%m-%d", date: "$dateApplied" },
+            $dateToString: { format: '%Y-%m-%d', date: '$dateApplied' },
           },
           count: { $sum: 1 },
         },
@@ -103,9 +125,9 @@ export const getStats = async (req, res) => {
     // Get jobs with interview status
     const interviewStatusJobs = await Job.find({
       user: userId,
-      status: "interview",
+      status: 'interview',
     })
-      .select("_id")
+      .select('_id')
       .lean();
     interviewStatusJobs.forEach((job) => uniqueJobIds.add(job._id.toString()));
 
@@ -114,7 +136,7 @@ export const getStats = async (req, res) => {
       user: userId,
       interviewDate: { $ne: null, $gte: now },
     })
-      .select("_id")
+      .select('_id')
       .lean();
     futureDateJobs.forEach((job) => uniqueJobIds.add(job._id.toString()));
 
@@ -128,9 +150,9 @@ export const getStats = async (req, res) => {
               {
                 $size: {
                   $filter: {
-                    input: { $ifNull: ["$interviewRounds", []] },
-                    as: "round",
-                    cond: { $eq: ["$$round.status", "scheduled"] },
+                    input: { $ifNull: ['$interviewRounds', []] },
+                    as: 'round',
+                    cond: { $eq: ['$$round.status', 'scheduled'] },
                   },
                 },
               },
@@ -146,9 +168,7 @@ export const getStats = async (req, res) => {
       },
       { $project: { _id: 1 } },
     ]);
-    scheduledRoundsJobs.forEach((job) =>
-      uniqueJobIds.add(job._id.toString()),
-    );
+    scheduledRoundsJobs.forEach((job) => uniqueJobIds.add(job._id.toString()));
 
     const interviewsScheduled = uniqueJobIds.size;
 
@@ -184,7 +204,7 @@ export const getStats = async (req, res) => {
     // Count unique job applications that reached at least the "Interview" stage
     // Statuses that count as "interview-converted": ["interview", "offer", "rejected"]
     // Statuses that do NOT count: ["applied", "online_test", "withdrawn"]
-    const interviewConvertedStatuses = ["interview", "offer", "rejected"];
+    const interviewConvertedStatuses = ['interview', 'offer', 'rejected'];
     const jobsReachedInterviewStage = await Job.countDocuments({
       user: userId,
       status: { $in: interviewConvertedStatuses },
@@ -204,7 +224,7 @@ export const getStats = async (req, res) => {
               (jobsReachedInterviewStage /
                 totalApplicationsExcludingWithdrawn) *
               100
-            ).toFixed(1)
+            ).toFixed(1),
           )
         : 0.0;
 
@@ -223,7 +243,7 @@ export const getStats = async (req, res) => {
       {
         $group: {
           _id: {
-            $dateToString: { format: "%Y-W%V", date: "$dateApplied" },
+            $dateToString: { format: '%Y-W%V', date: '$dateApplied' },
           },
           count: { $sum: 1 },
         },
@@ -249,14 +269,15 @@ export const getStats = async (req, res) => {
       applicationsPerWeek,
     });
   } catch (error) {
-    console.error("Get stats error:", {
+    console.error('Get stats error:', {
       error: error.message,
       stack: error.stack,
       name: error.name,
     });
     res.status(500).json({
-      error: "Internal server error",
-      message: process.env.NODE_ENV === "development" ? error.message : undefined,
+      error: 'Internal server error',
+      message:
+        process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
 };
@@ -267,24 +288,24 @@ export const getJobById = async (req, res) => {
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ error: "Invalid job ID" });
+      return res.status(400).json({ error: 'Invalid job ID' });
     }
 
     const userId = safeUserId(req.user?.id);
     if (!userId) {
-      return res.status(401).json({ error: "Invalid or missing user context" });
+      return res.status(401).json({ error: 'Invalid or missing user context' });
     }
 
     const job = await Job.findOne({ _id: id, user: userId }).lean();
 
     if (!job) {
-      return res.status(404).json({ error: "Job not found" });
+      return res.status(404).json({ error: 'Job not found' });
     }
 
     res.json(formatJobForResponse(job));
   } catch (error) {
-    console.error("Get job error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error('Get job error:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -308,10 +329,11 @@ export const createJob = async (req, res) => {
       preparation_notes,
       interview_difficulty,
       interview_status,
+      job_url,
     } = req.body;
 
     // Log incoming request for debugging
-    console.log("CreateJob: Received request:", {
+    console.log('CreateJob: Received request:', {
       company,
       position,
       status,
@@ -321,34 +343,28 @@ export const createJob = async (req, res) => {
 
     // Validate required fields
     if (!company || !company.trim()) {
-      return res
-        .status(400)
-        .json({ error: "Company name is required" });
+      return res.status(400).json({ error: 'Company name is required' });
     }
     if (!position || !position.trim()) {
-      return res
-        .status(400)
-        .json({ error: "Position/job role is required" });
+      return res.status(400).json({ error: 'Position/job role is required' });
     }
     if (!date_applied) {
-      return res
-        .status(400)
-        .json({ error: "Date applied is required" });
+      return res.status(400).json({ error: 'Date applied is required' });
     }
 
     // Validate status against enum (if provided)
     const validStatuses = [
-      "applied",
-      "online_test",
-      "interview",
-      "offer",
-      "rejected",
-      "withdrawn",
+      'applied',
+      'online_test',
+      'interview',
+      'offer',
+      'rejected',
+      'withdrawn',
     ];
     if (status && !validStatuses.includes(status)) {
-      console.error("CreateJob: Invalid status value:", status);
+      console.error('CreateJob: Invalid status value:', status);
       return res.status(400).json({
-        error: `Invalid status. Must be one of: ${validStatuses.join(", ")}`,
+        error: `Invalid status. Must be one of: ${validStatuses.join(', ')}`,
       });
     }
 
@@ -367,8 +383,8 @@ export const createJob = async (req, res) => {
       company: company.trim(),
       position: position.trim(),
       location: location ? location.trim() : null,
-      status: status || "applied",
-      applicationType: application_type || "off_campus",
+      status: status || 'applied',
+      applicationType: application_type || 'off_campus',
       dateApplied: new Date(date_applied),
       interviewDate: interview_date ? new Date(interview_date) : null,
       applicationSource: application_source ? application_source.trim() : null,
@@ -377,24 +393,24 @@ export const createJob = async (req, res) => {
       portfolioLink: portfolio_link ? portfolio_link.trim() : null,
       interviewRounds: interview_rounds || [],
       interviewQuestions: filteredQuestions,
-      preparationNotes: preparation_notes
-        ? preparation_notes.trim()
-        : null,
+      preparationNotes: preparation_notes ? preparation_notes.trim() : null,
       interviewDifficulty: interview_difficulty || null,
-      interviewStatus: interview_status || "pending",
+      interviewStatus: interview_status || 'pending',
+      jobUrl: job_url ? job_url.trim() : null,
+      isCaptured: false,
     };
 
-    console.log("CreateJob: Creating job with data:", {
+    console.log('CreateJob: Creating job with data:', {
       ...jobData,
-      user: "[REDACTED]",
+      user: '[REDACTED]',
     });
 
     const job = await Job.create(jobData);
 
-    console.log("CreateJob: Job created successfully:", job._id.toString());
+    console.log('CreateJob: Job created successfully:', job._id.toString());
     res.status(201).json(formatJobForResponse(job));
   } catch (error) {
-    console.error("CreateJob: Error creating job:", {
+    console.error('CreateJob: Error creating job:', {
       error: error.message,
       name: error.name,
       stack: error.stack,
@@ -402,30 +418,517 @@ export const createJob = async (req, res) => {
     });
 
     // Handle MongoDB validation errors
-    if (error.name === "ValidationError") {
+    if (error.name === 'ValidationError') {
       const validationErrors = Object.values(error.errors || {}).map(
         (err) => err.message,
       );
       return res.status(400).json({
-        error: "Validation failed",
-        details: validationErrors.join(", "),
+        error: 'Validation failed',
+        details: validationErrors.join(', '),
       });
     }
 
     // Handle duplicate key errors or other MongoDB errors
     if (error.code === 11000) {
       return res.status(400).json({
-        error: "Duplicate entry. This job may already exist.",
+        error: 'Duplicate entry. This job may already exist.',
       });
     }
 
     // Generic error response
     res.status(500).json({
-      error: "Internal server error",
-      message: process.env.NODE_ENV === "development" ? error.message : undefined,
+      error: 'Internal server error',
+      message:
+        process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
 };
+
+// Capture job from browser extension (Smart Job Capture System)
+export const captureJob = async (req, res) => {
+  try {
+    const userId = safeUserId(req.user?.id);
+    if (!userId) {
+      return res.status(401).json({ error: 'Invalid or missing user context' });
+    }
+
+    const {
+      jobTitle,
+      company,
+      location,
+      salary,
+      description,
+      jobUrl,
+      companyLogo,
+      notes,
+      source,
+      screenshot,
+    } = req.body || {};
+
+    if (!company || !company.trim()) {
+      return res.status(400).json({ error: 'Company name is required' });
+    }
+    if (!jobTitle || !jobTitle.trim()) {
+      return res.status(400).json({ error: 'Job title is required' });
+    }
+
+    // Duplicate detection:
+    // 1. Prefer exact match on jobUrl
+    // 2. Fallback to same company + position + optional location
+    let existingJob = null;
+    if (jobUrl && jobUrl.trim()) {
+      existingJob = await Job.findOne({
+        user: userId,
+        jobUrl: jobUrl.trim(),
+      }).lean();
+    }
+
+    if (!existingJob) {
+      const query = {
+        user: userId,
+        company: company.trim(),
+        position: jobTitle.trim(),
+      };
+      if (location && location.trim()) {
+        query.location = location.trim();
+      }
+      existingJob = await Job.findOne(query).lean();
+    }
+
+    if (existingJob) {
+      return res.status(200).json({
+        duplicated: true,
+        message: 'This job already exists in your HustleMap.',
+        job: formatJobForResponse(existingJob),
+      });
+    }
+
+    const now = new Date();
+
+    const jobData = {
+      user: userId,
+      company: company.trim(),
+      position: jobTitle.trim(),
+      location: location ? location.trim() : null,
+      status: 'saved',
+      applicationType: 'off_campus',
+      dateApplied: now,
+      interviewDate: null,
+      applicationSource: source || (jobUrl ? new URL(jobUrl).hostname : null),
+      notes: notes
+        ? notes.trim()
+        : description
+          ? description.slice(0, 2000)
+          : null,
+      resumeLink: null,
+      portfolioLink: null,
+      interviewRounds: [],
+      interviewQuestions: [],
+      preparationNotes: null,
+      interviewDifficulty: null,
+      interviewStatus: 'pending',
+      jobUrl: jobUrl ? jobUrl.trim() : null,
+      salary: salary ? salary.trim() : null,
+      companyLogo: companyLogo ? companyLogo.trim() : null,
+      screenshot:
+        screenshot && typeof screenshot === 'string' ? screenshot : null,
+    };
+
+    const created = await Job.create(jobData);
+    return res.status(201).json({
+      duplicated: false,
+      job: formatJobForResponse(created),
+    });
+  } catch (error) {
+    console.error('CaptureJob error:', {
+      error: error.message,
+      stack: error.stack,
+      name: error.name,
+    });
+    return res.status(500).json({
+      error: 'Internal server error',
+      message:
+        process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
+  }
+};
+
+// Extension screenshot save: userId + screenshot + jobUrl + timestamp (no auth)
+export const saveScreenshotFromExtension = async (req, res) => {
+  try {
+    const { userId, screenshotBase64, jobUrl, timestamp } = req.body || {};
+
+    if (!userId || typeof userId !== 'string' || !userId.trim()) {
+      return res.status(400).json({ error: 'User ID is required' });
+    }
+    const uid = userId.trim();
+    if (!mongoose.Types.ObjectId.isValid(uid)) {
+      return res.status(400).json({ error: 'Invalid user ID' });
+    }
+
+    if (!screenshotBase64 || typeof screenshotBase64 !== 'string') {
+      return res.status(400).json({ error: 'Screenshot data is required' });
+    }
+
+    const dateApplied = timestamp ? new Date(timestamp) : new Date();
+    const applicationSource = jobUrl
+      ? (() => {
+          try {
+            return new URL(jobUrl).hostname;
+          } catch {
+            return null;
+          }
+        })()
+      : null;
+
+    const jobData = {
+      user: uid,
+      company: 'Captured',
+      position: 'Job capture',
+      location: null,
+      status: 'saved',
+      applicationType: 'off_campus',
+      dateApplied,
+      interviewDate: null,
+      applicationSource,
+      notes: null,
+      resumeLink: null,
+      portfolioLink: null,
+      interviewRounds: [],
+      interviewQuestions: [],
+      preparationNotes: null,
+      interviewDifficulty: null,
+      interviewStatus: 'pending',
+      jobUrl: jobUrl && typeof jobUrl === 'string' ? jobUrl.trim() : null,
+      salary: null,
+      companyLogo: null,
+      screenshot: screenshotBase64,
+      isCaptured: true,
+    };
+
+    const created = await Job.create(jobData);
+    return res.status(201).json({
+      job: formatJobForResponse(created),
+      message: 'Screenshot saved.',
+    });
+  } catch (error) {
+    console.error('Save screenshot (extension) error:', error);
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ error: error.message });
+    }
+    return res.status(500).json({
+      error: 'Internal server error',
+      message:
+        process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
+  }
+};
+
+// Minimal save endpoint for simple Chrome extension:
+// accepts { userId, screenshot, jobUrl } and creates a basic "saved" job.
+export const saveSimpleExtensionJob = async (req, res) => {
+  try {
+    const { userId, screenshot, jobUrl } = req.body || {};
+
+    if (!userId || typeof userId !== 'string' || !userId.trim()) {
+      return res.status(400).json({ error: 'User ID is required' });
+    }
+    const uid = userId.trim();
+    if (!mongoose.Types.ObjectId.isValid(uid)) {
+      return res.status(400).json({ error: 'Invalid user ID' });
+    }
+
+    if (!screenshot || typeof screenshot !== 'string') {
+      return res.status(400).json({ error: 'Screenshot is required' });
+    }
+
+    const now = new Date();
+
+    let applicationSource = null;
+    let normalizedJobUrl = null;
+    if (jobUrl && typeof jobUrl === 'string' && jobUrl.trim()) {
+      normalizedJobUrl = jobUrl.trim();
+      try {
+        const urlObj = new URL(normalizedJobUrl);
+        applicationSource = urlObj.hostname || null;
+      } catch {
+        applicationSource = null;
+      }
+    }
+
+    const jobData = {
+      user: uid,
+      company: 'Captured Job',
+      position: 'Saved from extension',
+      location: null,
+      status: 'saved',
+      applicationType: 'off_campus',
+      dateApplied: now,
+      interviewDate: null,
+      applicationSource,
+      notes: null,
+      resumeLink: null,
+      portfolioLink: null,
+      interviewRounds: [],
+      interviewQuestions: [],
+      preparationNotes: null,
+      interviewDifficulty: null,
+      interviewStatus: 'pending',
+      jobUrl: normalizedJobUrl,
+      salary: null,
+      companyLogo: null,
+      screenshot,
+      isCaptured: true,
+    };
+
+    const created = await Job.create(jobData);
+
+    return res.status(201).json({
+      message: 'Job saved from extension',
+      job: formatJobForResponse(created),
+    });
+  } catch (error) {
+    console.error('saveSimpleExtensionJob error:', {
+      error: error.message,
+      stack: error.stack,
+      name: error.name,
+    });
+    return res.status(500).json({
+      error: 'Internal server error',
+      message:
+        process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
+  }
+};
+
+// Extension screenshot save with structured job data (no auth; uses userId in body)
+export const saveScreenshotJob = async (req, res) => {
+  try {
+    const {
+      userId,
+      company,
+      position,
+      location,
+      jobUrl,
+      screenshotBase64,
+      timestamp,
+      source,
+    } = req.body || {};
+
+    if (!userId || typeof userId !== 'string' || !userId.trim()) {
+      return res.status(400).json({ error: 'Missing required fields: userId' });
+    }
+    const uid = userId.trim();
+    if (!mongoose.Types.ObjectId.isValid(uid)) {
+      return res.status(400).json({ error: 'Invalid userId' });
+    }
+
+    if (!screenshotBase64 || typeof screenshotBase64 !== 'string') {
+      return res
+        .status(400)
+        .json({ error: 'Missing required fields: screenshotBase64' });
+    }
+
+    const dateApplied = timestamp ? new Date(timestamp) : new Date();
+
+    const normalizedSource =
+      typeof source === 'string' && source.trim()
+        ? source.trim().toLowerCase()
+        : (() => {
+            if (jobUrl) {
+              try {
+                const host = new URL(jobUrl).hostname || '';
+                if (host.includes('linkedin.com')) return 'linkedin';
+                if (host.includes('indeed.com')) return 'indeed';
+                if (host.includes('glassdoor.com')) return 'glassdoor';
+              } catch {
+                // ignore URL parse errors
+              }
+            }
+            return 'other';
+          })();
+
+    const job = await Job.create({
+      user: uid,
+      company: company && company.trim() ? company.trim() : 'Captured',
+      position: position && position.trim() ? position.trim() : 'Job Capture',
+      location: location && location.trim() ? location.trim() : '',
+      status: 'saved',
+      applicationType: 'off_campus',
+      dateApplied,
+      interviewDate: null,
+      applicationSource: normalizedSource,
+      notes: null,
+      resumeLink: null,
+      portfolioLink: null,
+      interviewRounds: [],
+      interviewQuestions: [],
+      preparationNotes: null,
+      interviewDifficulty: null,
+      interviewStatus: 'pending',
+      jobUrl: jobUrl && typeof jobUrl === 'string' ? jobUrl.trim() : '',
+      salary: null,
+      companyLogo: null,
+      screenshot: screenshotBase64,
+      isCaptured: true,
+    });
+
+    return res.status(201).json({
+      message: 'Screenshot job saved successfully',
+      job: formatJobForResponse(job),
+    });
+  } catch (error) {
+    console.error('saveScreenshotJob error:', {
+      error: error.message,
+      stack: error.stack,
+      name: error.name,
+    });
+    return res.status(500).json({
+      error: 'Internal server error',
+      message:
+        process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
+  }
+};
+
+// Save from extension with DOM extraction or OCR fallback
+export const saveFromExtension = async (req, res) => {
+  try {
+    const {
+      extensionId,
+      screenshot,
+      source,
+      url,
+      jobTitle,
+      company,
+      location,
+      description,
+    } = req.body;
+
+    if (!extensionId) {
+      return res.status(400).json({ error: 'Extension ID required' });
+    }
+
+    const user = await User.findOne({ extensionId });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    let jobData = {};
+
+    if (jobTitle || company) {
+      // Use provided extracted data
+      jobData = {
+        position: jobTitle || 'Captured Job',
+        company: company || 'Unknown Company',
+        location: location || '',
+        description: description || '',
+        applicationSource: source || 'other',
+        jobUrl: url,
+      };
+    } else if (screenshot) {
+      // Fallback to OCR
+      if (!screenshot) {
+        return res
+          .status(400)
+          .json({ error: 'Screenshot required for OCR fallback' });
+      }
+
+      // Validate screenshot size
+      const screenshotSize = Buffer.from(screenshot, 'base64').length;
+      if (screenshotSize > 5 * 1024 * 1024) {
+        return res.status(400).json({ error: 'Screenshot too large' });
+      }
+
+      // Auto-detect source
+      let detectedSource = source;
+      if (!detectedSource && url) {
+        if (url.includes('linkedin')) detectedSource = 'linkedin';
+        else if (url.includes('indeed')) detectedSource = 'indeed';
+        else if (url.includes('glassdoor')) detectedSource = 'glassdoor';
+      }
+
+      // OCR the screenshot
+      const worker = await createWorker('eng');
+      const {
+        data: { text },
+      } = await worker.recognize(screenshot);
+      await worker.terminate();
+
+      // Parse extracted text
+      const extracted = parseJobDetails(text);
+
+      jobData = {
+        position: extracted.jobTitle || 'Captured Job',
+        company: extracted.company || 'Unknown Company',
+        location: extracted.location || '',
+        salary: extracted.salary || '',
+        description: extracted.jobDescription || text,
+        screenshot: screenshot,
+        applicationSource: detectedSource || 'other',
+        jobUrl: url,
+      };
+    } else {
+      return res
+        .status(400)
+        .json({ error: 'Either extracted data or screenshot required' });
+    }
+
+    const job = await Job.create({
+      user: user._id,
+      ...jobData,
+      status: 'saved',
+      dateApplied: new Date(),
+      isCaptured: true,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Job saved successfully',
+    });
+  } catch (error) {
+    console.error('saveFromExtension error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+// Simple parser for job details from OCR text
+function parseJobDetails(text) {
+  const lines = text
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line);
+  const result = {
+    jobTitle: null,
+    company: null,
+    location: null,
+    salary: null,
+    jobDescription: null,
+  };
+
+  // Look for common patterns
+  for (const line of lines) {
+    const lower = line.toLowerCase();
+    if (lower.includes('job title') || lower.includes('position')) {
+      result.jobTitle = line.split(':')[1]?.trim() || line;
+    } else if (lower.includes('company') && !result.company) {
+      result.company = line.split(':')[1]?.trim() || line;
+    } else if (lower.includes('location') && !result.location) {
+      result.location = line.split(':')[1]?.trim() || line;
+    } else if (
+      lower.includes('salary') ||
+      lower.includes('pay') ||
+      lower.includes('$')
+    ) {
+      result.salary = line.split(':')[1]?.trim() || line;
+    }
+  }
+
+  // Description as remaining text
+  result.jobDescription = lines.join('\n');
+
+  return result;
+}
 
 // Update job
 export const updateJob = async (req, res) => {
@@ -453,11 +956,11 @@ export const updateJob = async (req, res) => {
     if (!company || !position || !date_applied) {
       return res
         .status(400)
-        .json({ error: "Company, position, and date_applied are required" });
+        .json({ error: 'Company, position, and date_applied are required' });
     }
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ error: "Invalid job ID" });
+      return res.status(400).json({ error: 'Invalid job ID' });
     }
 
     // Filter out empty questions (questions with no text)
@@ -474,7 +977,7 @@ export const updateJob = async (req, res) => {
       position,
       location: location || null,
       status,
-      applicationType: application_type || "off_campus",
+      applicationType: application_type || 'off_campus',
       dateApplied: new Date(date_applied),
       interviewDate: interview_date ? new Date(interview_date) : null,
       applicationSource: application_source || null,
@@ -485,12 +988,15 @@ export const updateJob = async (req, res) => {
       interviewQuestions: filteredQuestions,
       preparationNotes: preparation_notes || null,
       interviewDifficulty: interview_difficulty || null,
-      interviewStatus: interview_status || "pending",
+      interviewStatus: interview_status || 'pending',
+      jobUrl: job_url ? job_url.trim() : null,
+      // Once edited via the main form, treat as a normal job
+      isCaptured: false,
     };
 
     const userId = safeUserId(req.user?.id);
     if (!userId) {
-      return res.status(401).json({ error: "Invalid or missing user context" });
+      return res.status(401).json({ error: 'Invalid or missing user context' });
     }
 
     const job = await Job.findOneAndUpdate(
@@ -500,16 +1006,16 @@ export const updateJob = async (req, res) => {
     ).lean();
 
     if (!job) {
-      return res.status(404).json({ error: "Job not found" });
+      return res.status(404).json({ error: 'Job not found' });
     }
 
     res.json(formatJobForResponse(job));
   } catch (error) {
-    console.error("Update job error:", error);
-    if (error.name === "ValidationError") {
+    console.error('Update job error:', error);
+    if (error.name === 'ValidationError') {
       return res.status(400).json({ error: error.message });
     }
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -519,23 +1025,23 @@ export const deleteJob = async (req, res) => {
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ error: "Invalid job ID" });
+      return res.status(400).json({ error: 'Invalid job ID' });
     }
 
     const userId = safeUserId(req.user?.id);
     if (!userId) {
-      return res.status(401).json({ error: "Invalid or missing user context" });
+      return res.status(401).json({ error: 'Invalid or missing user context' });
     }
 
     const job = await Job.findOneAndDelete({ _id: id, user: userId });
 
     if (!job) {
-      return res.status(404).json({ error: "Job not found" });
+      return res.status(404).json({ error: 'Job not found' });
     }
 
-    res.json({ message: "Job deleted successfully" });
+    res.json({ message: 'Job deleted successfully' });
   } catch (error) {
-    console.error("Delete job error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error('Delete job error:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 };

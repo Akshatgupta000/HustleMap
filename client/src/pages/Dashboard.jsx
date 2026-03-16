@@ -1,40 +1,45 @@
-import { useState, useMemo, useEffect, useRef } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { jobsAPI } from "../lib/api";
-import QuickAddJob from "../components/QuickAddJob";
-import AnalyticsWidgets from "../components/AnalyticsWidgets";
-import JobCard from "../components/JobCard";
-import JobDetailsModal from "../components/JobDetailsModal";
-import { Link } from "react-router-dom";
+import { useState, useMemo, useEffect, useRef } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { jobsAPI } from '../lib/api';
+import { getUser } from '../lib/auth';
+import QuickAddJob from '../components/QuickAddJob';
+import AnalyticsWidgets from '../components/AnalyticsWidgets';
+import JobCard from '../components/JobCard';
+import JobDetailsModal from '../components/JobDetailsModal';
+import CapturedJobs from '../components/CapturedJobs';
+import { Link } from 'react-router-dom';
 
 const STATUS_LABELS = {
-  applied: "Applied",
-  online_test: "Online Test",
-  interview: "Interview",
-  offer: "Offer",
-  rejected: "Rejected",
-  withdrawn: "Withdrawn",
+  saved: 'Saved',
+  applied: 'Applied',
+  online_test: 'Online Test',
+  interview: 'Interview',
+  offer: 'Offer',
+  rejected: 'Rejected',
+  withdrawn: 'Withdrawn',
 };
 
-const SCROLL_POSITION_KEY = "dashboard_scroll_position";
+const SCROLL_POSITION_KEY = 'dashboard_scroll_position';
 
 export default function Dashboard() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [typeFilter, setTypeFilter] = useState("all");
-  const [sortBy, setSortBy] = useState("date");
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [typeFilter, setTypeFilter] = useState('all');
+  const [sortBy, setSortBy] = useState('date');
   const [showAnalyticsDetails, setShowAnalyticsDetails] = useState(false);
   const [showApplications, setShowApplications] = useState(true);
   const [selectedJob, setSelectedJob] = useState(null);
   const dashboardRef = useRef(null);
 
+  const user = getUser();
+
   const { data: jobs, isLoading } = useQuery({
-    queryKey: ["jobs"],
+    queryKey: ['jobs'],
     queryFn: () => jobsAPI.getAll().then((res) => res.data),
   });
 
   const { data: stats } = useQuery({
-    queryKey: ["jobStats"],
+    queryKey: ['jobStats'],
     queryFn: () => jobsAPI.getStats().then((res) => res.data),
   });
 
@@ -60,9 +65,9 @@ export default function Dashboard() {
       sessionStorage.setItem(SCROLL_POSITION_KEY, scrollPosition.toString());
     };
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener('beforeunload', handleBeforeUnload);
     return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, []);
 
@@ -71,35 +76,38 @@ export default function Dashboard() {
     if (!jobs || !Array.isArray(jobs)) return [];
 
     let filtered = jobs.filter((job) => {
+      // Exclude captured-only screenshot jobs from the main applications list
+      if (job.is_captured) return false;
       // Search filter
       const matchesSearch =
-        searchQuery === "" ||
+        searchQuery === '' ||
         job.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
         job.position.toLowerCase().includes(searchQuery.toLowerCase());
 
       // Status filter
       const matchesStatus =
-        statusFilter === "all" || job.status === statusFilter;
+        statusFilter === 'all' || job.status === statusFilter;
 
       // Type filter
       const matchesType =
-        typeFilter === "all" || job.application_type === typeFilter;
+        typeFilter === 'all' || job.application_type === typeFilter;
 
       return matchesSearch && matchesStatus && matchesType;
     });
 
     // Sort
     filtered.sort((a, b) => {
-      if (sortBy === "date") {
+      if (sortBy === 'date') {
         return new Date(b.date_applied) - new Date(a.date_applied);
-      } else if (sortBy === "status") {
+      } else if (sortBy === 'status') {
         const statusOrder = [
-          "applied",
-          "online_test",
-          "interview",
-          "offer",
-          "rejected",
-          "withdrawn",
+          'saved',
+          'applied',
+          'online_test',
+          'interview',
+          'offer',
+          'rejected',
+          'withdrawn',
         ];
         return statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status);
       }
@@ -138,7 +146,27 @@ export default function Dashboard() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
         {/* Header */}
         <div className="mb-4">
-          <h1 className="page-title text-black mb-1">Dashboard</h1>
+          <div className="flex items-center justify-between mb-1">
+            <h1 className="page-title text-black">Dashboard</h1>
+            {user?.extensionId && (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">Extension ID:</span>
+                <code className="bg-gray-100 px-2 py-1 border border-gray-300 rounded text-xs font-mono">
+                  {user.extensionId}
+                </code>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(user.extensionId);
+                    alert('Extension ID copied to clipboard!');
+                  }}
+                  className="text-xs bg-black text-white px-2 py-1 rounded hover:bg-gray-800 transition-colors"
+                  title="Copy Extension ID"
+                >
+                  Copy
+                </button>
+              </div>
+            )}
+          </div>
           <p className="helper-text text-gray-600">
             Track and manage your job applications
           </p>
@@ -159,6 +187,9 @@ export default function Dashboard() {
         {/* Quick Add Job Section */}
         <QuickAddJob />
 
+        {/* Captured Jobs Section */}
+        <CapturedJobs />
+
         {/* Main Dashboard Section - Applied Jobs */}
         <div className="bg-white border border-black mb-4">
           <button
@@ -169,7 +200,7 @@ export default function Dashboard() {
               My Applications ({filteredAndSortedJobs.length})
             </h2>
             <span className="text-black text-lg">
-              {showApplications ? "−" : "+"}
+              {showApplications ? '−' : '+'}
             </span>
           </button>
 
@@ -229,14 +260,14 @@ export default function Dashboard() {
                   <h3 className="subtitle text-black mb-2">No jobs found</h3>
                   <p className="helper-text text-gray-600 mb-4">
                     {searchQuery ||
-                    statusFilter !== "all" ||
-                    typeFilter !== "all"
-                      ? "Try adjusting your filters"
-                      : "Start tracking your job applications"}
+                    statusFilter !== 'all' ||
+                    typeFilter !== 'all'
+                      ? 'Try adjusting your filters'
+                      : 'Start tracking your job applications'}
                   </p>
                   {!searchQuery &&
-                    statusFilter === "all" &&
-                    typeFilter === "all" && (
+                    statusFilter === 'all' &&
+                    typeFilter === 'all' && (
                       <Link
                         to="/jobs/new"
                         className="inline-block px-4 py-2 border border-black text-black hover:bg-black hover:text-white transition-colors"
@@ -278,14 +309,14 @@ export default function Dashboard() {
                     className="flex items-center justify-between body-text text-yellow-800 bg-white p-2 border border-yellow-200"
                   >
                     <div>
-                      <strong className="font-medium">{job.company}</strong> -{" "}
+                      <strong className="font-medium">{job.company}</strong> -{' '}
                       {job.position}
                     </div>
                     <div className="text-yellow-700 font-medium">
                       {daysUntil === 0
-                        ? "Today"
+                        ? 'Today'
                         : daysUntil === 1
-                          ? "Tomorrow"
+                          ? 'Tomorrow'
                           : `${daysUntil} days`}
                     </div>
                   </div>

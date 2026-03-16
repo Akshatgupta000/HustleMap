@@ -1,21 +1,21 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const jobSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
       index: true,
     },
     company: {
       type: String,
-      required: [true, "Company name is required"],
+      required: [true, 'Company name is required'],
       trim: true,
     },
     position: {
       type: String,
-      required: [true, "Position is required"],
+      required: [true, 'Position is required'],
       trim: true,
     },
     location: {
@@ -23,28 +23,59 @@ const jobSchema = new mongoose.Schema(
       trim: true,
       default: null,
     },
+    // Raw job posting URL, primarily populated by the Smart Job Capture extension
+    jobUrl: {
+      type: String,
+      trim: true,
+      default: null,
+      index: true,
+    },
+    // Parsed salary string (e.g. "$120,000 - $140,000 per year")
+    salary: {
+      type: String,
+      trim: true,
+      default: null,
+    },
+    // Company logo URL, when available from job boards
+    companyLogo: {
+      type: String,
+      trim: true,
+      default: null,
+    },
+    // Base64 data URL of a cropped screenshot from the extension (optional)
+    screenshot: {
+      type: String,
+      default: null,
+    },
+    // Flag to distinguish screenshot-only captures from full jobs
+    isCaptured: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
     status: {
       type: String,
       enum: [
-        "applied",
-        "online_test",
-        "interview",
-        "offer",
-        "rejected",
-        "withdrawn",
+        'saved',
+        'applied',
+        'online_test',
+        'interview',
+        'offer',
+        'rejected',
+        'withdrawn',
       ],
-      default: "applied",
+      default: 'applied',
       index: true,
     },
     applicationType: {
       type: String,
-      enum: ["on_campus", "off_campus"],
-      default: "off_campus",
+      enum: ['on_campus', 'off_campus'],
+      default: 'off_campus',
       index: true,
     },
     dateApplied: {
       type: Date,
-      required: [true, "Date applied is required"],
+      required: [true, 'Date applied is required'],
     },
     interviewDate: {
       type: Date,
@@ -57,6 +88,11 @@ const jobSchema = new mongoose.Schema(
       default: null,
     },
     notes: {
+      type: String,
+      trim: true,
+      default: null,
+    },
+    description: {
       type: String,
       trim: true,
       default: null,
@@ -89,8 +125,8 @@ const jobSchema = new mongoose.Schema(
         },
         status: {
           type: String,
-          enum: ["scheduled", "completed", "passed", "failed"],
-          default: "scheduled",
+          enum: ['scheduled', 'completed', 'passed', 'failed'],
+          default: 'scheduled',
         },
       },
     ],
@@ -128,8 +164,8 @@ const jobSchema = new mongoose.Schema(
     },
     interviewStatus: {
       type: String,
-      enum: ["pending", "completed"],
-      default: "pending",
+      enum: ['pending', 'completed'],
+      default: 'pending',
     },
   },
   {
@@ -146,9 +182,12 @@ jobSchema.index({ user: 1, dateApplied: -1 });
 // Index for interview dates (for reminders)
 jobSchema.index({ user: 1, interviewDate: 1 });
 
+// Index to help with duplicate detection from Smart Job Capture
+jobSchema.index({ user: 1, jobUrl: 1 }, { unique: false });
+
 // Index for recent activity
 jobSchema.index({ user: 1, updatedAt: -1 });
 
-const Job = mongoose.model("Job", jobSchema);
+const Job = mongoose.model('Job', jobSchema);
 
 export default Job;
