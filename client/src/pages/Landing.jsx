@@ -353,7 +353,7 @@ export default function Landing() {
           <Reveal delay={80}>
             <div className="flex justify-center items-center gap-3 flex-wrap">
               <a
-                href="https://github.com/Akshatgupta000/HustleMap"
+                href="https://github.com/Akshatgupta000/HustleMap-extension"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="no-underline"
