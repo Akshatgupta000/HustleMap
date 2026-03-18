@@ -11,7 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import Jobs from "./pages/Jobs";
 import JobForm from "./pages/JobForm";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Navbar from "./components/Navbar";
+import AppLayout from "./components/AppLayout";
 
 // React Router v7 future flags
 const futureFlags = {
@@ -44,17 +44,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter future={futureFlags}>
-        <div
-          className="min-h-screen"
-          style={{
-            backgroundImage: `
-              linear-gradient(to right, #e5e7eb 1px, transparent 1px),
-              linear-gradient(to bottom, #e5e7eb 1px, transparent 1px)
-            `,
-            backgroundSize: "40px 40px",
-            backgroundColor: "#fafafa",
-          }}
-        >
+        <div className="min-h-screen bg-notion-bg">
           <Routes>
             <Route
               path="/"
@@ -84,8 +74,9 @@ function App() {
               path="/dashboard"
               element={
                 <ProtectedRoute isAuth={isAuth}>
-                  <Navbar onLogout={() => setIsAuth(false)} />
-                  <Dashboard />
+                  <AppLayout onLogout={() => setIsAuth(false)}>
+                    <Dashboard />
+                  </AppLayout>
                 </ProtectedRoute>
               }
             />
@@ -93,8 +84,9 @@ function App() {
               path="/jobs"
               element={
                 <ProtectedRoute isAuth={isAuth}>
-                  <Navbar onLogout={() => setIsAuth(false)} />
-                  <Jobs />
+                  <AppLayout onLogout={() => setIsAuth(false)}>
+                    <Jobs />
+                  </AppLayout>
                 </ProtectedRoute>
               }
             />
@@ -102,8 +94,9 @@ function App() {
               path="/jobs/new"
               element={
                 <ProtectedRoute isAuth={isAuth}>
-                  <Navbar onLogout={() => setIsAuth(false)} />
-                  <JobForm />
+                  <AppLayout onLogout={() => setIsAuth(false)}>
+                    <JobForm />
+                  </AppLayout>
                 </ProtectedRoute>
               }
             />
@@ -111,8 +104,9 @@ function App() {
               path="/jobs/edit/:id"
               element={
                 <ProtectedRoute isAuth={isAuth}>
-                  <Navbar onLogout={() => setIsAuth(false)} />
-                  <JobForm />
+                  <AppLayout onLogout={() => setIsAuth(false)}>
+                    <JobForm />
+                  </AppLayout>
                 </ProtectedRoute>
               }
             />

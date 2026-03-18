@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Comic Neue", "Comic Sans MS", "cursive", "sans-serif"],
+        sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       fontSize: {
         // Hierarchical text sizing with responsive scaling - optimized for density
@@ -16,6 +16,14 @@ export default {
         "small-text": "clamp(0.75rem, 1.5vw, 0.875rem)", // 0.75rem - 0.875rem (reduced from 0.8rem-0.95rem)
       },
       colors: {
+        notion: {
+          bg: "#f7f6f3",
+          card: "#ffffff",
+          border: "#e5e5e5",
+          text: "#37352f",
+          muted: "#6b6b6b",
+          accent: "#4f46e5",
+        },
         primary: {
           50: "#f0f9ff",
           100: "#e0f2fe",
@@ -28,6 +36,9 @@ export default {
           800: "#075985",
           900: "#0c4a6e",
         },
+      },
+      boxShadow: {
+        soft: "0 1px 2px rgba(0,0,0,0.06)",
       },
     },
   },

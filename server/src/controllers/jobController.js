@@ -706,6 +706,7 @@ export const saveScreenshotJob = async (req, res) => {
   try {
     const {
       userId,
+      extensionId,
       company,
       position,
       location,
@@ -715,12 +716,26 @@ export const saveScreenshotJob = async (req, res) => {
       source,
     } = req.body || {};
 
-    if (!userId || typeof userId !== 'string' || !userId.trim()) {
-      return res.status(400).json({ error: 'Missing required fields: userId' });
-    }
-    const uid = userId.trim();
-    if (!mongoose.Types.ObjectId.isValid(uid)) {
-      return res.status(400).json({ error: 'Invalid userId' });
+    // Backward compatible: accept either userId (preferred) or extensionId.
+    let uid = null;
+    if (userId && typeof userId === 'string' && userId.trim()) {
+      const candidate = userId.trim();
+      if (!mongoose.Types.ObjectId.isValid(candidate)) {
+        return res.status(400).json({ error: 'Invalid userId' });
+      }
+      uid = candidate;
+    } else if (extensionId && typeof extensionId === 'string' && extensionId.trim()) {
+      const user = await User.findOne({ extensionId: extensionId.trim() })
+        .select('_id')
+        .lean();
+      if (!user?._id) {
+        return res.status(404).json({ error: 'User not found for extensionId' });
+      }
+      uid = user._id.toString();
+    } else {
+      return res
+        .status(400)
+        .json({ error: 'Missing required fields: userId (or extensionId)' });
     }
 
     if (!screenshotBase64 || typeof screenshotBase64 !== 'string') {
@@ -729,6 +744,7 @@ export const saveScreenshotJob = async (req, res) => {
         .json({ error: 'Missing required fields: screenshotBase64' });
     }
 
+    // timestamp can be a number (ms) or ISO string; Date handles both.
     const dateApplied = timestamp ? new Date(timestamp) : new Date();
 
     const normalizedSource =
@@ -809,7 +825,15 @@ export const saveFromExtension = async (req, res) => {
       return res.status(400).json({ error: 'Extension ID required' });
     }
 
-    const user = await User.findOne({ extensionId });
+    let user = null;
+    const cleanId = extensionId.trim();
+    if (mongoose.Types.ObjectId.isValid(cleanId)) {
+      user = await User.findById(cleanId);
+    }
+    if (!user) {
+      user = await User.findOne({ extensionId: cleanId });
+    }
+    
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -848,26 +872,40 @@ export const saveFromExtension = async (req, res) => {
         else if (url.includes('glassdoor')) detectedSource = 'glassdoor';
       }
 
-      // OCR the screenshot
-      const worker = await createWorker('eng');
-      const {
-        data: { text },
-      } = await worker.recognize(screenshot);
-      await worker.terminate();
+      // OCR the screenshot with fallback
+      try {
+        const worker = await createWorker('eng');
+        const {
+          data: { text },
+        } = await worker.recognize(screenshot);
+        await worker.terminate();
 
-      // Parse extracted text
-      const extracted = parseJobDetails(text);
+        // Parse extracted text
+        const extracted = parseJobDetails(text);
 
-      jobData = {
-        position: extracted.jobTitle || 'Captured Job',
-        company: extracted.company || 'Unknown Company',
-        location: extracted.location || '',
-        salary: extracted.salary || '',
-        description: extracted.jobDescription || text,
-        screenshot: screenshot,
-        applicationSource: detectedSource || 'other',
-        jobUrl: url,
-      };
+        jobData = {
+          position: extracted.jobTitle || 'Captured Job',
+          company: extracted.company || 'Unknown Company',
+          location: extracted.location || '',
+          salary: extracted.salary || '',
+          description: extracted.jobDescription || text,
+          screenshot: screenshot,
+          applicationSource: detectedSource || 'other',
+          jobUrl: url,
+        };
+      } catch (ocrError) {
+        console.error('OCR failed, falling back to basic capture:', ocrError);
+        jobData = {
+          position: 'Captured Job',
+          company: 'Unknown Company',
+          location: '',
+          salary: '',
+          description: '',
+          screenshot: screenshot,
+          applicationSource: detectedSource || 'other',
+          jobUrl: url,
+        };
+      }
     } else {
       return res
         .status(400)
@@ -933,6 +971,7 @@ function parseJobDetails(text) {
 // Update job
 export const updateJob = async (req, res) => {
   try {
+    console.log("Incoming body:", req.body);
     const { id } = req.params;
     const {
       company,
@@ -951,6 +990,7 @@ export const updateJob = async (req, res) => {
       preparation_notes,
       interview_difficulty,
       interview_status,
+      job_url,
     } = req.body;
 
     if (!company || !position || !date_applied) {
@@ -963,14 +1003,19 @@ export const updateJob = async (req, res) => {
       return res.status(400).json({ error: 'Invalid job ID' });
     }
 
-    // Filter out empty questions (questions with no text)
-    const filteredQuestions = (interview_questions || [])
-      .filter((q) => q && q.question && q.question.trim())
-      .map((q) => ({
-        question: q.question.trim(),
-        notes_or_answer: q.notes_or_answer ?? q.answer ?? null,
-        round: q.round || null,
-      }));
+    // Validate interview_questions structure safely
+    const rawQuestions = interview_questions || [];
+    const safeQuestions = Array.isArray(rawQuestions) ? rawQuestions : [];
+    
+    const parsedQuestions = safeQuestions.map((q) => {
+      const safeQ = q || {};
+      return {
+        round: safeQ.round || '',
+        question: safeQ.question || '',
+        answer: safeQ.answer || '',
+        notes_or_answer: safeQ.notes_or_answer || '',
+      };
+    });
 
     const updateData = {
       company,
@@ -985,7 +1030,7 @@ export const updateJob = async (req, res) => {
       resumeLink: resume_link || null,
       portfolioLink: portfolio_link || null,
       interviewRounds: interview_rounds || [],
-      interviewQuestions: filteredQuestions,
+      interviewQuestions: parsedQuestions,
       preparationNotes: preparation_notes || null,
       interviewDifficulty: interview_difficulty || null,
       interviewStatus: interview_status || 'pending',
@@ -1015,7 +1060,7 @@ export const updateJob = async (req, res) => {
     if (error.name === 'ValidationError') {
       return res.status(400).json({ error: error.message });
     }
-    res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ message: 'Failed to update job', error: error.message || error });
   }
 };
 

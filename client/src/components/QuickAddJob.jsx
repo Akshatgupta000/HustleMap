@@ -3,6 +3,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { jobsAPI } from "../lib/api";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 const STATUS_OPTIONS = [
   { value: "applied", label: "Applied" },
@@ -96,99 +99,101 @@ export default function QuickAddJob() {
   };
 
   return (
-    <div className="bg-white border border-black p-3 sm:p-4 mb-4">
-      <div className="flex items-center justify-between mb-3">
-        <h2 className="section-heading text-black">Quick Add Job</h2>
-        <Link
-          to="/jobs/new"
-          className="px-2.5 py-1 border border-black text-black form-label hover:bg-gray-50 transition-colors"
-        >
-          Open Full Form
+    <Card className="mb-4">
+      <CardHeader className="flex-row items-center justify-between space-y-0">
+        <CardTitle className="section-heading">Quick Add Job</CardTitle>
+        <Link to="/jobs/new">
+          <Button variant="outline" size="sm">
+            Open Full Form
+          </Button>
         </Link>
-      </div>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-notion-text mb-1">
+                Company Name *
+              </label>
+              <Input
+                type="text"
+                required
+                value={formData.company}
+                onChange={(e) =>
+                  setFormData({ ...formData, company: e.target.value })
+                }
+                placeholder="Google"
+              />
+            </div>
 
-      <form onSubmit={handleSubmit} className="space-y-2 sm:space-y-3">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
-          <div>
-            <label className="block form-label text-black mb-1">
-              Company Name *
-            </label>
-            <input
-              type="text"
-              required
-              value={formData.company}
-              onChange={(e) =>
-                setFormData({ ...formData, company: e.target.value })
-              }
-              className="w-full px-3 py-1.5 body-text border border-black focus:border-gray-500 focus:outline-none"
-              placeholder="Google"
-            />
+            <div>
+              <label className="block text-sm font-medium text-notion-text mb-1">
+                Job Role *
+              </label>
+              <Input
+                type="text"
+                required
+                value={formData.position}
+                onChange={(e) =>
+                  setFormData({ ...formData, position: e.target.value })
+                }
+                placeholder="Software Engineer"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-notion-text mb-1">
+                Status
+              </label>
+              <select
+                value={formData.status}
+                onChange={(e) =>
+                  setFormData({ ...formData, status: e.target.value })
+                }
+                className="h-10 w-full rounded-xl border border-notion-border bg-white px-3 text-sm shadow-soft transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-notion-accent/30 focus-visible:ring-offset-2 focus-visible:ring-offset-notion-bg"
+              >
+                {STATUS_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-notion-text mb-1">
+                Date
+              </label>
+              <Input
+                type="date"
+                required
+                value={formData.date_applied}
+                onChange={(e) =>
+                  setFormData({ ...formData, date_applied: e.target.value })
+                }
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="block form-label text-black mb-1">
-              Job Role *
-            </label>
-            <input
-              type="text"
-              required
-              value={formData.position}
-              onChange={(e) =>
-                setFormData({ ...formData, position: e.target.value })
-              }
-              className="w-full px-3 py-1.5 body-text border border-black focus:border-gray-500 focus:outline-none"
-              placeholder="Software Engineer"
-            />
-          </div>
-
-          <div>
-            <label className="block form-label text-black mb-1">Status</label>
-            <select
-              value={formData.status}
-              onChange={(e) =>
-                setFormData({ ...formData, status: e.target.value })
-              }
-              className="w-full px-3 py-1.5 body-text border border-black focus:border-gray-500 focus:outline-none"
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <Button
+              type="submit"
+              disabled={createMutation.isPending}
+              variant="default"
+              className="sm:w-auto"
             >
-              {STATUS_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+              {createMutation.isPending ? "Adding..." : "Add Job"}
+            </Button>
+            <p className="text-sm text-notion-muted">
+              Quick entry for urgent applications
+            </p>
           </div>
-
-          <div>
-            <label className="block form-label text-black mb-1">Date</label>
-            <input
-              type="date"
-              required
-              value={formData.date_applied}
-              onChange={(e) =>
-                setFormData({ ...formData, date_applied: e.target.value })
-              }
-              className="w-full px-3 py-1.5 body-text border border-black focus:border-gray-500 focus:outline-none"
-            />
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            type="submit"
-            disabled={createMutation.isPending}
-            className="px-3 py-1.5 bg-black text-white form-label font-medium hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            {createMutation.isPending ? "Adding..." : "Add Job"}
-          </button>
-          <p className="helper-text text-gray-600">
-            Quick entry for urgent applications
+          <p className="text-sm text-notion-muted">
+            Use "Open Full Form" to add complete job details like interview
+            notes, resume links, and preparation materials.
           </p>
-        </div>
-        <p className="helper-text text-gray-500 text-sm mt-2">
-          Use "Open Full Form" above to add complete job details like interview
-          notes, resume links, and preparation materials.
-        </p>
-      </form>
-    </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 }

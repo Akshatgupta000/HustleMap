@@ -166,7 +166,7 @@ Job seekers often lose track of applications across multiple companies and platf
 
    ```bash
    git clone <repository-url>
-   cd job-tracker
+   cd HustleMap
    ```
 
 2. **Backend Setup**
@@ -224,7 +224,7 @@ Job seekers often lose track of applications across multiple companies and platf
 ## 📁 Project Structure
 
 ```
-job-tracker/
+HustleMap/
 ├── client/                           # React frontend application
 │   ├── src/
 │   │   ├── components/               # Reusable components
@@ -284,6 +284,17 @@ job-tracker/
 │   │
 │   ├── package.json
 │   └── .env                          # Environment variables
+│
+├── hustlemap-extension/              # Chrome extension: screenshot-based job capture
+│   ├── manifest.json
+│   ├── popup.html
+│   ├── popup.js
+│   ├── background.js
+│   ├── content.js
+│   ├── styles.css
+│   └── icons/
+│
+├── extension/                        # Legacy / experimental extension (WIP)
 │
 ├── README.md                         # This file
 ├── SETUP.md                          # Detailed setup guide

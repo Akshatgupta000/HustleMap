@@ -1,4 +1,7 @@
 import { useNavigate } from "react-router-dom";
+import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
+import { cn } from "../lib/cn";
 
 const STATUS_LABELS = {
   applied: "Applied",
@@ -52,22 +55,22 @@ export default function JobDetailsModal({ job, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-3 sm:p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[1px] p-3 sm:p-4"
       onClick={onClose}
     >
       <div
-        className="bg-white border border-black max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+        className="bg-notion-card border border-notion-border shadow-soft rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex justify-between items-start p-4 border-b border-black sticky top-0 bg-white z-10">
+        <div className="flex justify-between items-start p-5 border-b border-notion-border sticky top-0 bg-notion-card z-10">
           <div className="flex-1 pr-3">
-            <h2 className="page-title text-black mb-1">{job.company}</h2>
-            <p className="subtitle text-gray-700">{job.position}</p>
+            <h2 className="page-title mb-1">{job.company}</h2>
+            <p className="subtitle text-notion-muted">{job.position}</p>
           </div>
           <button
             onClick={onClose}
-            className="text-2xl font-light text-black hover:text-gray-600 flex-shrink-0 w-7 h-7 flex items-center justify-center"
+            className="text-2xl font-light text-notion-muted hover:text-notion-text flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-xl hover:bg-black/5 transition-all duration-200"
             aria-label="Close"
           >
             ×
@@ -75,29 +78,30 @@ export default function JobDetailsModal({ job, onClose }) {
         </div>
 
         {/* Content */}
-        <div className="p-4 space-y-6">
+        <div className="p-5 space-y-6">
           {/* Status Badge */}
           <div className="flex items-center gap-3 flex-wrap">
-            <span
-              className={`px-2.5 py-0.5 badge-text border rounded ${
+            <Badge
+              className={cn(
+                "border",
                 STATUS_COLORS[job.status] ||
-                "bg-gray-100 text-gray-800 border-gray-300"
-              }`}
+                  "bg-gray-100 text-gray-800 border-gray-300",
+              )}
             >
               {STATUS_LABELS[job.status] || job.status}
-            </span>
+            </Badge>
             {job.application_type && (
-              <span className="px-2.5 py-0.5 badge-text border border-black text-black bg-gray-50">
+              <Badge variant="muted">
                 {APPLICATION_TYPE_LABELS[job.application_type] ||
                   job.application_type}
-              </span>
+              </Badge>
             )}
           </div>
 
           {/* Interview Status Recommendation */}
           {job.status === "interview" && (
-            <div className="p-3 bg-yellow-50 border-l-4 border-yellow-500 rounded-sm">
-              <p className="body-text text-yellow-900 font-medium">
+            <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl">
+              <p className="text-sm text-amber-950 font-medium">
                 ⏰ Interview scheduled — preparation recommended. Consider
                 adding interview questions.
               </p>
@@ -105,96 +109,103 @@ export default function JobDetailsModal({ job, onClose }) {
           )}
 
           {/* Job Details Section */}
-          <div className="border-t border-b border-gray-300 py-4">
-            <h3 className="section-heading text-black mb-3">Job Details</h3>
+          <div className="border-y border-notion-border py-4">
+            <h3 className="section-heading mb-3">Job Details</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Company Name */}
               <div>
-                <p className="form-label text-gray-600 mb-1">Company Name</p>
-                <p className="body-text text-black">{job.company}</p>
+                <p className="text-xs font-medium text-notion-muted mb-1">
+                  Company Name
+                </p>
+                <p className="text-sm text-notion-text">{job.company}</p>
               </div>
 
               {/* Job Role / Title */}
               <div>
-                <p className="form-label text-gray-600 mb-1">
+                <p className="text-xs font-medium text-notion-muted mb-1">
                   Job Role / Title
                 </p>
-                <p className="body-text text-black">{job.position}</p>
+                <p className="text-sm text-notion-text">{job.position}</p>
               </div>
 
               {/* Location */}
               <div>
-                <p className="form-label text-gray-600 mb-1">Location</p>
-                <p className="body-text text-black">
+                <p className="text-xs font-medium text-notion-muted mb-1">
+                  Location
+                </p>
+                <p className="text-sm text-notion-text">
                   {job.location || "Not specified"}
                 </p>
               </div>
 
               {/* Application Status */}
               <div>
-                <p className="form-label text-gray-600 mb-1">
+                <p className="text-xs font-medium text-notion-muted mb-1">
                   Application Status
                 </p>
-                <p className="body-text text-black">
+                <p className="text-sm text-notion-text">
                   {STATUS_LABELS[job.status] || job.status}
                 </p>
               </div>
 
               {/* Application Date */}
               <div>
-                <p className="form-label text-gray-600 mb-1">
+                <p className="text-xs font-medium text-notion-muted mb-1">
                   Application Date
                 </p>
-                <p className="body-text text-black">
+                <p className="text-sm text-notion-text">
                   {formatDate(job.date_applied)}
                 </p>
               </div>
 
               {/* Interview Date */}
               <div>
-                <p className="form-label text-gray-600 mb-1">Interview Date</p>
-                <p className="body-text text-black">
+                <p className="text-xs font-medium text-notion-muted mb-1">
+                  Interview Date
+                </p>
+                <p className="text-sm text-notion-text">
                   {job.interview_date
                     ? formatDate(job.interview_date)
                     : "Not scheduled"}
                 </p>
               </div>
+
             </div>
           </div>
 
           {/* Interview Rounds */}
           {job.interview_rounds && job.interview_rounds.length > 0 && (
             <div>
-              <h3 className="text-lg font-medium text-black mb-3">
+              <h3 className="text-base font-semibold text-notion-text mb-3">
                 Interview Rounds
               </h3>
               <div className="space-y-2">
                 {job.interview_rounds.map((round, index) => (
                   <div
                     key={index}
-                    className="p-3 bg-gray-50 border border-gray-300"
+                    className="p-3 bg-black/5 border border-notion-border rounded-xl"
                   >
                     <div className="flex items-start justify-between mb-1.5">
-                      <p className="font-medium text-black">
+                      <p className="font-medium text-notion-text">
                         {round.round || `Round ${index + 1}`}
                       </p>
                       {round.status && (
-                        <span className="px-2 py-0.5 text-xs font-medium border border-gray-400 text-gray-700 bg-white">
+                        <Badge variant="muted">
                           {ROUND_STATUS_LABELS[round.status] || round.status}
-                        </span>
+                        </Badge>
                       )}
                     </div>
                     {round.date && (
-                      <p className="text-sm text-gray-600 mb-1.5">
+                      <p className="text-sm text-notion-muted mb-1.5">
                         Date: {formatDate(round.date)}
                       </p>
                     )}
                     {round.feedback && (
                       <div className="mt-1.5">
-                        <p className="text-xs font-medium text-gray-600 mb-1">
+                        <p className="text-xs font-medium text-notion-muted mb-1">
                           Feedback
                         </p>
-                        <p className="text-sm text-black whitespace-pre-wrap">
+                        <p className="text-sm text-notion-text whitespace-pre-wrap">
                           {round.feedback}
                         </p>
                       </div>
@@ -208,30 +219,40 @@ export default function JobDetailsModal({ job, onClose }) {
           {/* Notes / HR Details */}
           {job.notes && (
             <div>
-              <h3 className="section-heading text-black mb-2">
+              <h3 className="section-heading mb-2">
                 Notes / HR Details
               </h3>
-              <div className="p-3 bg-gray-50 border border-gray-300">
-                <p className="body-text text-black whitespace-pre-wrap">
+              <div className="p-3 bg-black/5 border border-notion-border rounded-xl">
+                <p className="text-sm text-notion-text whitespace-pre-wrap">
                   {job.notes}
                 </p>
               </div>
             </div>
           )}
 
-          {/* Resume / Portfolio Links */}
-          {(job.resume_link || job.portfolio_link) && (
+          {/* Resume / Portfolio / Job Links */}
+          {(job.job_url || job.resume_link || job.portfolio_link) && (
             <div>
-              <h3 className="section-heading text-black mb-2">
-                Resume / Portfolio Links
+              <h3 className="section-heading mb-2">
+                Links
               </h3>
               <div className="flex gap-2 flex-wrap">
+                {job.job_url && (
+                  <a
+                    href={job.job_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-2 rounded-xl border border-notion-border bg-white shadow-soft text-sm text-notion-accent hover:bg-black/5 transition-all duration-200"
+                  >
+                    🔗 Job Posting
+                  </a>
+                )}
                 {job.resume_link && (
                   <a
                     href={job.resume_link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-3 py-1.5 border border-blue-600 text-blue-600 hover:bg-blue-50 form-label flex items-center gap-2 transition-colors"
+                    className="px-3 py-2 rounded-xl border border-notion-border bg-white shadow-soft text-sm text-notion-accent hover:bg-black/5 transition-all duration-200"
                   >
                     📄 Resume
                   </a>
@@ -241,7 +262,7 @@ export default function JobDetailsModal({ job, onClose }) {
                     href={job.portfolio_link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-3 py-1.5 border border-blue-600 text-blue-600 hover:bg-blue-50 form-label flex items-center gap-2 transition-colors"
+                    className="px-3 py-2 rounded-xl border border-notion-border bg-white shadow-soft text-sm text-notion-accent hover:bg-black/5 transition-all duration-200"
                   >
                     🎨 Portfolio
                   </a>
@@ -255,19 +276,19 @@ export default function JobDetailsModal({ job, onClose }) {
             job.interview_difficulty ||
             (job.interview_questions &&
               job.interview_questions.length > 0)) && (
-            <div className="border-t-2 border-black pt-4">
-              <h3 className="page-title text-black mb-4">
+            <div className="border-t border-notion-border pt-4">
+              <h3 className="page-title mb-4">
                 Interview Summary
               </h3>
 
               {/* Preparation Notes (pre-interview) */}
               {job.preparation_notes && (
                 <div className="mb-4">
-                  <h4 className="subtitle text-black mb-1.5">
+                  <h4 className="subtitle mb-1.5">
                     Preparation Notes
                   </h4>
-                  <div className="p-3 bg-gray-50 border border-gray-300">
-                    <p className="body-text text-black whitespace-pre-wrap">
+                  <div className="p-3 bg-black/5 border border-notion-border rounded-xl">
+                    <p className="text-sm text-notion-text whitespace-pre-wrap">
                       {job.preparation_notes}
                     </p>
                   </div>
@@ -277,7 +298,7 @@ export default function JobDetailsModal({ job, onClose }) {
               {/* Interview Difficulty Rating */}
               {job.interview_difficulty && (
                 <div className="mb-4">
-                  <h4 className="subtitle text-black mb-2">
+                  <h4 className="subtitle mb-2">
                     Interview Difficulty Rating
                   </h4>
                   <div className="flex items-center gap-2">
@@ -295,10 +316,10 @@ export default function JobDetailsModal({ job, onClose }) {
                         </span>
                       ))}
                     </div>
-                    <span className="body-text font-medium text-black">
+                    <span className="text-sm font-medium text-notion-text">
                       {job.interview_difficulty}/5
                     </span>
-                    <span className="helper-text text-gray-600">
+                    <span className="text-sm text-notion-muted">
                       {job.interview_difficulty <= 2
                         ? "(Easy)"
                         : job.interview_difficulty <= 3
@@ -315,19 +336,19 @@ export default function JobDetailsModal({ job, onClose }) {
               {job.interview_questions &&
                 job.interview_questions.length > 0 && (
                   <div>
-                    <h4 className="subtitle text-black mb-3">
+                    <h4 className="subtitle mb-3">
                       Interview Questions ({job.interview_questions.length})
                     </h4>
                     <div className="space-y-3">
                       {job.interview_questions.map((qna, index) => (
                         <div
                           key={index}
-                          className="bg-white border border-gray-300 p-3 space-y-2"
+                          className="bg-white border border-notion-border p-3 space-y-2 rounded-xl shadow-soft"
                         >
                           {/* Round */}
                           {qna.round && (
-                            <div className="pb-1.5 border-b border-gray-200">
-                              <p className="helper-text font-semibold text-blue-600 uppercase tracking-wide">
+                            <div className="pb-1.5 border-b border-notion-border">
+                              <p className="text-xs font-semibold text-notion-accent uppercase tracking-wide">
                                 {qna.round}
                               </p>
                             </div>
@@ -335,10 +356,10 @@ export default function JobDetailsModal({ job, onClose }) {
 
                           {/* Question */}
                           <div>
-                            <p className="form-label text-gray-600 mb-1">
+                            <p className="text-xs font-medium text-notion-muted mb-1">
                               Question Asked
                             </p>
-                            <p className="body-text text-black font-medium">
+                            <p className="text-sm text-notion-text font-medium">
                               {qna.question}
                             </p>
                           </div>
@@ -346,17 +367,17 @@ export default function JobDetailsModal({ job, onClose }) {
                           {/* Answer / Notes */}
                           {qna.notes_or_answer || qna.answer ? (
                             <div>
-                              <p className="form-label text-gray-600 mb-1">
+                              <p className="text-xs font-medium text-notion-muted mb-1">
                                 Your Notes / Answer
                               </p>
-                              <div className="p-2 bg-gray-50 border border-gray-200">
-                                <p className="body-text text-black whitespace-pre-wrap">
+                              <div className="p-2 bg-black/5 border border-notion-border rounded-xl">
+                                <p className="text-sm text-notion-text whitespace-pre-wrap">
                                   {qna.notes_or_answer || qna.answer}
                                 </p>
                               </div>
                             </div>
                           ) : (
-                            <p className="helper-text text-gray-500 italic">
+                            <p className="text-sm text-notion-muted italic">
                               No answer recorded yet
                             </p>
                           )}
@@ -373,12 +394,12 @@ export default function JobDetailsModal({ job, onClose }) {
             !job.interview_difficulty &&
             (!job.interview_questions ||
               job.interview_questions.length === 0) && (
-              <div className="border-t-2 border-gray-300 pt-4">
-                <h3 className="page-title text-black mb-3">
+              <div className="border-t border-notion-border pt-4">
+                <h3 className="page-title mb-3">
                   Interview Summary
                 </h3>
-                <div className="p-3 bg-blue-50 border-l-4 border-blue-500">
-                  <p className="helper-text text-blue-900">
+                <div className="p-3 bg-indigo-50 border border-indigo-200 rounded-xl">
+                  <p className="text-sm text-indigo-900">
                     No interview summary added yet. Add difficulty rating and
                     questions below.
                   </p>
@@ -388,19 +409,21 @@ export default function JobDetailsModal({ job, onClose }) {
         </div>
 
         {/* Footer */}
-        <div className="flex gap-2 p-4 border-t border-black bg-gray-50 sticky bottom-0">
-          <button
+        <div className="flex gap-2 p-5 border-t border-notion-border bg-notion-bg/50 sticky bottom-0">
+          <Button
             onClick={handleEdit}
-            className="flex-1 px-3 py-2 bg-black text-white hover:bg-gray-800 form-label transition-colors"
+            variant="default"
+            className="flex-1"
           >
             Edit Job
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={onClose}
-            className="flex-1 px-3 py-2 border border-black text-black hover:bg-black hover:text-white form-label transition-colors"
+            variant="secondary"
+            className="flex-1"
           >
             Close
-          </button>
+          </Button>
         </div>
       </div>
     </div>

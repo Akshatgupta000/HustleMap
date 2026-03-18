@@ -2,7 +2,16 @@ import mongoose from "mongoose";
 
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGO_URI, {
+    const mongoUri = (process.env.MONGO_URI || "").trim();
+
+    if (!mongoUri) {
+      console.error(
+        "MongoDB connection error: MONGO_URI is not set. Check your .env file and restart the server.",
+      );
+      throw new Error("MONGO_URI environment variable is required");
+    }
+
+    const conn = await mongoose.connect(mongoUri, {
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
     });

@@ -1,25 +1,28 @@
-import express from "express";
-import cors from "cors";
-import morgan from "morgan";
-import dotenv from "dotenv";
-import connectDB from "./config/db.js";
-import authRoutes from "./routes/auth.js";
-import jobRoutes from "./routes/jobs.js";
-import { healthCheck } from "./utils/healthCheck.js";
-import mongoose from "mongoose";
-import http from "http";
+import express from 'express';
+import cors from 'cors';
+import morgan from 'morgan';
+import dotenv from 'dotenv';
+import connectDB from './config/db.js';
+import authRoutes from './routes/auth.js';
+import jobRoutes from './routes/jobs.js';
+import { healthCheck } from './utils/healthCheck.js';
+import mongoose from 'mongoose';
+import http from 'http';
 
+// Load environment variables. Prefer root `.env`, but also support `src/.env`
+// so local dev works even if the file was placed there.
 dotenv.config();
+dotenv.config({ path: './src/.env', override: false });
 
 // Allow common alternate env var names for Mongo connection strings
 const mongoCandidates = [
-  "MONGO_URI",
-  "MONGODB_URI",
-  "DATABASE_URL",
-  "MONGO_URL",
-  "ATLAS_URI",
-  "RENDER_DATABASE_URL",
-  "MONGO_CONNECTION_STRING",
+  'MONGO_URI',
+  'MONGODB_URI',
+  'DATABASE_URL',
+  'MONGO_URL',
+  'ATLAS_URI',
+  'RENDER_DATABASE_URL',
+  'MONGO_CONNECTION_STRING',
 ];
 let _mongoUriName = null;
 for (const name of mongoCandidates) {
@@ -34,18 +37,21 @@ if (_mongoUriName) {
 }
 
 // Prevent unhandled rejections from crashing the process (log instead)
-process.on("unhandledRejection", (reason, promise) => {
-  console.error("Unhandled Rejection at:", promise, "reason:", reason);
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
-// Validate required env vars before starting (fail fast in production)
-const requiredEnv = ["JWT_SECRET", "MONGO_URI"];
-const missing = requiredEnv.filter((key) => !(process.env[key] || "").trim());
+// Validate required env vars before starting (fail fast with clear error)
+const requiredEnv = ['JWT_SECRET', 'MONGO_URI'];
+const missing = requiredEnv.filter((key) => !(process.env[key] || '').trim());
 if (missing.length > 0) {
-  console.error(`[FATAL] Missing required env vars: ${missing.join(", ")}`);
-  if (process.env.NODE_ENV === "production") {
-    process.exit(1);
-  }
+  console.error(
+    `[FATAL] Missing required env vars: ${missing.join(
+      ', ',
+    )}. Check your .env file – these are required for MongoDB and JWT auth.`,
+  );
+  // Always exit so we fail fast instead of serving 500s with a misconfigured server
+  process.exit(1);
 }
 
 const app = express();
@@ -53,21 +59,23 @@ const PORT = process.env.PORT || 5000;
 
 // CORS: CLIENT_URL = frontend origin(s), comma-separated for multiple (e.g. Vercel + preview deploys)
 const clientOrigins = process.env.CLIENT_URL
-  ? process.env.CLIENT_URL.split(",")
+  ? process.env.CLIENT_URL.split(',')
       .map((u) => u.trim())
       .filter(Boolean)
-  : ["http://localhost:5173"];
+  : ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175'];
 
-console.log(`[CORS] Allowed origins: ${clientOrigins.join(", ")}`);
+console.log(`[CORS] Allowed origins: ${clientOrigins.join(', ')}`);
 
 app.use(
   cors({
     origin: (origin, cb) => {
       if (!origin) return cb(null, true); // server-to-server, curl, Postman
+      if (origin.startsWith('http://localhost:')) return cb(null, true);
+      if (origin.startsWith('chrome-extension://')) return cb(null, true);
       if (clientOrigins.includes(origin)) return cb(null, true);
 
       // Log CORS rejections in production for debugging
-      if (process.env.NODE_ENV === "production") {
+      if (process.env.NODE_ENV === 'production') {
         console.warn(`[CORS] Rejected request from origin: ${origin}`);
       }
 
@@ -77,29 +85,37 @@ app.use(
     optionsSuccessStatus: 200,
   }),
 );
-app.use(morgan("dev"));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(morgan('dev'));
+// Chrome extension screenshots can be large base64 payloads; raise limits safely.
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Log all requests in production for debugging
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === 'production') {
   app.use((req, res, next) => {
     console.log(
-      `[${new Date().toISOString()}] ${req.method} ${req.path} from ${req.get("origin") || "unknown"}`,
+      `[${new Date().toISOString()}] ${req.method} ${req.path} from ${req.get('origin') || 'unknown'}`,
     );
     next();
   });
 }
 // Health check
-app.get("/api/health", healthCheck);
+app.get('/api/health', healthCheck);
 
 // Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/jobs", jobRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/jobs', jobRoutes);
 
 // Error handling middleware (must have 4 args for Express to recognize)
 app.use((err, req, res, next) => {
-  console.error("Error:", err);
-  res.status(500).json({ error: "Internal server error" });
+  console.error(`[Unhandled Error] ${err.name || 'Error'}:`, err.message || err);
+  if (err.stack) {
+    console.error(err.stack);
+  }
+  
+  res.status(err.status || 500).json({ 
+    error: err.message || 'Internal server error',
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+  });
 });
 
 // Start server only after DB is connected (prevents 500s from early requests)
@@ -112,8 +128,8 @@ const attemptListen = (startPort, maxAttempts = 10) =>
     const tryPort = (port) => {
       server = http.createServer(app);
 
-      server.once("error", (err) => {
-        if (err && err.code === "EADDRINUSE") {
+      server.once('error', (err) => {
+        if (err && err.code === 'EADDRINUSE') {
           attempts += 1;
           if (attempts >= maxAttempts) {
             return reject(
@@ -132,7 +148,7 @@ const attemptListen = (startPort, maxAttempts = 10) =>
 
       server.listen(port, () => {
         // remove the temporary error listener
-        server.removeAllListeners("error");
+        server.removeAllListeners('error');
         console.log(`Server running on http://localhost:${port}`);
         resolve(port);
       });
@@ -148,27 +164,27 @@ const startServer = async () => {
     // update process.env.PORT to reflect the actual port if needed elsewhere
     process.env.PORT = String(usedPort);
   } catch (err) {
-    console.error("Failed to start server:", err.message || err);
+    console.error('Failed to start server:', err.message || err);
     process.exit(1);
   }
 };
 startServer();
 
 // Graceful shutdown
-process.on("SIGINT", async () => {
+process.on('SIGINT', async () => {
   try {
     if (server) {
       await new Promise((resolve, reject) => {
         server.close((err) => (err ? reject(err) : resolve()));
       });
-      console.log("HTTP server closed");
+      console.log('HTTP server closed');
     }
 
     await mongoose.connection.close();
-    console.log("MongoDB connection closed");
+    console.log('MongoDB connection closed');
     process.exit(0);
   } catch (error) {
-    console.error("Error closing server or MongoDB connection:", error);
+    console.error('Error closing server or MongoDB connection:', error);
     process.exit(1);
   }
 });

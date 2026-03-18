@@ -22,10 +22,15 @@ const userSchema = new mongoose.Schema(
       minlength: 6,
       select: false, // Don't include password by default
     },
+    extensionId: {
+      type: String,
+      unique: true,
+      required: false,
+    },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 // Hash password before saving

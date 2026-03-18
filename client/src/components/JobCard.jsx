@@ -3,8 +3,12 @@ import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { jobsAPI } from "../lib/api";
 import toast from "react-hot-toast";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
+import { cn } from "../lib/cn";
 
 const STATUS_LABELS = {
+  saved: "Saved",
   applied: "Applied",
   online_test: "Online Test",
   interview: "Interview",
@@ -14,6 +18,7 @@ const STATUS_LABELS = {
 };
 
 const STATUS_COLORS = {
+  saved: "bg-slate-100 text-slate-800 border-slate-300",
   applied: "bg-blue-100 text-blue-800 border-blue-300",
   online_test: "bg-purple-100 text-purple-800 border-purple-300",
   interview: "bg-yellow-100 text-yellow-800 border-yellow-300",
@@ -31,6 +36,8 @@ export default function JobCard({ job, onViewDetails }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [isManuallyTicked, setIsManuallyTicked] = useState(false);
+  const isCaptured =
+    job?.is_captured === true || (job?.company || "").toLowerCase() === "captured";
 
   // Load manual tick from localStorage on mount and when job.id changes
   useEffect(() => {
@@ -101,19 +108,22 @@ export default function JobCard({ job, onViewDetails }) {
   return (
     <div
       onClick={() => onViewDetails(job)}
-      className={`bg-white border border-black p-4 transition-all duration-200 hover:shadow-lg cursor-pointer hover:border-gray-600 flex flex-col h-full ${isUpcomingInterview() ? "ring-2 ring-yellow-400" : ""}`}
+      className={cn(
+        "rounded-xl border border-notion-border bg-notion-card p-4 shadow-soft transition-all duration-200 hover:bg-black/[0.02] hover:-translate-y-[1px] cursor-pointer flex flex-col h-full",
+        isUpcomingInterview() && "ring-2 ring-amber-300",
+      )}
     >
       <div className="flex justify-between items-start mb-3">
         <div className="flex-1">
-          <h3 className="subtitle text-black mb-0.5">{job.company}</h3>
-          <p className="body-text text-black">{job.position}</p>
+          <h3 className="subtitle mb-0.5">{job.company}</h3>
+          <p className="text-sm text-notion-muted">{job.position}</p>
         </div>
         <div className="flex items-center gap-2">
           {/* Tick Checkbox */}
           <button
             onClick={handleTickToggle}
             disabled={isAutomatic}
-            className={`flex-shrink-0 w-5 h-5 border-2 rounded flex items-center justify-center transition-colors ${
+            className={`flex-shrink-0 w-5 h-5 border-2 rounded-md flex items-center justify-center transition-colors ${
               isTicked
                 ? `${tickColor.bg} ${tickColor.border}`
                 : `${tickColor.border} hover:border-gray-400`
@@ -134,29 +144,42 @@ export default function JobCard({ job, onViewDetails }) {
               <span className="text-white font-bold text-xs">✓</span>
             )}
           </button>
-          <span
-            className={`px-2 py-0.5 badge-text border rounded ${
+          {isCaptured && (
+            <Badge className="border bg-indigo-50 text-indigo-800 border-indigo-200">
+              📸 Captured
+            </Badge>
+          )}
+          <Badge
+            className={cn(
+              "border",
               STATUS_COLORS[job.status] ||
-              "bg-gray-100 text-gray-800 border-gray-300"
-            }`}
+                "bg-gray-100 text-gray-800 border-gray-300",
+            )}
           >
             {STATUS_LABELS[job.status] || job.status}
-          </span>
+          </Badge>
         </div>
       </div>
 
       <div className="space-y-1.5 mb-3">
-        <div className="body-text text-black">
+        {job.screenshot && (
+          <img
+            src={job.screenshot}
+            alt="Captured job"
+            className="rounded-xl mb-2 max-h-40 object-cover border border-notion-border"
+          />
+        )}
+        <div className="text-sm text-notion-text">
           <span className="font-medium">Applied:</span>{" "}
           {formatDate(job.date_applied)}
         </div>
         {job.location && (
-          <div className="body-text text-black">
+          <div className="text-sm text-notion-text">
             <span className="font-medium">Location:</span> {job.location}
           </div>
         )}
         {job.application_type && (
-          <div className="body-text text-black">
+          <div className="text-sm text-notion-text">
             <span className="font-medium">Type:</span>{" "}
             {APPLICATION_TYPE_LABELS[job.application_type] ||
               job.application_type}
@@ -164,7 +187,12 @@ export default function JobCard({ job, onViewDetails }) {
         )}
         {job.interview_date && (
           <div
-            className={`body-text ${isUpcomingInterview() ? "text-yellow-700 font-medium" : "text-black"}`}
+            className={cn(
+              "text-sm",
+              isUpcomingInterview()
+                ? "text-amber-900 font-medium"
+                : "text-notion-text",
+            )}
           >
             <span className="font-medium">Interview:</span>{" "}
             {formatDate(job.interview_date)}
@@ -172,7 +200,7 @@ export default function JobCard({ job, onViewDetails }) {
           </div>
         )}
         {job.interview_rounds && job.interview_rounds.length > 0 && (
-          <div className="body-text text-black">
+          <div className="text-sm text-notion-text">
             <span className="font-medium">Rounds:</span>{" "}
             {job.interview_rounds.length}
           </div>
@@ -180,13 +208,15 @@ export default function JobCard({ job, onViewDetails }) {
       </div>
 
       {job.notes && (
-        <p className="body-text text-black mb-3 line-clamp-2">{job.notes}</p>
+        <p className="text-sm text-notion-text mb-3 line-clamp-2">
+          {job.notes}
+        </p>
       )}
 
       {/* Interview Prep Indicator */}
       {job.interview_questions && job.interview_questions.length > 0 && (
-        <div className="mb-3 p-1.5 bg-blue-50 border border-blue-200 rounded">
-          <p className="helper-text text-blue-700 font-medium">
+        <div className="mb-3 p-2 bg-indigo-50 border border-indigo-200 rounded-xl">
+          <p className="text-xs text-indigo-800 font-medium">
             📝 Interview Summary: {job.interview_questions.length} question
             {job.interview_questions.length !== 1 ? "s" : ""}
           </p>
@@ -196,7 +226,7 @@ export default function JobCard({ job, onViewDetails }) {
       {/* Interview Difficulty Summary */}
       {job.interview_difficulty && (
         <div className="mb-3">
-          <p className="helper-text text-gray-800 font-medium">
+          <p className="text-xs text-notion-muted font-medium">
             Difficulty: {job.interview_difficulty}/5
           </p>
         </div>
@@ -204,22 +234,33 @@ export default function JobCard({ job, onViewDetails }) {
 
       {/* Interview Status Recommendation */}
       {job.status === "interview" && (
-        <div className="mb-3 p-1.5 bg-yellow-50 border border-yellow-200 rounded">
-          <p className="helper-text text-yellow-800 font-medium">
+        <div className="mb-3 p-2 bg-amber-50 border border-amber-200 rounded-xl">
+          <p className="text-xs text-amber-900 font-medium">
             Interview scheduled — preparation recommended
           </p>
         </div>
       )}
 
-      {(job.resume_link || job.portfolio_link) && (
+      {(job.job_url || job.resume_link || job.portfolio_link) && (
         <div className="flex gap-2 mb-3 flex-wrap">
+          {job.job_url && (
+            <a
+              href={job.job_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="text-xs text-notion-accent hover:underline truncate inline-block max-w-[120px]"
+            >
+              🔗 Job Link
+            </a>
+          )}
           {job.resume_link && (
             <a
               href={job.resume_link}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="helper-text text-blue-600 hover:underline"
+              className="text-xs text-notion-accent hover:underline"
             >
               📄 Resume
             </a>
@@ -230,7 +271,7 @@ export default function JobCard({ job, onViewDetails }) {
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="helper-text text-blue-600 hover:underline"
+              className="text-xs text-notion-accent hover:underline"
             >
               🎨 Portfolio
             </a>
@@ -240,25 +281,29 @@ export default function JobCard({ job, onViewDetails }) {
 
       {/* Buttons container with mt-auto to push to bottom */}
       <div className="flex gap-2 mt-auto pt-3">
-        <button
+        <Button
           onClick={(e) => {
             e.stopPropagation();
             navigate(`/jobs/edit/${job.id}`);
           }}
-          className="flex-1 px-3 py-1.5 border border-black text-black hover:bg-black hover:text-white transition-colors duration-200 hover:shadow-md form-label"
+          variant="secondary"
+          size="sm"
+          className="flex-1"
         >
           Edit
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={(e) => {
             e.stopPropagation();
             deleteMutation.mutate();
           }}
           disabled={deleteMutation.isPending}
-          className="flex-1 px-3 py-1.5 border border-black text-black hover:bg-black hover:text-white disabled:opacity-50 transition-colors duration-200 hover:shadow-md form-label"
+          variant="outline"
+          size="sm"
+          className="flex-1"
         >
           Delete
-        </button>
+        </Button>
       </div>
     </div>
   );

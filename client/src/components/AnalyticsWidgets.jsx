@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { jobsAPI } from "../lib/api";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { cn } from "../lib/cn";
 
 const STATUS_LABELS = {
   applied: "Applied",
@@ -27,11 +29,11 @@ export default function AnalyticsWidgets({
   // Show loading state
   if (isLoading) {
     return (
-      <div className="border border-black bg-white p-4">
-        <div className="text-center py-8 body-text text-black">
+      <Card>
+        <CardContent className="py-10 text-center text-sm text-notion-muted">
           Loading analytics...
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     );
   }
 
@@ -39,16 +41,18 @@ export default function AnalyticsWidgets({
   if (error) {
     console.error("AnalyticsWidgets: Error loading stats", error);
     return (
-      <div className="border border-red-500 bg-red-50 p-4">
-        <div className="text-center py-4">
-          <p className="body-text text-red-800 mb-2">
+      <Card className="border-red-200 bg-red-50/60">
+        <CardContent className="py-6 text-center">
+          <p className="text-sm font-medium text-red-900 mb-1">
             Failed to load analytics
           </p>
-          <p className="helper-text text-red-600">
-            {error.response?.data?.error || error.message || "Please refresh the page"}
+          <p className="text-sm text-red-800/80">
+            {error.response?.data?.error ||
+              error.message ||
+              "Please refresh the page"}
           </p>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     );
   }
 
@@ -102,10 +106,11 @@ export default function AnalyticsWidgets({
   return (
     <div className="space-y-4">
       {/* Key Metrics - Enhanced Styling */}
-      <div className="bg-white border border-black p-3 sm:p-4">
-        <h2 className="section-heading text-black mb-3 sm:mb-4">
-          Analytics Overview
-        </h2>
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="section-heading">Analytics Overview</CardTitle>
+        </CardHeader>
+        <CardContent className="pt-0">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
         {widgets.map((widget, index) => {
           const isActive =
@@ -123,40 +128,33 @@ export default function AnalyticsWidgets({
                   handleCardClick("all");
                 }
               }}
-              className={`
-                border-2 border-black p-4 sm:p-5 rounded-sm
-                transition-all duration-200
-                ${isClickable || widget.filterValue === null ? "cursor-pointer hover:shadow-lg hover:-translate-y-0.5" : ""}
-                ${isActive ? "bg-black text-white shadow-lg" : "bg-white text-black hover:bg-gray-50"}
-                ${!isClickable && widget.filterValue !== null ? "opacity-75" : ""}
-              `}
-              style={{
-                boxShadow: isActive
-                  ? "4px 4px 0px 0px rgba(0,0,0,0.2)"
-                  : "2px 2px 0px 0px rgba(0,0,0,0.1)",
-              }}
+              className={cn(
+                "rounded-xl border border-notion-border bg-white p-4 shadow-soft transition-all duration-200",
+                (isClickable || widget.filterValue === null) &&
+                  "cursor-pointer hover:bg-black/5 hover:-translate-y-[1px]",
+                isActive && "border-notion-accent/30 bg-notion-accent/10",
+                !isClickable && widget.filterValue !== null && "opacity-75",
+              )}
             >
               <p
-                className={`form-label mb-2 ${
-                  isActive ? "text-white opacity-90" : "text-gray-600"
-                }`}
-                style={{ fontSize: "0.875rem" }}
+                className={cn(
+                  "text-xs font-medium",
+                  isActive ? "text-notion-accent" : "text-notion-muted",
+                )}
               >
                 {widget.label}
               </p>
               <p
-                className={`font-bold ${
-                  isActive ? "text-white" : "text-black"
-                }`}
-                style={{ fontSize: "clamp(1.5rem, 4vw, 2.25rem)" }}
+                className="text-2xl sm:text-3xl font-semibold tracking-tight text-notion-text"
               >
                 {widget.value}
               </p>
               {isClickable && (
                 <p
-                  className={`helper-text mt-1.5 ${
-                    isActive ? "text-white opacity-75" : "text-gray-500"
-                  }`}
+                  className={cn(
+                    "mt-1 text-xs",
+                    isActive ? "text-notion-muted" : "text-notion-muted",
+                  )}
                 >
                   Click to filter
                 </p>
@@ -165,41 +163,40 @@ export default function AnalyticsWidgets({
           );
         })}
         </div>
-      </div>
+        </CardContent>
+      </Card>
 
       {/* Expandable Detailed Analytics */}
       {onToggleDetails && (
-        <div className="border border-black bg-white">
+        <Card className="p-0">
           <button
             onClick={onToggleDetails}
-            className="w-full px-4 sm:px-6 py-3 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
+            className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-black/5 transition-all duration-200 rounded-xl"
           >
-            <h3 className="section-heading text-black">
-              Detailed Analytics & Insights
-            </h3>
-            <span className="text-black text-lg">
-              {showDetails ? "−" : "+"}
+            <h3 className="section-heading">Detailed Analytics & Insights</h3>
+            <span className="text-notion-muted text-sm">
+              {showDetails ? "Hide" : "Show"}
             </span>
           </button>
           {showDetails && (
-            <div className="px-4 sm:px-6 pb-4 sm:pb-6 border-t border-black pt-4 space-y-4">
+            <div className="px-6 pb-6 pt-2 space-y-4 border-t border-notion-border">
               {/* Applications Per Week */}
               {safeStats.applicationsPerWeek &&
                 safeStats.applicationsPerWeek.length > 0 && (
-                  <div className="border border-gray-300 p-4 bg-gray-50">
-                    <h4 className="subtitle mb-3 text-black">
+                  <div className="rounded-xl border border-notion-border bg-black/5 p-4">
+                    <h4 className="subtitle mb-3">
                       Applications Per Week (Last 4 Weeks)
                     </h4>
                     <div className="space-y-2">
                       {safeStats.applicationsPerWeek.map((week, index) => (
                         <div
                           key={index}
-                          className="flex items-center justify-between py-2 px-3 bg-white border border-gray-200"
+                          className="flex items-center justify-between rounded-xl bg-white border border-notion-border px-3 py-2 shadow-soft"
                         >
-                          <span className="body-text text-black">
+                          <span className="text-sm text-notion-text">
                             Week {week.week}
                           </span>
-                          <span className="body-text font-semibold text-black">
+                          <span className="text-sm font-medium text-notion-text">
                             {week.count} {week.count === 1 ? "application" : "applications"}
                           </span>
                         </div>
@@ -210,10 +207,8 @@ export default function AnalyticsWidgets({
 
               {/* Status Distribution */}
               {safeStats.byStatus && Object.keys(safeStats.byStatus).length > 0 && (
-                <div className="border border-gray-300 p-4 bg-gray-50">
-                  <h4 className="subtitle mb-3 text-black">
-                    Status Distribution
-                  </h4>
+                <div className="rounded-xl border border-notion-border bg-black/5 p-4">
+                  <h4 className="subtitle mb-3">Status Distribution</h4>
                   <div className="space-y-2">
                     {Object.entries(safeStats.byStatus)
                       .sort((a, b) => b[1] - a[1])
@@ -228,32 +223,19 @@ export default function AnalyticsWidgets({
                                 handleCardClick(status);
                               }
                             }}
-                            className={`
-                              flex items-center justify-between py-2 px-3
-                              border-2 transition-all duration-200
-                              ${
-                                isClickableStatus
-                                  ? "cursor-pointer hover:shadow-md"
-                                  : ""
-                              }
-                              ${
-                                isActive
-                                  ? "bg-black text-white border-black"
-                                  : "bg-white border-gray-200 hover:border-gray-400"
-                              }
-                            `}
+                            className={cn(
+                              "flex items-center justify-between rounded-xl px-3 py-2 border border-notion-border bg-white shadow-soft transition-all duration-200",
+                              isClickableStatus && "cursor-pointer hover:bg-black/5",
+                              isActive && "border-notion-accent/30 bg-notion-accent/10",
+                            )}
                           >
                             <span
-                              className={`body-text ${
-                                isActive ? "text-white" : "text-black"
-                              }`}
+                              className="text-sm text-notion-text"
                             >
                               {STATUS_LABELS[status] || status}
                             </span>
                             <span
-                              className={`body-text font-semibold ${
-                                isActive ? "text-white" : "text-black"
-                              }`}
+                              className="text-sm font-medium text-notion-text"
                             >
                               {count}
                             </span>
@@ -269,25 +251,25 @@ export default function AnalyticsWidgets({
                 safeStats.offerRatio !== undefined) && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {safeStats.interviewConversionRate !== undefined && (
-                    <div className="border border-gray-300 p-4 bg-gray-50">
-                      <h4 className="subtitle mb-2 text-black">
+                    <div className="rounded-xl border border-notion-border bg-black/5 p-4">
+                      <h4 className="subtitle mb-2">
                         Interview Conversion Rate
                       </h4>
-                      <p className="text-2xl font-bold text-black">
+                      <p className="text-2xl font-semibold tracking-tight text-notion-text">
                         {safeStats.interviewConversionRate}%
                       </p>
-                      <p className="helper-text text-gray-600 mt-1">
+                      <p className="text-sm text-notion-muted mt-1">
                         Applied → Interview
                       </p>
                     </div>
                   )}
                   {safeStats.offerRatio !== undefined && (
-                    <div className="border border-gray-300 p-4 bg-gray-50">
-                      <h4 className="subtitle mb-2 text-black">Offer Rate</h4>
-                      <p className="text-2xl font-bold text-black">
+                    <div className="rounded-xl border border-notion-border bg-black/5 p-4">
+                      <h4 className="subtitle mb-2">Offer Rate</h4>
+                      <p className="text-2xl font-semibold tracking-tight text-notion-text">
                         {safeStats.offerRatio}%
                       </p>
-                      <p className="helper-text text-gray-600 mt-1">
+                      <p className="text-sm text-notion-muted mt-1">
                         Total → Offer
                       </p>
                     </div>
@@ -296,7 +278,7 @@ export default function AnalyticsWidgets({
               )}
             </div>
           )}
-        </div>
+        </Card>
       )}
     </div>
   );

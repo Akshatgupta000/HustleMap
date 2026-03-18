@@ -1,13 +1,21 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import { clearAuth, getUser } from "../lib/auth";
+import { clearAuth, getUser, setAuth } from "../lib/auth";
+import { authAPI } from "../lib/api";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { LayoutDashboard, Briefcase, LogOut, Copy, Sparkles } from "lucide-react";
+
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
+import { cn } from "../lib/cn";
 
 export default function Navbar({ onLogout }) {
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
-  const user = getUser();
+  const storedUser = getUser();
+  const [user, setUser] = useState(storedUser);
 
   const handleLogout = () => {
     // Clear authentication data
@@ -31,41 +39,141 @@ export default function Navbar({ onLogout }) {
     navigate("/", { replace: true });
   };
 
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setUser(getUser());
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
+  const ensureExtensionId = async () => {
+    if (!user) return;
+    if (user.extensionId) return;
+
+    try {
+      const response = await authAPI.getExtensionId();
+      const extensionId = response.data?.extensionId;
+      if (extensionId) {
+        const updatedUser = { ...user, extensionId };
+        setUser(updatedUser);
+        setAuth(localStorage.getItem("token"), updatedUser);
+        toast.success("Extension ID generated");
+      }
+    } catch (error) {
+      toast.error("Failed to generate Extension ID");
+      console.error("GetExtensionId error:", error);
+    }
+  };
+
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="bg-white border-b border-black">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-14">
-          <Link to="/dashboard" className="subtitle text-black">
+    <aside className="sticky top-0 h-screen w-[272px] border-r border-notion-border bg-notion-bg/60 backdrop-blur supports-[backdrop-filter]:bg-notion-bg/40">
+      <div className="flex h-full flex-col p-4">
+        <div className="mb-4 flex items-center justify-between">
+          <Link
+            to="/dashboard"
+            className="flex items-center gap-2 rounded-xl px-2 py-1.5 text-sm font-semibold tracking-tight text-notion-text hover:bg-black/5 transition-all duration-200"
+          >
+            <span className="grid h-7 w-7 place-items-center rounded-xl bg-white shadow-soft border border-notion-border">
+              <Sparkles className="h-4 w-4 text-notion-accent" />
+            </span>
             HustleMap
           </Link>
+        </div>
 
-          <div className="flex items-center gap-6">
-            <Link
-              to="/jobs"
-              className={`body-text ${
-                isActive("/jobs")
-                  ? "text-black font-semibold border-b-2 border-black pb-1"
-                  : "text-black hover:underline"
-              }`}
-            >
-              My Applications
-            </Link>
-            {user && (
-              <>
-                <span className="body-text text-black">{user.name}</span>
-                <button
-                  onClick={handleLogout}
-                  className="body-text text-black hover:underline"
-                >
-                  Logout
-                </button>
-              </>
+        <nav className="space-y-1">
+          <Link
+            to="/dashboard"
+            className={cn(
+              "flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition-all duration-200",
+              isActive("/dashboard")
+                ? "bg-white border border-notion-border shadow-soft text-notion-text"
+                : "text-notion-text/90 hover:bg-black/5",
             )}
+          >
+            <LayoutDashboard className="h-4 w-4" />
+            Dashboard
+          </Link>
+          <Link
+            to="/jobs"
+            className={cn(
+              "flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition-all duration-200",
+              isActive("/jobs")
+                ? "bg-white border border-notion-border shadow-soft text-notion-text"
+                : "text-notion-text/90 hover:bg-black/5",
+            )}
+          >
+            <Briefcase className="h-4 w-4" />
+            My Applications
+          </Link>
+        </nav>
+
+        {user && (
+          <div className="mt-4 rounded-xl border border-notion-border bg-white shadow-soft p-3">
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-notion-text truncate">
+                  {user.name}
+                </p>
+                <p className="text-xs text-notion-muted truncate">
+                  Signed in
+                </p>
+              </div>
+              <LayoutDashboard className="h-4 w-4 text-notion-muted" />
+            </div>
+
+            <div className="mt-3 space-y-2">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-xs text-notion-muted">Extension ID</span>
+                {user.extensionId ? (
+                  <Badge className="font-mono" variant="muted">
+                    {user.extensionId}
+                  </Badge>
+                ) : (
+                  <Button
+                    onClick={ensureExtensionId}
+                    variant="outline"
+                    size="sm"
+                    className="h-8"
+                  >
+                    Generate
+                  </Button>
+                )}
+              </div>
+
+              {user.extensionId && (
+                <Button
+                  onClick={() => {
+                    navigator.clipboard.writeText(user.extensionId);
+                    toast.success("Extension ID copied to clipboard");
+                  }}
+                  variant="secondary"
+                  size="sm"
+                  className="w-full justify-between"
+                  title="Copy Extension ID"
+                >
+                  Copy ID
+                  <Copy className="h-4 w-4 text-notion-muted" />
+                </Button>
+              )}
+            </div>
           </div>
+        )}
+
+        <div className="mt-auto pt-4">
+          <Button
+            onClick={handleLogout}
+            variant="secondary"
+            className="w-full justify-between"
+          >
+            Logout
+            <LogOut className="h-4 w-4 text-notion-muted" />
+          </Button>
         </div>
       </div>
-    </nav>
+    </aside>
   );
 }

@@ -8,6 +8,8 @@ import JobCard from '../components/JobCard';
 import JobDetailsModal from '../components/JobDetailsModal';
 import CapturedJobs from '../components/CapturedJobs';
 import { Link } from 'react-router-dom';
+import { Input } from '../components/ui/input';
+import { ChevronDown, ChevronUp, Calendar, Copy } from 'lucide-react';
 
 const STATUS_LABELS = {
   saved: 'Saved',
@@ -43,87 +45,52 @@ export default function Dashboard() {
     queryFn: () => jobsAPI.getStats().then((res) => res.data),
   });
 
-  // Restore scroll position when component mounts
   useEffect(() => {
     const savedScrollPosition = sessionStorage.getItem(SCROLL_POSITION_KEY);
     if (savedScrollPosition && dashboardRef.current) {
-      // Use setTimeout to ensure DOM is fully rendered
       setTimeout(() => {
-        dashboardRef.current?.parentElement?.scrollTo(
-          0,
-          parseInt(savedScrollPosition, 10),
-        );
+        dashboardRef.current?.parentElement?.scrollTo(0, parseInt(savedScrollPosition, 10));
       }, 0);
     }
   }, []);
 
-  // Save scroll position before navigating away
   useEffect(() => {
     const handleBeforeUnload = () => {
-      const scrollPosition =
-        dashboardRef.current?.parentElement?.scrollY || window.scrollY || 0;
+      const scrollPosition = dashboardRef.current?.parentElement?.scrollY || window.scrollY || 0;
       sessionStorage.setItem(SCROLL_POSITION_KEY, scrollPosition.toString());
     };
-
     window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, []);
 
-  // Filter and sort jobs
   const filteredAndSortedJobs = useMemo(() => {
     if (!jobs || !Array.isArray(jobs)) return [];
-
     let filtered = jobs.filter((job) => {
-      // Exclude captured-only screenshot jobs from the main applications list
       if (job.is_captured) return false;
-      // Search filter
       const matchesSearch =
         searchQuery === '' ||
         job.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
         job.position.toLowerCase().includes(searchQuery.toLowerCase());
-
-      // Status filter
-      const matchesStatus =
-        statusFilter === 'all' || job.status === statusFilter;
-
-      // Type filter
-      const matchesType =
-        typeFilter === 'all' || job.application_type === typeFilter;
-
+      const matchesStatus = statusFilter === 'all' || job.status === statusFilter;
+      const matchesType = typeFilter === 'all' || job.application_type === typeFilter;
       return matchesSearch && matchesStatus && matchesType;
     });
-
-    // Sort
     filtered.sort((a, b) => {
-      if (sortBy === 'date') {
-        return new Date(b.date_applied) - new Date(a.date_applied);
-      } else if (sortBy === 'status') {
-        const statusOrder = [
-          'saved',
-          'applied',
-          'online_test',
-          'interview',
-          'offer',
-          'rejected',
-          'withdrawn',
-        ];
+      if (sortBy === 'date') return new Date(b.date_applied) - new Date(a.date_applied);
+      if (sortBy === 'status') {
+        const statusOrder = ['saved', 'applied', 'online_test', 'interview', 'offer', 'rejected', 'withdrawn'];
         return statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status);
       }
       return 0;
     });
-
     return filtered;
   }, [jobs, searchQuery, statusFilter, typeFilter, sortBy]);
 
-  // Get upcoming interviews (next 7 days)
   const upcomingInterviews = useMemo(() => {
     if (!jobs) return [];
     const now = new Date();
     const sevenDaysFromNow = new Date();
     sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
-
     return jobs
       .filter((job) => {
         if (!job.interview_date) return false;
@@ -134,200 +101,178 @@ export default function Dashboard() {
       .slice(0, 5);
   }, [jobs]);
 
-  // Handle filter click from analytics cards
   const handleFilterClick = (filterValue) => {
     setStatusFilter(filterValue);
-    // Expand applications section when filtering so users can see results
     setShowApplications(true);
   };
 
+  const selectClass =
+    'h-[38px] rounded-[10px] border border-[#e8e6e1] bg-white px-3 text-[13.5px] text-[#37352f] cursor-pointer outline-none transition-all shadow-sm focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100';
+
   return (
-    <div className="min-h-screen bg-white" ref={dashboardRef}>
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-        {/* Header */}
-        <div className="mb-4">
-          <div className="flex items-center justify-between mb-1">
-            <h1 className="page-title text-black">Dashboard</h1>
-            {user?.extensionId && (
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600">Extension ID:</span>
-                <code className="bg-gray-100 px-2 py-1 border border-gray-300 rounded text-xs font-mono">
-                  {user.extensionId}
-                </code>
-                <button
-                  onClick={() => {
-                    navigator.clipboard.writeText(user.extensionId);
-                    alert('Extension ID copied to clipboard!');
-                  }}
-                  className="text-xs bg-black text-white px-2 py-1 rounded hover:bg-gray-800 transition-colors"
-                  title="Copy Extension ID"
-                >
-                  Copy
-                </button>
-              </div>
-            )}
+    <div ref={dashboardRef} className="flex flex-col gap-5">
+
+      {/* ── Page header ── */}
+      <div className="flex flex-col gap-3">
+        <div className="flex items-end justify-between flex-wrap gap-3">
+          <div>
+            <h1 className="text-2xl font-extrabold text-[#37352f] tracking-tight mb-1">
+              Dashboard
+            </h1>
+            <p className="text-[13.5px] text-[#6b6b6b]">
+              Track and manage your job applications
+            </p>
           </div>
-          <p className="helper-text text-gray-600">
-            Track and manage your job applications
-          </p>
         </div>
+      </div>
 
-        {/* Analytics Section - Top Priority */}
-        <div className="mb-4 sm:mb-6">
-          <AnalyticsWidgets
-            statusFilter={statusFilter}
-            onFilterClick={handleFilterClick}
-            showDetails={showAnalyticsDetails}
-            onToggleDetails={() =>
-              setShowAnalyticsDetails(!showAnalyticsDetails)
-            }
-          />
+      {/* ── Analytics ── */}
+      <div>
+        <AnalyticsWidgets
+          statusFilter={statusFilter}
+          onFilterClick={handleFilterClick}
+          showDetails={showAnalyticsDetails}
+          onToggleDetails={() => setShowAnalyticsDetails(!showAnalyticsDetails)}
+        />
+      </div>
+
+      {/* ── Quick Add ── */}
+      <QuickAddJob />
+
+      {/* ── Captured Jobs ── */}
+      <CapturedJobs />
+
+      {/* ── Upcoming Interviews ── */}
+      {upcomingInterviews.length > 0 && (
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl overflow-hidden shadow-sm">
+          <div className="px-5 py-4 border-b border-amber-200 flex items-center gap-2">
+            <Calendar size={15} className="text-amber-800" />
+            <span className="text-sm font-bold text-amber-900 tracking-tight">
+              Upcoming Interviews ({upcomingInterviews.length})
+            </span>
+          </div>
+          <div className="p-4 flex flex-col gap-2">
+            {upcomingInterviews.map((job) => {
+              const interviewDate = new Date(job.interview_date);
+              const daysUntil = Math.ceil((interviewDate - new Date()) / (1000 * 60 * 60 * 24));
+              return (
+                <div
+                  key={job.id}
+                  className="flex items-center justify-between bg-white border border-amber-200 rounded-[10px] px-[14px] py-[10px] text-[13.5px]"
+                >
+                  <div className="min-w-0">
+                    <span className="font-semibold text-amber-900">{job.company}</span>
+                    <span className="text-amber-800 ml-1.5">— {job.position}</span>
+                  </div>
+                  <span className="shrink-0 font-semibold text-amber-900 bg-amber-100 px-2.5 py-0.5 rounded-full text-xs">
+                    {daysUntil === 0 ? 'Today' : daysUntil === 1 ? 'Tomorrow' : `${daysUntil}d`}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
         </div>
+      )}
 
-        {/* Quick Add Job Section */}
-        <QuickAddJob />
-
-        {/* Captured Jobs Section */}
-        <CapturedJobs />
-
-        {/* Main Dashboard Section - Applied Jobs */}
-        <div className="bg-white border border-black mb-4">
+      {/* ── Applications card ── */}
+      <div className="bg-white border border-[#e8e6e1] rounded-2xl overflow-hidden shadow-sm">
+        {/* Card header */}
+        <div
+          className={`flex items-center justify-between px-5 py-4 ${showApplications ? 'border-b border-[#f0ede8]' : ''}`}
+        >
+          <h2 className="text-[15px] font-bold text-[#37352f] tracking-tight">
+            My Applications{' '}
+            <span className="text-[12.5px] font-medium text-[#6b6b6b] bg-[#f7f6f3] px-2 py-0.5 rounded-full border border-[#e8e6e1] ml-1.5">
+              {filteredAndSortedJobs.length}
+            </span>
+          </h2>
           <button
             onClick={() => setShowApplications(!showApplications)}
-            className="w-full px-4 sm:px-6 py-3 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-1.5 bg-transparent border border-[#e8e6e1] rounded-lg px-[11px] py-[5px] text-[13px] font-medium text-[#6b6b6b] cursor-pointer transition-all hover:bg-[#f7f6f3] hover:text-[#37352f]"
           >
-            <h2 className="section-heading text-black">
-              My Applications ({filteredAndSortedJobs.length})
-            </h2>
-            <span className="text-black text-lg">
-              {showApplications ? '−' : '+'}
-            </span>
+            {showApplications ? (
+              <><ChevronUp size={13} /> Hide</>
+            ) : (
+              <><ChevronDown size={13} /> Show</>
+            )}
           </button>
-
-          {showApplications && (
-            <div className="px-4 sm:px-6 pb-3 sm:pb-4 border-t border-black">
-              {/* Search and Filters */}
-              <div className="mb-4 space-y-3">
-                <div className="flex-1">
-                  <input
-                    type="text"
-                    placeholder="Search by company or role..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full px-4 py-2 border border-black focus:border-gray-500 focus:outline-none"
-                  />
-                </div>
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <select
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                    className="px-3 py-1.5 border border-black focus:border-gray-500 focus:outline-none form-label"
-                  >
-                    <option value="all">All Status</option>
-                    {Object.entries(STATUS_LABELS).map(([value, label]) => (
-                      <option key={value} value={value}>
-                        {label}
-                      </option>
-                    ))}
-                  </select>
-                  <select
-                    value={typeFilter}
-                    onChange={(e) => setTypeFilter(e.target.value)}
-                    className="px-3 py-1.5 border border-black focus:border-gray-500 focus:outline-none form-label"
-                  >
-                    <option value="all">All Types</option>
-                    <option value="on_campus">On-Campus</option>
-                    <option value="off_campus">Off-Campus</option>
-                  </select>
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="px-3 py-1.5 border border-black focus:border-gray-500 focus:outline-none form-label"
-                  >
-                    <option value="date">Sort by Date</option>
-                    <option value="status">Sort by Status</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Job List */}
-              {isLoading ? (
-                <div className="text-center py-8 body-text text-black">
-                  Loading jobs...
-                </div>
-              ) : filteredAndSortedJobs.length === 0 ? (
-                <div className="border border-gray-300 p-8 text-center">
-                  <h3 className="subtitle text-black mb-2">No jobs found</h3>
-                  <p className="helper-text text-gray-600 mb-4">
-                    {searchQuery ||
-                    statusFilter !== 'all' ||
-                    typeFilter !== 'all'
-                      ? 'Try adjusting your filters'
-                      : 'Start tracking your job applications'}
-                  </p>
-                  {!searchQuery &&
-                    statusFilter === 'all' &&
-                    typeFilter === 'all' && (
-                      <Link
-                        to="/jobs/new"
-                        className="inline-block px-4 py-2 border border-black text-black hover:bg-black hover:text-white transition-colors"
-                      >
-                        Add Your First Job
-                      </Link>
-                    )}
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 auto-rows-fr">
-                  {filteredAndSortedJobs.map((job) => (
-                    <JobCard
-                      key={job.id}
-                      job={job}
-                      onViewDetails={setSelectedJob}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
         </div>
 
-        {/* Upcoming Interviews Section */}
-        {upcomingInterviews.length > 0 && (
-          <div className="bg-yellow-50 border border-yellow-300 p-3 sm:p-4 mb-4">
-            <h3 className="subtitle text-yellow-900 mb-3">
-              ⏰ Upcoming Interviews ({upcomingInterviews.length})
-            </h3>
-            <div className="space-y-1.5">
-              {upcomingInterviews.map((job) => {
-                const interviewDate = new Date(job.interview_date);
-                const daysUntil = Math.ceil(
-                  (interviewDate - new Date()) / (1000 * 60 * 60 * 24),
-                );
-                return (
-                  <div
-                    key={job.id}
-                    className="flex items-center justify-between body-text text-yellow-800 bg-white p-2 border border-yellow-200"
-                  >
-                    <div>
-                      <strong className="font-medium">{job.company}</strong> -{' '}
-                      {job.position}
-                    </div>
-                    <div className="text-yellow-700 font-medium">
-                      {daysUntil === 0
-                        ? 'Today'
-                        : daysUntil === 1
-                          ? 'Tomorrow'
-                          : `${daysUntil} days`}
-                    </div>
-                  </div>
-                );
-              })}
+        {showApplications && (
+          <div className="px-5 pt-4 pb-5">
+            {/* Filters */}
+            <div className="flex flex-col gap-2.5 mb-[18px]">
+              <Input
+                type="text"
+                placeholder="Search by company or role…"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <div className="flex gap-2 flex-wrap">
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className={selectClass}
+                >
+                  <option value="all">All Status</option>
+                  {Object.entries(STATUS_LABELS).map(([value, label]) => (
+                    <option key={value} value={value}>{label}</option>
+                  ))}
+                </select>
+                <select
+                  value={typeFilter}
+                  onChange={(e) => setTypeFilter(e.target.value)}
+                  className={selectClass}
+                >
+                  <option value="all">All Types</option>
+                  <option value="on_campus">On-Campus</option>
+                  <option value="off_campus">Off-Campus</option>
+                </select>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className={selectClass}
+                >
+                  <option value="date">Sort by Date</option>
+                  <option value="status">Sort by Status</option>
+                </select>
+              </div>
             </div>
+
+            {/* Job list */}
+            {isLoading ? (
+              <div className="text-center py-10 text-[13.5px] text-[#6b6b6b]">
+                Loading jobs…
+              </div>
+            ) : filteredAndSortedJobs.length === 0 ? (
+              <div className="text-center py-10 px-5 bg-[#f7f6f3] rounded-xl border border-[#e8e6e1]">
+                <h3 className="text-[15px] font-semibold text-[#37352f] mb-1.5">
+                  No jobs found
+                </h3>
+                <p className="text-[13px] text-[#6b6b6b] mb-4">
+                  {searchQuery || statusFilter !== 'all' || typeFilter !== 'all'
+                    ? 'Try adjusting your filters'
+                    : 'Start tracking your job applications'}
+                </p>
+                {!searchQuery && statusFilter === 'all' && typeFilter === 'all' && (
+                  <Link to="/jobs/new" className="no-underline">
+                    <button className="bg-indigo-500 text-white border-none rounded-[9px] px-[18px] py-2 text-[13.5px] font-semibold cursor-pointer shadow-[0_2px_8px_rgba(99,102,241,0.25)] hover:bg-indigo-600 transition-colors">
+                      Add Your First Job
+                    </button>
+                  </Link>
+                )}
+              </div>
+            ) : (
+              <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
+                {filteredAndSortedJobs.map((job) => (
+                  <JobCard key={job.id} job={job} onViewDetails={setSelectedJob} />
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
 
-      {/* Job Details Modal */}
       <JobDetailsModal job={selectedJob} onClose={() => setSelectedJob(null)} />
     </div>
   );

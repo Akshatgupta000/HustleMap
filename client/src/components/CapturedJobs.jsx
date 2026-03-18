@@ -2,16 +2,18 @@ import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { jobsAPI } from "../lib/api";
+import { ExternalLink, ArrowRight, Inbox } from "lucide-react";
 
 const formatDate = (dateString) => {
   if (!dateString) return "N/A";
-  const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", {
+  return new Date(dateString).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
   });
 };
+
+const stripProtocol = (url) => url?.replace(/^https?:\/\//, "") ?? "";
 
 export default function CapturedJobs() {
   const navigate = useNavigate();
@@ -28,94 +30,91 @@ export default function CapturedJobs() {
 
   if (isLoading) {
     return (
-      <div className="bg-white border border-black mb-4">
-        <div className="px-4 sm:px-6 py-3 border-b border-black">
-          <h2 className="section-heading text-black">📸 Captured Jobs</h2>
+      <div className="bg-white border border-[#e8e6e1] rounded-2xl overflow-hidden shadow-sm">
+        <div className="px-5 py-3.5 border-b border-[#f0ede8] flex items-center gap-2">
+          <Inbox size={14} className="text-[#6b6b6b]" />
+          <span className="text-sm font-bold text-[#37352f] tracking-tight">Captured Jobs</span>
         </div>
-        <div className="px-4 sm:px-6 py-4 body-text text-black">
-          Loading captured jobs...
-        </div>
+        <div className="py-8 text-center text-[13px] text-[#9b9b9b]">Loading…</div>
       </div>
     );
   }
 
-  if (!capturedJobs.length) {
-    // Do not render the section at all when there are no captured jobs
-    return null;
-  }
+  if (!capturedJobs.length) return null;
 
   return (
-    <div className="bg-white border border-black mb-4">
-      <div className="px-4 sm:px-6 py-3 border-b border-black flex items-center justify-between">
-        <h2 className="section-heading text-black">📸 Captured Jobs</h2>
-        <span className="body-text text-gray-700">
-          {capturedJobs.length} captured
+    <div className="bg-white border border-[#e8e6e1] rounded-2xl overflow-hidden shadow-sm">
+      {/* Header */}
+      <div className="px-5 py-3.5 border-b border-[#f0ede8] flex items-center gap-2">
+        <Inbox size={14} className="text-[#6b6b6b]" />
+        <span className="text-sm font-bold text-[#37352f] tracking-tight">Captured Jobs</span>
+        <span className="text-[11.5px] font-medium text-[#6b6b6b] bg-[#f7f6f3] border border-[#e8e6e1] px-2 py-0.5 rounded-full">
+          {capturedJobs.length}
         </span>
       </div>
-      <div className="px-4 sm:px-6 py-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 auto-rows-fr">
-          {capturedJobs.map((job) => (
-            <div
-              key={job.id}
-              className="bg-white border border-black p-3 flex flex-col h-full hover:shadow-lg transition-shadow"
-            >
-              <div className="mb-2">
-                {job.screenshot && (
-                  <img
-                    src={job.screenshot}
-                    alt="Captured job"
-                    className="w-full max-h-40 object-cover border border-gray-200"
-                  />
-                )}
-              </div>
 
-              <div className="space-y-1 mb-3">
-                {job.job_url && (
-                  <p className="body-text text-black break-all">
-                    <span className="font-medium">Link:</span>{" "}
-                    <span className="text-blue-700">
-                      {job.job_url.replace(/^https?:\/\//, "")}
-                    </span>
-                  </p>
-                )}
-                <p className="body-text text-gray-800">
-                  <span className="font-medium">Captured on:</span>{" "}
-                  {formatDate(job.date_applied)}
-                </p>
-                {job.application_source && (
-                  <p className="helper-text text-gray-600">
-                    Source: {job.application_source}
-                  </p>
-                )}
-              </div>
+      {/* List */}
+      <div className="flex flex-col divide-y divide-[#f7f6f3]">
+        {capturedJobs.map((job) => (
+          <div
+            key={job.id}
+            className="flex items-center gap-3 px-5 py-2.5 hover:bg-black/[0.02] transition-colors"
+          >
+            {/* Thumbnail */}
+            {job.screenshot ? (
+              <img
+                src={job.screenshot}
+                alt=""
+                className="w-11 h-8 object-cover rounded-md border border-[#e8e6e1] shrink-0"
+              />
+            ) : (
+              <div className="w-11 h-8 rounded-md bg-[#f7f6f3] border border-[#e8e6e1] shrink-0" />
+            )}
 
-              <div className="flex gap-2 mt-auto pt-2">
-                {job.job_url && (
-                  <button
-                    onClick={() => {
-                      window.open(job.job_url, "_blank", "noopener,noreferrer");
-                    }}
-                    className="flex-1 px-3 py-1.5 border border-black text-black hover:bg-black hover:text-white transition-colors duration-200 form-label"
-                  >
-                    Open Job
-                  </button>
-                )}
-                <button
-                  onClick={() =>
-                    navigate(`/jobs/edit/${job.id}`, {
-                      state: { fromCaptured: true },
-                    })
-                  }
-                  className="flex-1 px-3 py-1.5 border border-black text-black hover:bg-black hover:text-white transition-colors duration-200 form-label"
+            {/* Info */}
+            <div className="flex flex-col gap-0.5 flex-1 min-w-0">
+              {job.company && job.company !== 'Unknown Company' && job.company !== 'Captured Job' && job.company !== 'Captured' && (
+                <span className="text-[13.5px] font-semibold text-[#37352f] truncate">
+                  {job.company}
+                </span>
+              )}
+              {job.job_url ? (
+                <a
+                  href={job.job_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[13px] font-medium text-indigo-500 hover:text-indigo-700 truncate transition-colors"
+                  title={job.job_url}
                 >
-                  Convert to Job
-                </button>
-              </div>
+                  {stripProtocol(job.job_url)}
+                </a>
+              ) : (
+                <span className="text-[13px] text-[#9b9b9b]">No URL</span>
+              )}
+              <span className="text-[11.5px] text-[#9b9b9b]">{formatDate(job.date_applied)}</span>
             </div>
-          ))}
-        </div>
+
+            {/* Actions */}
+            <div className="flex items-center gap-1.5 shrink-0">
+              {job.job_url && (
+                <button
+                  onClick={() => window.open(job.job_url, "_blank", "noopener,noreferrer")}
+                  title="Open job"
+                  className="flex items-center justify-center w-7 h-7 rounded-lg border border-[#e8e6e1] bg-white text-[#6b6b6b] hover:bg-[#f7f6f3] hover:text-[#37352f] transition-colors cursor-pointer"
+                >
+                  <ExternalLink size={13} />
+                </button>
+              )}
+              <button
+                onClick={() => navigate(`/jobs/edit/${job.id}`, { state: { fromCaptured: true } })}
+                className="flex items-center gap-1 h-7 px-2.5 rounded-lg bg-indigo-500 hover:bg-indigo-600 text-white text-[12px] font-semibold transition-colors cursor-pointer"
+              >
+                Convert <ArrowRight size={11} />
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
 }
-

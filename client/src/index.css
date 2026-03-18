@@ -3,32 +3,8 @@
 @tailwind utilities;
 
 @layer base {
-  * {
-    font-family: "Comic Neue", "Comic Sans MS", cursive, sans-serif;
-  }
-
   body {
-    @apply bg-white text-black;
-    font-family: "Comic Neue", "Comic Sans MS", cursive, sans-serif;
-  }
-
-  /* Ensure all text elements inherit the comic font */
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  p,
-  span,
-  div,
-  a,
-  button,
-  input,
-  textarea,
-  select,
-  label {
-    font-family: "Comic Neue", "Comic Sans MS", cursive, sans-serif;
+    @apply bg-notion-bg text-notion-text font-sans tracking-tight leading-relaxed;
   }
 }
 
@@ -36,37 +12,37 @@
   /* Page Title / Main Heading */
   .page-title {
     font-size: clamp(1.5rem, 4vw, 2rem);
-    @apply font-bold leading-tight;
+    @apply font-semibold leading-tight tracking-tight text-notion-text;
   }
 
   /* Section Heading / Subtitle */
   .section-heading {
     font-size: clamp(1.25rem, 3.5vw, 1.5rem);
-    @apply font-bold leading-snug;
+    @apply font-semibold leading-snug tracking-tight text-notion-text;
   }
 
   /* Subtitle / Subheading */
   .subtitle {
     font-size: clamp(1rem, 2.5vw, 1.25rem);
-    @apply font-semibold leading-snug;
+    @apply font-semibold leading-snug text-notion-text;
   }
 
   /* Form Label / Field Names */
   .form-label {
     font-size: clamp(0.875rem, 2vw, 1rem);
-    @apply font-semibold;
+    @apply font-medium text-notion-text;
   }
 
   /* Body Text / Regular Content */
   .body-text {
     font-size: clamp(0.875rem, 1.75vw, 0.9375rem);
-    @apply leading-relaxed;
+    @apply leading-relaxed text-notion-text;
   }
 
   /* Small Helper Text / Instructions */
   .helper-text {
     font-size: clamp(0.75rem, 1.5vw, 0.875rem);
-    @apply leading-relaxed;
+    @apply leading-relaxed text-notion-muted;
   }
 
   /* Badge / Small Label */
