@@ -704,6 +704,15 @@ export const saveSimpleExtensionJob = async (req, res) => {
 // Extension screenshot save with structured job data (no auth; uses userId in body)
 export const saveScreenshotJob = async (req, res) => {
   try {
+    console.log("Incoming request to /api/jobs/screenshot:", {
+      userId: req.body?.userId || req.body?.extensionId,
+      hasScreenshot: !!req.body?.screenshotBase64,
+      jobUrl: req.body?.jobUrl,
+      source: req.body?.source,
+      company: req.body?.company,
+      position: req.body?.position
+    });
+
     const {
       userId,
       extensionId,

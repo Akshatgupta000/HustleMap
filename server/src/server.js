@@ -81,6 +81,8 @@ app.use(
 
       cb(null, false); // reject unsupported origins
     },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
     optionsSuccessStatus: 200,
   }),
