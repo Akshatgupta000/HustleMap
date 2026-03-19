@@ -1,6 +1,6 @@
 # HustleMap
 
-**Track smarter. Prep better. Get hired.**  
+**Track smarter. Prep better. Get hired.**
 A full‑stack job application tracker with analytics, interview prep, and a Chrome extension for screenshot-based job capture.
 
 ---
@@ -210,7 +210,6 @@ HustleMap/
 ├── client/                 # React frontend (Vite)
 ├── server/                 # Express API + MongoDB (Mongoose)
 ├── hustlemap-extension/    # Chrome extension (MV3) for screenshot capture
-├── extension/              # Legacy/experimental extension folder
 ├── README.md               # Project overview (this file)
 ├── SETUP.md                # Local setup notes
 └── DEPLOYMENT.md           # Production deployment guide

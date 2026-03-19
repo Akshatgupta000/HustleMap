@@ -858,6 +858,7 @@ export const saveFromExtension = async (req, res) => {
         description: description || '',
         applicationSource: source || 'other',
         jobUrl: url,
+        screenshot: screenshot || null,
       };
     } else if (screenshot) {
       // Fallback to OCR

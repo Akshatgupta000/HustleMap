@@ -62,9 +62,13 @@ export default function JobForm() {
   useEffect(() => {
     if (job) {
       const fromCaptured = location.state?.fromCaptured && job.is_captured;
+      
+      const isPlaceholderCompany = job.company === "Captured" || job.company === "Unknown Company";
+      const isPlaceholderPosition = job.position === "Job Capture" || job.position === "Captured Job";
+
       setFormData({
-        company: fromCaptured ? "" : job.company || "",
-        position: fromCaptured ? "" : job.position || "",
+        company: fromCaptured && isPlaceholderCompany ? "" : job.company || "",
+        position: fromCaptured && isPlaceholderPosition ? "" : job.position || "",
         location: job.location || "",
         application_type: job.application_type || "off_campus",
         status: job.status || "applied",
