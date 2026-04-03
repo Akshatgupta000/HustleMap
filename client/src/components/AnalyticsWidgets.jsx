@@ -171,7 +171,7 @@ export default function AnalyticsWidgets({
         <Card className="p-0">
           <button
             onClick={onToggleDetails}
-            className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-black/5 transition-all duration-200 rounded-xl"
+            className="w-full px-4 sm:px-6 py-4 flex items-center justify-between text-left hover:bg-black/5 transition-all duration-200 rounded-xl"
           >
             <h3 className="section-heading">Detailed Analytics & Insights</h3>
             <span className="text-notion-muted text-sm">
@@ -179,7 +179,7 @@ export default function AnalyticsWidgets({
             </span>
           </button>
           {showDetails && (
-            <div className="px-6 pb-6 pt-2 space-y-4 border-t border-notion-border">
+            <div className="px-4 sm:px-6 pb-6 pt-2 space-y-4 border-t border-notion-border">
               {/* Applications Per Week */}
               {safeStats.applicationsPerWeek &&
                 safeStats.applicationsPerWeek.length > 0 && (

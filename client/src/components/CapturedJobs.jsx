@@ -58,7 +58,7 @@ export default function CapturedJobs() {
         {capturedJobs.map((job) => (
           <div
             key={job.id}
-            className="flex items-center gap-3 px-5 py-2.5 hover:bg-black/[0.02] transition-colors"
+            className="flex flex-col sm:flex-row sm:items-center gap-3 px-4 sm:px-5 py-3 hover:bg-black/[0.02] transition-colors"
           >
             {/* Thumbnail */}
             {job.screenshot ? (
@@ -95,7 +95,7 @@ export default function CapturedJobs() {
             </div>
 
             {/* Actions */}
-            <div className="flex items-center gap-1.5 shrink-0">
+            <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center mt-1 sm:mt-0">
               {job.job_url && (
                 <button
                   onClick={() => window.open(job.job_url, "_blank", "noopener,noreferrer")}

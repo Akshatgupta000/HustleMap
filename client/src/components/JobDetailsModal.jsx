@@ -63,7 +63,7 @@ export default function JobDetailsModal({ job, onClose }) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex justify-between items-start p-5 border-b border-notion-border sticky top-0 bg-notion-card z-10">
+        <div className="flex justify-between items-start px-4 sm:px-5 py-5 border-b border-notion-border sticky top-0 bg-notion-card z-10">
           <div className="flex-1 pr-3">
             <h2 className="page-title mb-1">{job.company}</h2>
             <p className="subtitle text-notion-muted">{job.position}</p>
@@ -78,7 +78,7 @@ export default function JobDetailsModal({ job, onClose }) {
         </div>
 
         {/* Content */}
-        <div className="p-5 space-y-6">
+        <div className="p-4 sm:p-5 space-y-6">
           {/* Status Badge */}
           <div className="flex items-center gap-3 flex-wrap">
             <Badge
@@ -409,7 +409,7 @@ export default function JobDetailsModal({ job, onClose }) {
         </div>
 
         {/* Footer */}
-        <div className="flex gap-2 p-5 border-t border-notion-border bg-notion-bg/50 sticky bottom-0">
+        <div className="flex gap-2 p-4 sm:p-5 border-t border-notion-border bg-notion-bg/50 sticky bottom-0">
           <Button
             onClick={handleEdit}
             variant="default"

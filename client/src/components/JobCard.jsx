@@ -113,10 +113,10 @@ export default function JobCard({ job, onViewDetails }) {
         isUpcomingInterview() && "ring-2 ring-amber-300",
       )}
     >
-      <div className="flex justify-between items-start mb-3">
-        <div className="flex-1">
-          <h3 className="subtitle mb-0.5">{job.company}</h3>
-          <p className="text-sm text-notion-muted">{job.position}</p>
+      <div className="flex justify-between items-start gap-3 mb-3">
+        <div className="flex-1 min-w-0">
+          <h3 className="subtitle mb-0.5 truncate">{job.company}</h3>
+          <p className="text-sm text-notion-muted truncate">{job.position}</p>
         </div>
         <div className="flex items-center gap-2">
           {/* Tick Checkbox */}

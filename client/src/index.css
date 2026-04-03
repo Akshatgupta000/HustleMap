@@ -5,6 +5,7 @@
 @layer base {
   body {
     @apply bg-notion-bg text-notion-text font-sans tracking-tight leading-relaxed;
+    overflow-x: hidden;
   }
 }
 

@@ -107,7 +107,7 @@ export default function Dashboard() {
   };
 
   const selectClass =
-    'h-[38px] rounded-[10px] border border-[#e8e6e1] bg-white px-3 text-[13.5px] text-[#37352f] cursor-pointer outline-none transition-all shadow-sm focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100';
+    'h-[38px] w-full sm:w-auto rounded-[10px] border border-[#e8e6e1] bg-white px-3 text-[13.5px] text-[#37352f] cursor-pointer outline-none transition-all shadow-sm focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100';
 
   return (
     <div ref={dashboardRef} className="flex flex-col gap-5">
@@ -207,6 +207,7 @@ export default function Dashboard() {
                 placeholder="Search by company or role…"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full"
               />
               <div className="flex gap-2 flex-wrap">
                 <select

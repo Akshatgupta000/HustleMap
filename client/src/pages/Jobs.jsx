@@ -77,7 +77,7 @@ export default function Jobs() {
     <div className="flex flex-col gap-5">
 
       {/* ── Page header ── */}
-      <div className="flex items-end justify-between flex-wrap gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
         <div>
           <h1 className="text-2xl font-extrabold text-[#37352f] tracking-tight mb-1">
             My Applications
@@ -87,14 +87,14 @@ export default function Jobs() {
           </p>
         </div>
         <Link to="/jobs/new" className="no-underline">
-          <button className="flex items-center gap-1.5 bg-indigo-500 text-white border-none rounded-[10px] px-4 py-[9px] text-[13.5px] font-semibold cursor-pointer shadow-[0_2px_10px_rgba(99,102,241,0.25)] transition-all hover:bg-indigo-600 hover:scale-[1.03]">
+          <button className="flex items-center justify-center gap-1.5 bg-indigo-500 text-white border-none rounded-[10px] px-4 py-[9px] text-[13.5px] font-semibold cursor-pointer shadow-[0_2px_10px_rgba(99,102,241,0.25)] transition-all hover:bg-indigo-600 hover:scale-[1.03] w-full sm:w-auto">
             <Plus size={15} /> Add Job
           </button>
         </Link>
       </div>
 
       {/* ── Filters card ── */}
-      <div className="bg-white border border-[#e8e6e1] rounded-2xl px-5 py-4 shadow-sm flex flex-col gap-3">
+      <div className="bg-white border border-[#e8e6e1] rounded-2xl px-4 sm:px-5 py-4 shadow-sm flex flex-col gap-3">
         {/* Search */}
         <Input
           type="text"
@@ -124,12 +124,12 @@ export default function Jobs() {
 
         {/* Type & Sort selects */}
         <div className="flex gap-2 flex-wrap">
-          <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className={selectClass}>
+          <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className={cn(selectClass, "w-full sm:w-auto")}>
             <option value="all">All Types</option>
             <option value="on_campus">On-Campus</option>
             <option value="off_campus">Off-Campus</option>
           </select>
-          <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className={selectClass}>
+          <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className={cn(selectClass, "w-full sm:w-auto")}>
             <option value="date">Sort by Date</option>
             <option value="status">Sort by Status</option>
           </select>

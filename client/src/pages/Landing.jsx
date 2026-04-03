@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Sparkles, BarChart2, FileText, Star, CheckCircle, ArrowRight, Github } from "lucide-react";
+import { Sparkles, BarChart2, FileText, Star, CheckCircle, ArrowRight, Github, Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 // ─── Fade-in on scroll hook ───────────────────────────────────────────────────
@@ -124,6 +124,8 @@ function UploadIcon({ size = 18, className = "", strokeWidth = 1.8 }) {
 
 // ─── Main component ───────────────────────────────────────────────────────────
 export default function Landing() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-[#f7f6f3] font-[inherit]">
 
@@ -137,7 +139,8 @@ export default function Landing() {
             <span className="text-[14px] font-bold text-[#37352f] tracking-tight">HustleMap</span>
           </Link>
 
-          <nav className="flex items-center gap-1.5">
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex items-center gap-1.5">
             {[["#features", "Features"], ["#how-it-works", "How it Works"]].map(([href, label]) => (
               <a
                 key={href}
@@ -159,14 +162,50 @@ export default function Landing() {
               </button>
             </Link>
           </nav>
+
+          {/* Mobile Toggle */}
+          <button 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden p-1.5 rounded-lg hover:bg-black/[0.06] transition-colors"
+          >
+            {isMobileMenuOpen ? <X size={20} className="text-[#37352f]" /> : <Menu size={20} className="text-[#37352f]" />}
+          </button>
         </div>
+
+        {/* Mobile Nav Overlay */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden absolute top-[58px] left-0 right-0 bg-[#f7f6f3] border-b border-black/[0.09] shadow-xl px-6 py-6 flex flex-col gap-4 animate-in slide-in-from-top duration-200">
+            {[["#features", "Features"], ["#how-it-works", "How it Works"]].map(([href, label]) => (
+              <a
+                key={href}
+                href={href}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-[15px] font-medium text-[#37352f] no-underline py-2 border-b border-black/[0.03]"
+              >
+                {label}
+              </a>
+            ))}
+            <Link
+              to="/login"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-[15px] font-medium text-[#37352f] no-underline py-2 border-b border-black/[0.03]"
+            >
+              Login
+            </Link>
+            <Link to="/register" onClick={() => setIsMobileMenuOpen(false)} className="no-underline pt-2">
+              <button className="w-full bg-[#37352f] text-white border-none rounded-[11px] py-3 text-[15px] font-semibold cursor-pointer tracking-tight">
+                Get Started
+              </button>
+            </Link>
+          </div>
+        )}
       </header>
 
       {/* ── HERO ── */}
-      <section className="relative overflow-hidden pt-24 pb-20 text-center">
-        <div className="absolute top-[-80px] left-1/2 -translate-x-[60%] w-[700px] h-[500px] rounded-[50%] pointer-events-none"
+      <section className="relative overflow-hidden pt-16 sm:pt-24 pb-12 sm:pb-20 text-center">
+        <div className="absolute top-[-80px] left-1/2 -translate-x-[60%] w-[400px] sm:w-[700px] h-[300px] sm:h-[500px] rounded-[50%] pointer-events-none"
           style={{ background: "radial-gradient(ellipse at center, rgba(99,102,241,0.12) 0%, transparent 70%)" }} />
-        <div className="absolute top-[60px] right-[10%] w-[320px] h-[320px] rounded-[50%] pointer-events-none"
+        <div className="absolute top-[60px] right-[10%] w-[200px] sm:w-[320px] h-[200px] sm:h-[320px] rounded-[50%] pointer-events-none"
           style={{ background: "radial-gradient(ellipse at center, rgba(139,92,246,0.08) 0%, transparent 70%)" }} />
 
         <div className="max-w-[720px] mx-auto px-6 relative z-10">
@@ -221,7 +260,7 @@ export default function Landing() {
       </div>
 
       {/* ── FEATURES ── */}
-      <section id="features" className="py-[88px] px-6">
+      <section id="features" className="py-12 sm:py-[88px] px-6">
         <div className="max-w-[1080px] mx-auto">
           <Reveal delay={0}>
             <div className="text-center mb-14">
@@ -264,7 +303,7 @@ export default function Landing() {
       </div>
 
       {/* ── CHROME EXTENSION ── */}
-      <section className="py-[88px] px-6">
+      <section className="py-12 sm:py-[88px] px-6">
         <div className="max-w-[1080px] mx-auto">
 
           {/* Header */}
@@ -385,7 +424,7 @@ export default function Landing() {
       </div>
 
       {/* ── INTERVIEW DETAIL SECTION ── */}
-      <section className="px-6 pb-[88px]">
+      <section className="px-6 pb-12 sm:pb-[88px]">
         <div className="max-w-[1080px] mx-auto">
           <Reveal delay={0}>
             <div className="text-center mb-[52px]">
@@ -448,7 +487,7 @@ export default function Landing() {
       </div>
 
       {/* ── HOW IT WORKS ── */}
-      <section id="how-it-works" className="py-[88px] px-6">
+      <section id="how-it-works" className="py-12 sm:py-[88px] px-6">
         <div className="max-w-[560px] mx-auto">
           <Reveal delay={0}>
             <div className="text-center mb-[52px]">
@@ -510,8 +549,8 @@ export default function Landing() {
       </section>
 
       {/* ── FOOTER ── */}
-      <footer className="border-t border-black/[0.09] py-6 px-6 bg-[#f7f6f3]">
-        <div className="max-w-[1080px] mx-auto flex justify-between items-center gap-3 flex-wrap">
+      <footer className="border-t border-black/[0.09] py-8 px-6 bg-[#f7f6f3]">
+        <div className="max-w-[1080px] mx-auto flex flex-col md:flex-row justify-between items-center gap-6 text-center md:text-left">
           <div className="flex items-center gap-2">
             <div className="w-[22px] h-[22px] rounded-[6px] bg-white border border-[#e8e6e1] flex items-center justify-center">
               <Sparkles size={11} className="text-indigo-500" />

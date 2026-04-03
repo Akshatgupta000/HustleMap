@@ -139,7 +139,7 @@ export default function JobForm() {
     <div className="flex flex-col gap-5">
 
       {/* ── Page header ── */}
-      <div className="flex items-end justify-between flex-wrap gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
         <div>
           <h1 className="text-2xl font-extrabold text-[#37352f] tracking-tight mb-1">
             {isEdit ? "Edit Job" : "Add New Job"}
@@ -150,7 +150,7 @@ export default function JobForm() {
         </div>
         <button
           onClick={() => navigate("/dashboard")}
-          className="flex items-center gap-1.5 bg-white border border-[#e8e6e1] rounded-[10px] px-[14px] py-2 text-[13.5px] font-medium text-[#37352f] cursor-pointer shadow-sm transition-colors hover:bg-[#f7f6f3]"
+          className="flex items-center justify-center gap-1.5 bg-white border border-[#e8e6e1] rounded-[10px] px-[14px] py-2 text-[13.5px] font-medium text-[#37352f] cursor-pointer shadow-sm transition-colors hover:bg-[#f7f6f3] w-full sm:w-auto"
         >
           <ArrowLeft size={14} /> Back to Dashboard
         </button>
@@ -335,7 +335,7 @@ export default function JobForm() {
             <button
               type="submit"
               disabled={isPending}
-              className={`border-none rounded-[11px] px-7 py-[10px] text-[14.5px] font-semibold tracking-tight transition-all min-w-[160px] text-white ${
+              className={`border-none rounded-[11px] px-7 py-[10px] text-[14.5px] font-semibold tracking-tight transition-all flex-1 sm:flex-none sm:min-w-[160px] text-white ${
                 isPending
                   ? 'bg-gray-400 cursor-not-allowed'
                   : 'bg-indigo-500 cursor-pointer shadow-[0_2px_12px_rgba(99,102,241,0.28)] hover:bg-indigo-600 hover:scale-[1.03]'
@@ -346,7 +346,7 @@ export default function JobForm() {
             <button
               type="button"
               onClick={() => navigate("/dashboard")}
-              className="bg-white text-[#37352f] border border-[#e8e6e1] rounded-[11px] px-5 py-[10px] text-[14.5px] font-medium cursor-pointer transition-colors hover:bg-[#f7f6f3]"
+              className="bg-white text-[#37352f] border border-[#e8e6e1] rounded-[11px] px-5 py-[10px] text-[14.5px] font-medium cursor-pointer transition-colors hover:bg-[#f7f6f3] flex-1 sm:flex-none"
             >
               Cancel
             </button>

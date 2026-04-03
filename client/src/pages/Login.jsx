@@ -57,7 +57,7 @@ export default function Login({ onLoginSuccess }) {
         {/* Card */}
         <div className="bg-white border border-[#e8e6e1] rounded-[20px] shadow-[0_4px_24px_rgba(0,0,0,0.06),0_1px_4px_rgba(0,0,0,0.04)] overflow-hidden">
           {/* Card header */}
-          <div className="px-8 pt-8 pb-6 border-b border-[#f0ede8]">
+          <div className="px-6 sm:px-8 pt-8 pb-6 border-b border-[#f0ede8]">
             <h1 className="text-[22px] font-extrabold text-[#37352f] tracking-tight mb-1.5">
               Welcome back
             </h1>
@@ -67,7 +67,7 @@ export default function Login({ onLoginSuccess }) {
           </div>
 
           {/* Card body */}
-          <div className="px-8 pt-7 pb-8">
+          <div className="px-6 sm:px-8 pt-7 pb-8">
             <form onSubmit={handleSubmit} className="flex flex-col gap-[18px]">
               <div>
                 <label className="block text-[13px] font-semibold text-[#37352f] mb-[7px] tracking-tight">
