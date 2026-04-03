@@ -57,6 +57,9 @@ if (missing.length > 0) {
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Handle proxy headers from Render/Vercel
+app.set("trust proxy", 1);
+
 // CORS: CLIENT_URL = frontend origin(s), comma-separated for multiple (e.g. Vercel + preview deploys)
 const clientOrigins = process.env.CLIENT_URL
   ? process.env.CLIENT_URL.split(',')
@@ -66,31 +69,41 @@ const clientOrigins = process.env.CLIENT_URL
 
 console.log(`[CORS] Allowed origins: ${clientOrigins.join(', ')}`);
 
-app.use(
-  cors({
-    origin: (origin, cb) => {
-      // 1. Allow server-to-server, curl, Postman, or same-origin requests
-      if (!origin) return cb(null, true);
+const corsOptions = {
+  origin: (origin, cb) => {
+    // 1. Allow server-to-server, curl, Postman, or same-origin requests
+    if (!origin) return cb(null, true);
 
-      // 2. Allow any localhost for easier development/testing
-      if (origin.startsWith('http://localhost:')) return cb(null, true);
+    // 2. Allow any localhost for easier development/testing
+    if (origin.startsWith('http://localhost:')) return cb(null, true);
 
-      // 3. Allow Chrome extensions (for our capture extension)
-      if (origin.startsWith('chrome-extension://')) return cb(null, true);
+    // 3. Allow Chrome extensions (for our capture extension)
+    if (origin.startsWith('chrome-extension://')) return cb(null, true);
 
-      // 4. Check explicit whitelist from CLIENT_URL
-      if (clientOrigins.includes(origin)) return cb(null, true);
+    // 4. Check explicit whitelist from CLIENT_URL
+    if (clientOrigins.includes(origin)) return cb(null, true);
 
-      // 5. Fail closed but log details for debugging production mismatches
-      console.warn(`[CORS] Rejected request from unauthorized origin: ${origin}`);
-      cb(null, false);
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-    credentials: true,
-    optionsSuccessStatus: 200,
-  }),
-);
+    // 5. Fail closed but log details for debugging production mismatches
+    console.warn(`[CORS] Rejected request from unauthorized origin: ${origin}`);
+    cb(null, false);
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: [
+    'Content-Type',
+    'Authorization',
+    'X-Requested-With',
+    'Accept',
+    'Origin',
+  ],
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
+
+// Apply CORS globally
+app.use(cors(corsOptions));
+
+// Explicitly handle preflight for all routes
+app.options('*', cors(corsOptions));
 app.use(morgan('dev'));
 // Chrome extension screenshots can be large base64 payloads; raise limits safely.
 app.use(express.json({ limit: '10mb' }));
