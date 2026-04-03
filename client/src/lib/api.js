@@ -1,24 +1,18 @@
 import axios from 'axios';
 
-// VITE_API_URL must point to backend base; ensure it ends with /api (server mounts at /api/auth, /api/jobs)
-// Example (dev):  VITE_API_URL=http://localhost:5000/api
-// Example (prod): VITE_API_URL=https://your-backend.com/api
+// VITE_API_URL must point to backend base (e.g. https://hustlemap-yntw.onrender.com/api)
 const envUrl = import.meta.env.VITE_API_URL;
 let rawUrl = envUrl;
 
-// For local development, fall back to http://localhost:5005/api if VITE_API_URL is not set
+// For local development, fall back to http://localhost:5000/api if VITE_API_URL is not set
 if (!rawUrl && import.meta.env.DEV) {
-  rawUrl = 'http://localhost:5005/api';
-  // eslint-disable-next-line no-console
-  console.warn(
-    '[api] VITE_API_URL is not defined. Falling back to http://localhost:5005/api in development.',
-  );
-} else if (!rawUrl) {
-  // eslint-disable-next-line no-console
-  console.warn(
-    '[api] VITE_API_URL is not defined. ' +
-      'Set VITE_API_URL in your environment (e.g. http://localhost:5000/api for dev, https://your-backend.onrender.com/api for prod).',
-  );
+  rawUrl = 'http://localhost:5000/api';
+}
+
+if (!rawUrl) {
+  console.warn('[api] VITE_API_URL is not defined. Ensure it is set in Vercel/environment.');
+} else {
+  console.log(`[api] Using backend: ${rawUrl}`);
 }
 
 const API_URL =

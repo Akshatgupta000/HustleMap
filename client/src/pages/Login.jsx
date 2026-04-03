@@ -14,12 +14,17 @@ export default function Login({ onLoginSuccess }) {
   const loginMutation = useMutation({
     mutationFn: authAPI.login,
     onSuccess: (response) => {
+      console.log("[Login] Success response from server:", response.data);
       setAuth(response.data.token, response.data.user);
       toast.success("Logged in successfully!");
       if (onLoginSuccess) onLoginSuccess();
       navigate("/dashboard");
     },
     onError: (error) => {
+      console.error("[Login] Error from server:", error.response?.data || error.message);
+      if (error.code === 'ERR_NETWORK') {
+        console.error("[Login] Network error - potentially CORS or incorrect VITE_API_URL");
+      }
       toast.error(error.response?.data?.error || "Login failed");
     },
   });

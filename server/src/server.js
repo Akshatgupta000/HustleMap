@@ -69,20 +69,24 @@ console.log(`[CORS] Allowed origins: ${clientOrigins.join(', ')}`);
 app.use(
   cors({
     origin: (origin, cb) => {
-      if (!origin) return cb(null, true); // server-to-server, curl, Postman
+      // 1. Allow server-to-server, curl, Postman, or same-origin requests
+      if (!origin) return cb(null, true);
+
+      // 2. Allow any localhost for easier development/testing
       if (origin.startsWith('http://localhost:')) return cb(null, true);
+
+      // 3. Allow Chrome extensions (for our capture extension)
       if (origin.startsWith('chrome-extension://')) return cb(null, true);
+
+      // 4. Check explicit whitelist from CLIENT_URL
       if (clientOrigins.includes(origin)) return cb(null, true);
 
-      // Log CORS rejections in production for debugging
-      if (process.env.NODE_ENV === 'production') {
-        console.warn(`[CORS] Rejected request from origin: ${origin}`);
-      }
-
-      cb(null, false); // reject unsupported origins
+      // 5. Fail closed but log details for debugging production mismatches
+      console.warn(`[CORS] Rejected request from unauthorized origin: ${origin}`);
+      cb(null, false);
     },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
     credentials: true,
     optionsSuccessStatus: 200,
   }),

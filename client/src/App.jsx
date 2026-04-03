@@ -29,15 +29,17 @@ const queryClient = new QueryClient({
 });
 
 function App() {
-  const [isAuth, setIsAuth] = useState(isAuthenticated());
+  const [isAuth, setIsAuth] = useState(() => isAuthenticated());
 
   // Listen for storage changes (logout from other tabs, etc.)
   useEffect(() => {
     const handleStorageChange = () => {
-      setIsAuth(isAuthenticated());
+      const auth = isAuthenticated();
+      setIsAuth(auth);
     };
 
     window.addEventListener("storage", handleStorageChange);
+    // Periodically sync auth state if needed, though storage listener is usually enough
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
