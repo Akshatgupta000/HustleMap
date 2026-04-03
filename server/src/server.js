@@ -45,12 +45,10 @@ process.on('unhandledRejection', (reason, promise) => {
 const requiredEnv = ['JWT_SECRET', 'MONGO_URI'];
 const missing = requiredEnv.filter((key) => !(process.env[key] || '').trim());
 if (missing.length > 0) {
-  console.error(
-    `[FATAL] Missing required env vars: ${missing.join(
-      ', ',
-    )}. Check your .env file – these are required for MongoDB and JWT auth.`,
-  );
-  // Always exit so we fail fast instead of serving 500s with a misconfigured server
+  console.error('[FATAL ERROR] ----------------------------------------');
+  console.error(`[FATAL ERROR] Missing required env vars: ${missing.join(', ')}`);
+  console.error('[FATAL ERROR] Check your .env file or hosting dashboard.');
+  console.error('[FATAL ERROR] ----------------------------------------');
   process.exit(1);
 }
 
@@ -178,12 +176,18 @@ const attemptListen = (startPort, maxAttempts = 10) =>
 
 const startServer = async () => {
   try {
+    console.log('[STARTUP] Connecting to MongoDB...');
     await connectDB();
+    
+    console.log(`[STARTUP] Attempting to listen on port ${PORT}...`);
     const usedPort = await attemptListen(Number(PORT), 10);
-    // update process.env.PORT to reflect the actual port if needed elsewhere
     process.env.PORT = String(usedPort);
   } catch (err) {
-    console.error('Failed to start server:', err.message || err);
+    console.error('[CRITICAL FAILURE] -----------------------------------');
+    console.error('[CRITICAL FAILURE] Failed to start server:');
+    console.error(err.message || err);
+    if (err.stack) console.error(err.stack);
+    console.error('[CRITICAL FAILURE] -----------------------------------');
     process.exit(1);
   }
 };
