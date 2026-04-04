@@ -70,21 +70,40 @@ console.log(`[CORS] Allowed origins: ${clientOrigins.join(', ')}`);
 
 const corsOptions = {
   origin: (origin, cb) => {
+    // Log EVERY cors request for debugging production issues
+    console.log(`[CORS Request] Origin: "${origin || 'no-origin'}"`);
+
     // 1. Allow server-to-server, curl, Postman, or same-origin requests
-    if (!origin) return cb(null, true);
+    if (!origin) {
+      console.log('[CORS] Allowed: No origin (server-to-server)');
+      return cb(null, true);
+    }
 
+    const normalizedOrigin = origin.replace(/\/+$/, '');
+    
     // 2. Allow any localhost for easier development/testing
-    if (origin.startsWith('http://localhost:')) return cb(null, true);
+    if (normalizedOrigin.startsWith('http://localhost:')) {
+      console.log(`[CORS] Allowed: Localhost origin "${normalizedOrigin}"`);
+      return cb(null, true);
+    }
 
-    // 3. Allow Chrome extensions (for our capture extension)
-    if (origin.startsWith('chrome-extension://')) return cb(null, true);
+    // 3. Allow Chrome extensions
+    if (normalizedOrigin.startsWith('chrome-extension://')) {
+      console.log(`[CORS] Allowed: Chrome extension "${normalizedOrigin}"`);
+      return cb(null, true);
+    }
 
     // 4. Check explicit whitelist from CLIENT_URL
-    const normalizedOrigin = origin.replace(/\/+$/, '');
-    if (clientOrigins.includes(normalizedOrigin)) return cb(null, true);
+    if (clientOrigins.includes(normalizedOrigin)) {
+      console.log(`[CORS] Allowed: Whitelisted origin "${normalizedOrigin}"`);
+      return cb(null, true);
+    }
 
     // 5. Fail closed but log details for debugging production mismatches
-    console.warn(`[CORS] Rejected request from unauthorized origin: ${origin}`);
+    console.error(`[CORS REJECTED] Origin: "${origin}"`);
+    console.error(`[CORS REJECTED] Whitelist: [${clientOrigins.join(', ')}]`);
+    
+    // Instead of throwing an error that might break the app, we just fail the CORS check
     cb(null, false);
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
