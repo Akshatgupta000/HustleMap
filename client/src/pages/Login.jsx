@@ -15,15 +15,26 @@ export default function Login({ onLoginSuccess }) {
     mutationFn: authAPI.login,
     onSuccess: (response) => {
       console.log("[Login] Success response from server:", response.data);
-      setAuth(response.data.token, response.data.user);
-      toast.success("Logged in successfully!");
-      if (onLoginSuccess) onLoginSuccess();
-      navigate("/dashboard");
+      if (response.data.token) {
+        console.log("[Login] Token received and being stored.");
+        setAuth(response.data.token, response.data.user);
+        toast.success("Logged in successfully!");
+        if (onLoginSuccess) onLoginSuccess();
+        navigate("/dashboard");
+      } else {
+        console.error("[Login] No token in success response:", response.data);
+        toast.error("Login failed: No authentication token received.");
+      }
     },
     onError: (error) => {
-      console.error("[Login] Error from server:", error.response?.data || error.message);
+      console.error("[Login] Error from server:", {
+        status: error.response?.status,
+        data: error.response?.data,
+        message: error.message,
+        url: error.config?.url
+      });
       if (error.code === 'ERR_NETWORK') {
-        console.error("[Login] Network error - potentially CORS or incorrect VITE_API_URL");
+        console.error("[Login] Network error - potentially CORS or incorrect VITE_API_URL or backend is down.");
       }
       toast.error(error.response?.data?.error || "Login failed");
     },

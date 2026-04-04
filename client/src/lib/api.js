@@ -10,9 +10,7 @@ if (!rawUrl && import.meta.env.DEV) {
 }
 
 if (!rawUrl) {
-  console.warn('[api] VITE_API_URL is not defined. Ensure it is set in Vercel/environment.');
-} else {
-  console.log(`[api] Using backend: ${rawUrl}`);
+  console.warn('[api] VITE_API_URL is not defined! Using defaults if local dev.');
 }
 
 const API_URL =
@@ -22,6 +20,9 @@ const API_URL =
         return base.endsWith('/api') ? base : `${base}/api`;
       })()
     : rawUrl;
+
+console.log(`[api] Final API Endpoint: ${API_URL}`);
+console.log(`[api] withCredentials: true (CORS enabled)`);
 
 // Warn if frontend is HTTPS but API is HTTP (mixed-content blocked by browsers)
 if (

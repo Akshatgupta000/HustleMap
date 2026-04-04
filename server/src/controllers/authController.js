@@ -87,12 +87,14 @@ export const login = async (req, res, next) => {
     // Find user (include password for comparison)
     const user = await User.findOne({ email }).select('+password');
     if (!user) {
+      console.warn(`[Login] Failed login attempt: User not found (${email})`);
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
     // Verify password
     const isValid = await user.comparePassword(password);
     if (!isValid) {
+      console.warn(`[Login] Failed login attempt: Incorrect password for ${email}`);
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
@@ -102,6 +104,8 @@ export const login = async (req, res, next) => {
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN || '7d' },
     );
+
+    console.log(`[Login] Successful login for: ${email}`);
 
     res.json({
       token,
@@ -113,7 +117,7 @@ export const login = async (req, res, next) => {
       },
     });
   } catch (error) {
-    console.error('Login error:', error);
+    console.error(`[Login Error] Exception for email ${req.body?.email}:`, error);
     next(error);
   }
 };

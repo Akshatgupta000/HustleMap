@@ -63,6 +63,7 @@ const clientOrigins = process.env.CLIENT_URL
   ? process.env.CLIENT_URL.split(',')
       .map((u) => u.trim())
       .filter(Boolean)
+      .map((u) => u.replace(/\/+$/, '')) // Remove trailing slashes
   : ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175'];
 
 console.log(`[CORS] Allowed origins: ${clientOrigins.join(', ')}`);
@@ -79,7 +80,8 @@ const corsOptions = {
     if (origin.startsWith('chrome-extension://')) return cb(null, true);
 
     // 4. Check explicit whitelist from CLIENT_URL
-    if (clientOrigins.includes(origin)) return cb(null, true);
+    const normalizedOrigin = origin.replace(/\/+$/, '');
+    if (clientOrigins.includes(normalizedOrigin)) return cb(null, true);
 
     // 5. Fail closed but log details for debugging production mismatches
     console.warn(`[CORS] Rejected request from unauthorized origin: ${origin}`);
