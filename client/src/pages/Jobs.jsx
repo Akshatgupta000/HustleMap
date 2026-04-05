@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { useState, useMemo, useEffect } from "react";
 import { Input } from "../components/ui/input";
 import { Plus } from "lucide-react";
+import { cn } from "../lib/cn";
 
 const STATUS_FILTERS = ["all", "applied", "online_test", "interview", "offer", "rejected", "withdrawn"];
 const STATUS_LABELS = {
