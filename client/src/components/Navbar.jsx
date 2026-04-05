@@ -4,7 +4,7 @@ import { clearAuth, getUser, setAuth } from "../lib/auth";
 import { authAPI } from "../lib/api";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { LayoutDashboard, Briefcase, LogOut, Copy, Sparkles, Menu, X } from "lucide-react";
+import { LayoutDashboard, Briefcase, LogOut, Copy, Sparkles, Menu, X, Puzzle } from "lucide-react";
 
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
@@ -155,6 +155,19 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
             >
               <Briefcase className="h-4 w-4" />
               My Applications
+            </Link>
+            <Link
+              to="/extension"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={cn(
+                "flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition-all duration-200",
+                isActive("/extension")
+                  ? "bg-white border border-notion-border shadow-soft text-notion-text"
+                  : "text-notion-text/90 hover:bg-black/5",
+              )}
+            >
+              <Puzzle className="h-4 w-4" />
+              Extension
             </Link>
           </nav>
 

@@ -8,6 +8,7 @@ import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+import BrowserExtension from "./pages/BrowserExtension";
 import Jobs from "./pages/Jobs";
 import JobForm from "./pages/JobForm";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -78,6 +79,16 @@ function App() {
                 <ProtectedRoute isAuth={isAuth}>
                   <AppLayout onLogout={() => setIsAuth(false)}>
                     <Dashboard />
+                  </AppLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/extension"
+              element={
+                <ProtectedRoute isAuth={isAuth}>
+                  <AppLayout onLogout={() => setIsAuth(false)}>
+                    <BrowserExtension />
                   </AppLayout>
                 </ProtectedRoute>
               }
