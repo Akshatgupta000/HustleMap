@@ -129,17 +129,17 @@ export default function AnalyticsWidgets({
                 }
               }}
               className={cn(
-                "rounded-xl border border-notion-border bg-white p-4 shadow-soft transition-all duration-200",
+                "rounded-xl border border-notion-border bg-notion-card p-4 shadow-soft transition-all duration-200",
                 (isClickable || widget.filterValue === null) &&
-                  "cursor-pointer hover:bg-black/5 hover:-translate-y-[1px]",
-                isActive && "border-notion-accent/30 bg-notion-accent/10",
+                  "cursor-pointer hover:bg-white/5 hover:-translate-y-[1px]",
+                isActive && "border-accent-purple/30 bg-accent-purple/10",
                 !isClickable && widget.filterValue !== null && "opacity-75",
               )}
             >
               <p
                 className={cn(
                   "text-xs font-medium",
-                  isActive ? "text-notion-accent" : "text-notion-muted",
+                  isActive ? "text-accent-purple" : "text-notion-muted",
                 )}
               >
                 {widget.label}
@@ -171,7 +171,7 @@ export default function AnalyticsWidgets({
         <Card className="p-0">
           <button
             onClick={onToggleDetails}
-            className="w-full px-4 sm:px-6 py-4 flex items-center justify-between text-left hover:bg-black/5 transition-all duration-200 rounded-xl"
+            className="w-full px-4 sm:px-6 py-4 flex items-center justify-between text-left hover:bg-white/5 transition-all duration-200 rounded-xl"
           >
             <h3 className="section-heading">Detailed Analytics & Insights</h3>
             <span className="text-notion-muted text-sm">
@@ -183,7 +183,7 @@ export default function AnalyticsWidgets({
               {/* Applications Per Week */}
               {safeStats.applicationsPerWeek &&
                 safeStats.applicationsPerWeek.length > 0 && (
-                  <div className="rounded-xl border border-notion-border bg-black/5 p-4">
+                  <div className="rounded-xl border border-notion-border bg-notion-bg/50 p-4">
                     <h4 className="subtitle mb-3">
                       Applications Per Week (Last 4 Weeks)
                     </h4>
@@ -191,7 +191,7 @@ export default function AnalyticsWidgets({
                       {safeStats.applicationsPerWeek.map((week, index) => (
                         <div
                           key={index}
-                          className="flex items-center justify-between rounded-xl bg-white border border-notion-border px-3 py-2 shadow-soft"
+                          className="flex items-center justify-between rounded-xl bg-notion-card border border-notion-border px-3 py-2 shadow-soft"
                         >
                           <span className="text-sm text-notion-text">
                             Week {week.week}
@@ -207,7 +207,7 @@ export default function AnalyticsWidgets({
 
               {/* Status Distribution */}
               {safeStats.byStatus && Object.keys(safeStats.byStatus).length > 0 && (
-                <div className="rounded-xl border border-notion-border bg-black/5 p-4">
+                <div className="rounded-xl border border-notion-border bg-notion-bg/50 p-4">
                   <h4 className="subtitle mb-3">Status Distribution</h4>
                   <div className="space-y-2">
                     {Object.entries(safeStats.byStatus)
@@ -224,9 +224,9 @@ export default function AnalyticsWidgets({
                               }
                             }}
                             className={cn(
-                              "flex items-center justify-between rounded-xl px-3 py-2 border border-notion-border bg-white shadow-soft transition-all duration-200",
-                              isClickableStatus && "cursor-pointer hover:bg-black/5",
-                              isActive && "border-notion-accent/30 bg-notion-accent/10",
+                              "flex items-center justify-between rounded-xl px-3 py-2 border border-notion-border bg-notion-card shadow-soft transition-all duration-200",
+                              isClickableStatus && "cursor-pointer hover:bg-white/5",
+                              isActive && "border-accent-purple/30 bg-accent-purple/10",
                             )}
                           >
                             <span
@@ -251,7 +251,7 @@ export default function AnalyticsWidgets({
                 safeStats.offerRatio !== undefined) && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {safeStats.interviewConversionRate !== undefined && (
-                    <div className="rounded-xl border border-notion-border bg-black/5 p-4">
+                    <div className="rounded-xl border border-notion-border bg-notion-bg/50 p-4">
                       <h4 className="subtitle mb-2">
                         Interview Conversion Rate
                       </h4>
@@ -264,7 +264,7 @@ export default function AnalyticsWidgets({
                     </div>
                   )}
                   {safeStats.offerRatio !== undefined && (
-                    <div className="rounded-xl border border-notion-border bg-black/5 p-4">
+                    <div className="rounded-xl border border-notion-border bg-notion-bg/50 p-4">
                       <h4 className="subtitle mb-2">Offer Rate</h4>
                       <p className="text-2xl font-semibold tracking-tight text-notion-text">
                         {safeStats.offerRatio}%

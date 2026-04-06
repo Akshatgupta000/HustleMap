@@ -150,7 +150,7 @@ export default function QuickAddJob() {
                 onChange={(e) =>
                   setFormData({ ...formData, status: e.target.value })
                 }
-                className="h-10 w-full rounded-xl border border-notion-border bg-white px-3 text-sm shadow-soft transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-notion-accent/30 focus-visible:ring-offset-2 focus-visible:ring-offset-notion-bg"
+                className="h-10 w-full rounded-xl border border-notion-border bg-notion-card px-3 text-sm text-notion-text shadow-soft transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-purple/30 focus-visible:ring-offset-2 focus-visible:ring-offset-notion-bg"
               >
                 {STATUS_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>

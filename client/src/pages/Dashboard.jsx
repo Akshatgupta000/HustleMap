@@ -107,7 +107,7 @@ export default function Dashboard() {
   };
 
   const selectClass =
-    'h-[38px] w-full sm:w-auto rounded-[10px] border border-[#e8e6e1] bg-white px-3 text-[13.5px] text-[#37352f] cursor-pointer outline-none transition-all shadow-sm focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100';
+    'h-[38px] w-full sm:w-auto rounded-[10px] border border-notion-border bg-notion-card px-3 text-[13.5px] text-notion-text cursor-pointer outline-none transition-all shadow-sm focus:border-accent-purple focus:ring-2 focus:ring-accent-purple/10';
 
   return (
     <div ref={dashboardRef} className="flex flex-col gap-5">
@@ -116,10 +116,10 @@ export default function Dashboard() {
       <div className="flex flex-col gap-3">
         <div className="flex items-end justify-between flex-wrap gap-3">
           <div>
-            <h1 className="text-2xl font-extrabold text-[#37352f] tracking-tight mb-1">
+            <h1 className="text-2xl font-extrabold text-notion-text tracking-tight mb-1">
               Dashboard
             </h1>
-            <p className="text-[13.5px] text-[#6b6b6b]">
+            <p className="text-[13.5px] text-notion-muted">
               Track and manage your job applications
             </p>
           </div>
@@ -144,10 +144,10 @@ export default function Dashboard() {
 
       {/* ── Upcoming Interviews ── */}
       {upcomingInterviews.length > 0 && (
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl overflow-hidden shadow-sm">
-          <div className="px-5 py-4 border-b border-amber-200 flex items-center gap-2">
-            <Calendar size={15} className="text-amber-800" />
-            <span className="text-sm font-bold text-amber-900 tracking-tight">
+        <div className="bg-accent-purple/10 border border-accent-purple/20 rounded-2xl overflow-hidden shadow-soft">
+          <div className="px-5 py-4 border-b border-accent-purple/20 flex items-center gap-2">
+            <Calendar size={15} className="text-accent-purple" />
+            <span className="text-sm font-bold text-accent-purple tracking-tight">
               Upcoming Interviews ({upcomingInterviews.length})
             </span>
           </div>
@@ -158,13 +158,13 @@ export default function Dashboard() {
               return (
                 <div
                   key={job.id}
-                  className="flex items-center justify-between bg-white border border-amber-200 rounded-[10px] px-[14px] py-[10px] text-[13.5px]"
+                  className="flex items-center justify-between bg-notion-card border border-accent-purple/20 rounded-[10px] px-[14px] py-[10px] text-[13.5px]"
                 >
                   <div className="min-w-0">
-                    <span className="font-semibold text-amber-900">{job.company}</span>
-                    <span className="text-amber-800 ml-1.5">— {job.position}</span>
+                    <span className="font-semibold text-accent-purple">{job.company}</span>
+                    <span className="text-notion-text ml-1.5">— {job.position}</span>
                   </div>
-                  <span className="shrink-0 font-semibold text-amber-900 bg-amber-100 px-2.5 py-0.5 rounded-full text-xs">
+                  <span className="shrink-0 font-extrabold text-notion-bg bg-accent-purple px-2.5 py-0.5 rounded-full text-[10.5px] uppercase tracking-wider">
                     {daysUntil === 0 ? 'Today' : daysUntil === 1 ? 'Tomorrow' : `${daysUntil}d`}
                   </span>
                 </div>
@@ -175,20 +175,20 @@ export default function Dashboard() {
       )}
 
       {/* ── Applications card ── */}
-      <div className="bg-white border border-[#e8e6e1] rounded-2xl overflow-hidden shadow-sm">
+      <div className="bg-notion-card border border-notion-border rounded-2xl overflow-hidden shadow-sm">
         {/* Card header */}
         <div
-          className={`flex items-center justify-between px-5 py-4 ${showApplications ? 'border-b border-[#f0ede8]' : ''}`}
+          className={`flex items-center justify-between px-5 py-4 ${showApplications ? 'border-b border-notion-border/50' : ''}`}
         >
-          <h2 className="text-[15px] font-bold text-[#37352f] tracking-tight">
+          <h2 className="text-[15px] font-bold text-notion-text tracking-tight">
             My Applications{' '}
-            <span className="text-[12.5px] font-medium text-[#6b6b6b] bg-[#f7f6f3] px-2 py-0.5 rounded-full border border-[#e8e6e1] ml-1.5">
+            <span className="text-[12.5px] font-medium text-notion-muted bg-notion-bg px-2 py-0.5 rounded-full border border-notion-border ml-1.5">
               {filteredAndSortedJobs.length}
             </span>
           </h2>
           <button
             onClick={() => setShowApplications(!showApplications)}
-            className="flex items-center gap-1.5 bg-transparent border border-[#e8e6e1] rounded-lg px-[11px] py-[5px] text-[13px] font-medium text-[#6b6b6b] cursor-pointer transition-all hover:bg-[#f7f6f3] hover:text-[#37352f]"
+            className="flex items-center gap-1.5 bg-transparent border border-notion-border rounded-lg px-[11px] py-[5px] text-[13px] font-medium text-notion-muted cursor-pointer transition-all hover:bg-notion-bg hover:text-notion-text"
           >
             {showApplications ? (
               <><ChevronUp size={13} /> Hide</>
@@ -242,22 +242,22 @@ export default function Dashboard() {
 
             {/* Job list */}
             {isLoading ? (
-              <div className="text-center py-10 text-[13.5px] text-[#6b6b6b]">
+              <div className="text-center py-10 text-[13.5px] text-notion-muted">
                 Loading jobs…
               </div>
             ) : filteredAndSortedJobs.length === 0 ? (
-              <div className="text-center py-10 px-5 bg-[#f7f6f3] rounded-xl border border-[#e8e6e1]">
-                <h3 className="text-[15px] font-semibold text-[#37352f] mb-1.5">
+              <div className="text-center py-10 px-5 bg-notion-bg rounded-xl border border-notion-border">
+                <h3 className="text-[15px] font-semibold text-notion-text mb-1.5">
                   No jobs found
                 </h3>
-                <p className="text-[13px] text-[#6b6b6b] mb-4">
+                <p className="text-[13px] text-notion-muted mb-4">
                   {searchQuery || statusFilter !== 'all' || typeFilter !== 'all'
                     ? 'Try adjusting your filters'
                     : 'Start tracking your job applications'}
                 </p>
                 {!searchQuery && statusFilter === 'all' && typeFilter === 'all' && (
                   <Link to="/jobs/new" className="no-underline">
-                    <button className="bg-indigo-500 text-white border-none rounded-[9px] px-[18px] py-2 text-[13.5px] font-semibold cursor-pointer shadow-[0_2px_8px_rgba(99,102,241,0.25)] hover:bg-indigo-600 transition-colors">
+                    <button className="bg-accent-purple text-notion-bg border-none rounded-[9px] px-[18px] py-2 text-[13.5px] font-semibold cursor-pointer shadow-soft hover:brightness-110 transition-all">
                       Add Your First Job
                     </button>
                   </Link>

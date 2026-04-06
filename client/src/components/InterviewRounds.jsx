@@ -44,46 +44,46 @@ export default function InterviewRounds({ rounds = [], onChange }) {
   return (
     <div className="space-y-3">
       <div className="flex justify-between items-center">
-        <label className="block form-label text-black">Interview Rounds</label>
+        <label className="block text-sm font-semibold text-notion-text">Interview Rounds</label>
         <button
           type="button"
           onClick={addRound}
-          className="form-label text-black border border-black px-2.5 py-1 hover:bg-black hover:text-white"
+          className="text-xs font-semibold text-notion-text border border-notion-border px-2.5 py-1 rounded-lg hover:bg-white/5 transition-all"
         >
           + Add Round
         </button>
       </div>
 
       {localRounds.map((round, index) => (
-        <div key={index} className="border border-gray-300 p-3 space-y-2">
+        <div key={index} className="bg-notion-bg border border-notion-border p-3 space-y-2 rounded-xl shadow-soft">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div>
-              <label className="block helper-text text-black mb-1">Round Name</label>
+              <label className="block text-xs font-medium text-notion-muted mb-1">Round Name</label>
               <input
                 type="text"
                 value={round.round}
                 onChange={(e) => handleRoundChange(index, 'round', e.target.value)}
-                className="w-full px-3 py-1.5 body-text border border-black focus:border-gray-500 focus:outline-none"
+                className="w-full px-3 py-1.5 text-sm text-notion-text bg-notion-card border border-notion-border rounded-lg focus:border-accent-purple/50 focus:outline-none transition-all"
                 placeholder="e.g., Technical Round 1"
               />
             </div>
             <div>
-              <label className="block helper-text text-black mb-1">Date</label>
+              <label className="block text-xs font-medium text-notion-muted mb-1">Date</label>
               <input
                 type="date"
                 value={round.date}
                 onChange={(e) => handleRoundChange(index, 'date', e.target.value)}
-                className="w-full px-3 py-1.5 body-text border border-black focus:border-gray-500 focus:outline-none"
+                className="w-full px-3 py-1.5 text-sm text-notion-text bg-notion-card border border-notion-border rounded-lg focus:border-accent-purple/50 focus:outline-none transition-all"
               />
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div>
-              <label className="block helper-text text-black mb-1">Status</label>
+              <label className="block text-xs font-medium text-notion-muted mb-1">Status</label>
               <select
                 value={round.status}
                 onChange={(e) => handleRoundChange(index, 'status', e.target.value)}
-                className="w-full px-3 py-1.5 body-text border border-black focus:border-gray-500 focus:outline-none"
+                className="w-full px-3 py-1.5 text-sm text-notion-text bg-notion-card border border-notion-border rounded-lg focus:border-accent-purple/50 focus:outline-none transition-all"
               >
                 <option value="scheduled">Scheduled</option>
                 <option value="completed">Completed</option>
@@ -96,7 +96,7 @@ export default function InterviewRounds({ rounds = [], onChange }) {
                 <button
                   type="button"
                   onClick={() => removeRound(index)}
-                  className="w-full px-3 py-1.5 form-label border border-red-500 text-red-600 hover:bg-red-50"
+                  className="w-full px-3 py-1.5 text-xs font-semibold border border-red-500/50 text-red-400 rounded-lg hover:bg-red-500/10 transition-all"
                 >
                   Remove
                 </button>
@@ -104,12 +104,12 @@ export default function InterviewRounds({ rounds = [], onChange }) {
             </div>
           </div>
           <div>
-            <label className="block helper-text text-black mb-1">Feedback</label>
+            <label className="block text-xs font-medium text-notion-muted mb-1">Feedback</label>
             <textarea
               value={round.feedback}
               onChange={(e) => handleRoundChange(index, 'feedback', e.target.value)}
               rows={2}
-              className="w-full px-3 py-1.5 body-text border border-black focus:border-gray-500 focus:outline-none resize-none"
+              className="w-full px-3 py-1.5 text-sm text-notion-text bg-notion-card border border-notion-border rounded-lg focus:border-accent-purple/50 focus:outline-none transition-all resize-none"
               placeholder="Add feedback about this round..."
             />
           </div>

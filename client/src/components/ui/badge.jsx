@@ -8,12 +8,12 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: "border-notion-border bg-white text-notion-text",
-        muted: "border-notion-border bg-black/5 text-notion-text",
-        accent: "border-notion-accent/20 bg-notion-accent/10 text-notion-accent",
-        success: "border-emerald-200 bg-emerald-50 text-emerald-800",
-        warning: "border-amber-200 bg-amber-50 text-amber-900",
-        danger: "border-red-200 bg-red-50 text-red-800",
+        default: "border-notion-border bg-notion-card text-notion-text",
+        muted: "border-notion-border bg-notion-sidebar text-notion-muted",
+        accent: "border-accent-purple/20 bg-accent-purple/10 text-accent-purple",
+        success: "border-accent-green/20 bg-accent-green/10 text-accent-green",
+        warning: "border-accent-yellow/20 bg-accent-yellow/10 text-accent-yellow",
+        danger: "border-red-500/20 bg-red-500/10 text-red-400",
       },
     },
     defaultVariants: {

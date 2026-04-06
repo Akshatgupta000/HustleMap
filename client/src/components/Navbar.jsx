@@ -77,8 +77,8 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
           to="/dashboard"
           className="flex items-center gap-2 text-sm font-semibold tracking-tight text-notion-text"
         >
-          <span className="grid h-7 w-7 place-items-center rounded-xl bg-white shadow-soft border border-notion-border">
-            <Sparkles className="h-4 w-4 text-notion-accent" />
+          <span className="grid h-7 w-7 place-items-center rounded-xl bg-notion-card shadow-soft border border-notion-border">
+            <Sparkles className="h-4 w-4 text-accent-purple" />
           </span>
           HustleMap
         </Link>
@@ -103,7 +103,7 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
       {/* ── Sidebar ── */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-[272px] border-r border-notion-border bg-notion-bg transition-transform duration-300 ease-in-out lg:sticky lg:top-0 lg:h-screen lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 w-[272px] border-r border-notion-border bg-notion-sidebar transition-transform duration-300 ease-in-out lg:sticky lg:top-0 lg:h-screen lg:translate-x-0",
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
@@ -112,10 +112,10 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
             <Link
               to="/dashboard"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="flex items-center gap-2 rounded-xl px-2 py-1.5 text-sm font-semibold tracking-tight text-notion-text hover:bg-black/5 transition-all duration-200"
+              className="flex items-center gap-2 rounded-xl px-2 py-1.5 text-sm font-semibold tracking-tight text-notion-text hover:bg-white/5 transition-all duration-200"
             >
-              <span className="grid h-7 w-7 place-items-center rounded-xl bg-white shadow-soft border border-notion-border">
-                <Sparkles className="h-4 w-4 text-notion-accent" />
+              <span className="grid h-7 w-7 place-items-center rounded-xl bg-notion-card shadow-soft border border-notion-border">
+                <Sparkles className="h-4 w-4 text-accent-purple" />
               </span>
               HustleMap
             </Link>
@@ -136,8 +136,8 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
               className={cn(
                 "flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition-all duration-200",
                 isActive("/dashboard")
-                  ? "bg-white border border-notion-border shadow-soft text-notion-text"
-                  : "text-notion-text/90 hover:bg-black/5",
+                  ? "bg-accent-purple/10 border-l-4 border-accent-purple text-accent-purple shadow-none rounded-r-xl rounded-l-none"
+                  : "text-notion-text/90 hover:bg-white/5",
               )}
             >
               <LayoutDashboard className="h-4 w-4" />
@@ -147,10 +147,10 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
               to="/jobs"
               onClick={() => setIsMobileMenuOpen(false)}
               className={cn(
-                "flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition-all duration-200",
+                "flex items-center gap-2 px-3 py-2 text-sm transition-all duration-200",
                 isActive("/jobs")
-                  ? "bg-white border border-notion-border shadow-soft text-notion-text"
-                  : "text-notion-text/90 hover:bg-black/5",
+                  ? "bg-accent-purple/10 border-l-4 border-accent-purple text-accent-purple shadow-none rounded-r-xl rounded-l-none"
+                  : "text-notion-text/90 hover:bg-white/5",
               )}
             >
               <Briefcase className="h-4 w-4" />
@@ -160,10 +160,10 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
               to="/extension"
               onClick={() => setIsMobileMenuOpen(false)}
               className={cn(
-                "flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition-all duration-200",
+                "flex items-center gap-2 px-3 py-2 text-sm transition-all duration-200",
                 isActive("/extension")
-                  ? "bg-white border border-notion-border shadow-soft text-notion-text"
-                  : "text-notion-text/90 hover:bg-black/5",
+                  ? "bg-accent-purple/10 border-l-4 border-accent-purple text-accent-purple shadow-none rounded-r-xl rounded-l-none"
+                  : "text-notion-text/90 hover:bg-white/5",
               )}
             >
               <Puzzle className="h-4 w-4" />
@@ -172,7 +172,7 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
           </nav>
 
           {user && (
-            <div className="mt-4 rounded-xl border border-notion-border bg-white shadow-soft p-3">
+            <div className="mt-4 rounded-xl border border-notion-border bg-notion-card shadow-soft p-3">
               <div className="flex items-center justify-between gap-2">
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-notion-text truncate">

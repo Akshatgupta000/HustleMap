@@ -10,14 +10,14 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-notion-accent text-white shadow-soft hover:brightness-[0.98] active:translate-y-[0.5px]",
+          "bg-accent-purple text-notion-bg shadow-soft hover:brightness-110 active:translate-y-[0.5px] font-bold",
         secondary:
-          "bg-white text-notion-text border border-notion-border shadow-soft hover:bg-black/5 active:translate-y-[0.5px]",
-        ghost: "hover:bg-black/5 text-notion-text",
+          "bg-notion-card text-notion-text border border-notion-border shadow-soft hover:bg-white/5 active:translate-y-[0.5px]",
+        ghost: "hover:bg-white/5 text-notion-text",
         destructive:
-          "bg-red-600 text-white shadow-soft hover:bg-red-700 active:translate-y-[0.5px]",
+          "bg-red-500 text-white shadow-soft hover:bg-red-600 active:translate-y-[0.5px]",
         outline:
-          "bg-transparent border border-notion-border text-notion-text hover:bg-black/5 active:translate-y-[0.5px]",
+          "bg-transparent border border-notion-border text-notion-text hover:bg-white/5 active:translate-y-[0.5px]",
       },
       size: {
         sm: "h-9 px-3",

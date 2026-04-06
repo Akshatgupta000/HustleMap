@@ -18,13 +18,13 @@ const STATUS_LABELS = {
 };
 
 const STATUS_COLORS = {
-  saved: "bg-slate-100 text-slate-800 border-slate-300",
-  applied: "bg-blue-100 text-blue-800 border-blue-300",
-  online_test: "bg-purple-100 text-purple-800 border-purple-300",
-  interview: "bg-yellow-100 text-yellow-800 border-yellow-300",
-  offer: "bg-green-100 text-green-800 border-green-300",
-  rejected: "bg-red-100 text-red-800 border-red-300",
-  withdrawn: "bg-gray-100 text-gray-800 border-gray-300",
+  saved: "bg-notion-sidebar text-notion-muted border-notion-border",
+  applied: "bg-accent-purple/10 text-accent-purple border-accent-purple/20",
+  online_test: "bg-accent-purple/10 text-accent-purple border-accent-purple/20",
+  interview: "bg-accent-purple/10 text-accent-purple border-accent-purple/20",
+  offer: "bg-accent-green/10 text-accent-green border-accent-green/20",
+  rejected: "bg-red-500/10 text-red-400 border-red-500/20",
+  withdrawn: "bg-notion-bg text-notion-muted border-notion-border",
 };
 
 const APPLICATION_TYPE_LABELS = {
@@ -84,10 +84,10 @@ export default function JobCard({ job, onViewDetails }) {
     if (job.status === "rejected")
       return { bg: "bg-red-500", border: "border-red-500" };
     if (job.status === "offer")
-      return { bg: "bg-green-500", border: "border-green-500" };
+      return { bg: "bg-accent-green", border: "border-accent-green" };
     if (isManuallyTicked)
-      return { bg: "bg-blue-500", border: "border-blue-500" };
-    return { bg: "bg-white", border: "border-gray-300" };
+      return { bg: "bg-accent-blue", border: "border-accent-blue" };
+    return { bg: "bg-notion-card", border: "border-notion-border" };
   };
 
   const tickColor = getTickColor();
@@ -109,8 +109,8 @@ export default function JobCard({ job, onViewDetails }) {
     <div
       onClick={() => onViewDetails(job)}
       className={cn(
-        "rounded-xl border border-notion-border bg-notion-card p-4 shadow-soft transition-all duration-200 hover:bg-black/[0.02] hover:-translate-y-[1px] cursor-pointer flex flex-col h-full",
-        isUpcomingInterview() && "ring-2 ring-amber-300",
+        "rounded-xl border border-notion-border bg-notion-card p-4 shadow-soft transition-all duration-200 hover:bg-white/[0.02] hover:-translate-y-[1px] cursor-pointer flex flex-col h-full",
+        isUpcomingInterview() && "ring-2 ring-accent-yellow/50",
       )}
     >
       <div className="flex justify-between items-start gap-3 mb-3">
@@ -126,7 +126,7 @@ export default function JobCard({ job, onViewDetails }) {
             className={`flex-shrink-0 w-5 h-5 border-2 rounded-md flex items-center justify-center transition-colors ${
               isTicked
                 ? `${tickColor.bg} ${tickColor.border}`
-                : `${tickColor.border} hover:border-gray-400`
+                : `${tickColor.border} hover:border-notion-muted`
             } ${!isAutomatic && !isTicked ? "cursor-pointer" : ""} ${
               isAutomatic ? "cursor-not-allowed" : ""
             }`}
@@ -145,7 +145,7 @@ export default function JobCard({ job, onViewDetails }) {
             )}
           </button>
           {isCaptured && (
-            <Badge className="border bg-indigo-50 text-indigo-800 border-indigo-200">
+            <Badge className="border bg-accent-purple/10 text-accent-purple border-accent-purple/20">
               📸 Captured
             </Badge>
           )}
@@ -153,7 +153,7 @@ export default function JobCard({ job, onViewDetails }) {
             className={cn(
               "border",
               STATUS_COLORS[job.status] ||
-                "bg-gray-100 text-gray-800 border-gray-300",
+                "bg-notion-bg text-notion-muted border-notion-border",
             )}
           >
             {STATUS_LABELS[job.status] || job.status}
@@ -190,7 +190,7 @@ export default function JobCard({ job, onViewDetails }) {
             className={cn(
               "text-sm",
               isUpcomingInterview()
-                ? "text-amber-900 font-medium"
+                ? "text-accent-yellow font-medium"
                 : "text-notion-text",
             )}
           >
@@ -215,8 +215,8 @@ export default function JobCard({ job, onViewDetails }) {
 
       {/* Interview Prep Indicator */}
       {job.interview_questions && job.interview_questions.length > 0 && (
-        <div className="mb-3 p-2 bg-indigo-50 border border-indigo-200 rounded-xl">
-          <p className="text-xs text-indigo-800 font-medium">
+        <div className="mb-3 p-2 bg-accent-purple/10 border border-accent-purple/20 rounded-xl">
+          <p className="text-xs text-accent-purple font-medium">
             📝 Interview Summary: {job.interview_questions.length} question
             {job.interview_questions.length !== 1 ? "s" : ""}
           </p>
@@ -234,8 +234,8 @@ export default function JobCard({ job, onViewDetails }) {
 
       {/* Interview Status Recommendation */}
       {job.status === "interview" && (
-        <div className="mb-3 p-2 bg-amber-50 border border-amber-200 rounded-xl">
-          <p className="text-xs text-amber-900 font-medium">
+        <div className="mb-3 p-2 bg-accent-purple/10 border border-accent-purple/20 rounded-xl">
+          <p className="text-xs text-accent-purple font-medium">
             Interview scheduled — preparation recommended
           </p>
         </div>

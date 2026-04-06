@@ -17,12 +17,20 @@ export default {
       },
       colors: {
         notion: {
-          bg: "#f7f6f3",
-          card: "#ffffff",
-          border: "#e5e5e5",
-          text: "#37352f",
-          muted: "#6b6b6b",
-          accent: "#4f46e5",
+          bg: "#000000",
+          sidebar: "#050505",
+          card: "#0A0A0F",
+          border: "#1A1A24",
+          text: "#F3F4F6",
+          muted: "#9CA3AF",
+          accent: "#A78BFA",
+        },
+        accent: {
+          purple: "#A78BFA",
+          blue: "#60A5FA",
+          pink: "#F472B6",
+          yellow: "#FBBF24",
+          green: "#34D399",
         },
         primary: {
           50: "#f0f9ff",

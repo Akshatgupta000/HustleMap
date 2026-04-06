@@ -22,10 +22,10 @@ const APPLICATION_TYPE_OPTIONS = [
   { value: "off_campus", label: "Off-Campus" },
 ];
 
-const labelClass = "block text-[13px] font-semibold text-[#37352f] mb-[7px] tracking-tight";
+const labelClass = "block text-[13px] font-semibold text-notion-text mb-[7px] tracking-tight";
 
 const selectClass =
-  "h-10 w-full rounded-[10px] border border-[#e8e6e1] bg-white px-3 text-[13.5px] text-[#37352f] cursor-pointer outline-none transition-all shadow-sm focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 appearance-auto";
+  "h-10 w-full rounded-[10px] border border-notion-border bg-notion-card px-3 text-[13.5px] text-notion-text cursor-pointer outline-none transition-all shadow-soft focus:border-accent-purple/50 focus:ring-2 focus:ring-accent-purple/20 appearance-auto";
 
 export default function JobForm() {
   const navigate = useNavigate();
@@ -129,7 +129,7 @@ export default function JobForm() {
 
   if (isEdit && isLoadingJob) {
     return (
-      <div className="text-center py-16 text-[13.5px] text-[#6b6b6b]">
+      <div className="text-center py-16 text-[13.5px] text-notion-muted">
         Loading job…
       </div>
     );
@@ -141,25 +141,25 @@ export default function JobForm() {
       {/* ── Page header ── */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-extrabold text-[#37352f] tracking-tight mb-1">
+          <h1 className="text-2xl font-extrabold text-notion-text tracking-tight mb-1">
             {isEdit ? "Edit Job" : "Add New Job"}
           </h1>
-          <p className="text-[13.5px] text-[#6b6b6b]">
+          <p className="text-[13.5px] text-notion-muted">
             Keep details clean and consistent so you can spot patterns later.
           </p>
         </div>
         <button
           onClick={() => navigate("/dashboard")}
-          className="flex items-center justify-center gap-1.5 bg-white border border-[#e8e6e1] rounded-[10px] px-[14px] py-2 text-[13.5px] font-medium text-[#37352f] cursor-pointer shadow-sm transition-colors hover:bg-[#f7f6f3] w-full sm:w-auto"
+          className="flex items-center justify-center gap-1.5 bg-notion-card border border-notion-border rounded-[10px] px-[14px] py-2 text-[13.5px] font-medium text-notion-text cursor-pointer shadow-soft transition-colors hover:bg-notion-sidebar w-full sm:w-auto"
         >
           <ArrowLeft size={14} /> Back to Dashboard
         </button>
       </div>
 
       {/* ── Form card ── */}
-      <div className="bg-white border border-[#e8e6e1] rounded-2xl overflow-hidden shadow-sm">
-        <div className="px-5 py-[14px] border-b border-[#f0ede8] flex items-center justify-between">
-          <p className="text-[11px] font-bold text-[#6b6b6b] uppercase tracking-[0.6px] m-0">
+      <div className="bg-notion-card border border-notion-border rounded-2xl overflow-hidden shadow-soft">
+        <div className="px-5 py-[14px] border-b border-notion-border/50 flex items-center justify-between">
+          <p className="text-[11px] font-bold text-notion-muted uppercase tracking-[0.6px] m-0">
             Job Details
           </p>
         </div>
@@ -246,7 +246,7 @@ export default function JobForm() {
           <div>
             <label className={labelClass}>
               Job URL{' '}
-              <span className="font-normal text-[#9b9994]">(optional)</span>
+              <span className="font-normal text-notion-muted">(optional)</span>
             </label>
             <Input
               type="url"
@@ -260,7 +260,7 @@ export default function JobForm() {
           <div>
             <label className={labelClass}>
               Interview Date{' '}
-              <span className="font-normal text-[#9b9994]">(optional)</span>
+              <span className="font-normal text-notion-muted">(optional)</span>
             </label>
             <Input
               type="date"
@@ -282,7 +282,7 @@ export default function JobForm() {
             <div>
               <label className={labelClass}>
                 Resume Link{' '}
-                <span className="font-normal text-[#9b9994]">(optional)</span>
+                <span className="font-normal text-notion-muted">(optional)</span>
               </label>
               <Input
                 type="url"
@@ -294,7 +294,7 @@ export default function JobForm() {
             <div>
               <label className={labelClass}>
                 Portfolio Link{' '}
-                <span className="font-normal text-[#9b9994]">(optional)</span>
+                <span className="font-normal text-notion-muted">(optional)</span>
               </label>
               <Input
                 type="url"
@@ -309,13 +309,13 @@ export default function JobForm() {
           <div>
             <label className={labelClass}>
               Notes / HR Details{' '}
-              <span className="font-normal text-[#9b9994]">(optional)</span>
+              <span className="font-normal text-notion-muted">(optional)</span>
             </label>
             <textarea
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
               rows={3}
-              className="w-full rounded-[10px] border border-[#e8e6e1] bg-white px-3 py-[9px] text-[13.5px] text-[#37352f] resize-none outline-none shadow-sm transition-all font-[inherit] box-border focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+              className="w-full rounded-[10px] border border-notion-border bg-notion-bg px-3 py-[9px] text-[13.5px] text-notion-text resize-none outline-none shadow-soft transition-all font-[inherit] box-border focus:border-accent-purple/50 focus:ring-2 focus:ring-accent-purple/20"
               placeholder="Notes about this application, HR contact, salary range…"
             />
           </div>
@@ -335,10 +335,10 @@ export default function JobForm() {
             <button
               type="submit"
               disabled={isPending}
-              className={`border-none rounded-[11px] px-7 py-[10px] text-[14.5px] font-semibold tracking-tight transition-all flex-1 sm:flex-none sm:min-w-[160px] text-white ${
+              className={`border-none rounded-[11px] px-7 py-[10px] text-[14.5px] font-bold tracking-tight transition-all flex-1 sm:flex-none sm:min-w-[160px] text-notion-bg ${
                 isPending
-                  ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-indigo-500 cursor-pointer shadow-[0_2px_12px_rgba(99,102,241,0.28)] hover:bg-indigo-600 hover:scale-[1.03]'
+                  ? 'bg-notion-muted cursor-not-allowed'
+                  : 'bg-accent-purple cursor-pointer shadow-soft hover:brightness-110 hover:scale-[1.03]'
               }`}
             >
               {isPending ? "Saving…" : isEdit ? "Update Job" : "Add Job"}
@@ -346,7 +346,7 @@ export default function JobForm() {
             <button
               type="button"
               onClick={() => navigate("/dashboard")}
-              className="bg-white text-[#37352f] border border-[#e8e6e1] rounded-[11px] px-5 py-[10px] text-[14.5px] font-medium cursor-pointer transition-colors hover:bg-[#f7f6f3] flex-1 sm:flex-none"
+              className="bg-notion-card text-notion-text border border-notion-border rounded-[11px] px-5 py-[10px] text-[14.5px] font-medium cursor-pointer transition-colors hover:bg-notion-sidebar flex-1 sm:flex-none shadow-soft"
             >
               Cancel
             </button>

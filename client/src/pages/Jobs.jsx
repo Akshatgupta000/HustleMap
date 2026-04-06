@@ -20,17 +20,17 @@ const STATUS_LABELS = {
 };
 
 const STATUS_COLORS = {
-  all:         { base: "bg-[#f7f6f3] text-[#6b6b6b]",         active: "bg-[#37352f] text-white" },
-  applied:     { base: "bg-blue-50 text-blue-700",             active: "bg-blue-500 text-white" },
-  online_test: { base: "bg-amber-50 text-amber-800",           active: "bg-amber-400 text-white" },
-  interview:   { base: "bg-violet-50 text-violet-700",         active: "bg-indigo-500 text-white" },
-  offer:       { base: "bg-emerald-50 text-emerald-800",       active: "bg-emerald-500 text-white" },
-  rejected:    { base: "bg-red-50 text-red-800",               active: "bg-red-500 text-white" },
-  withdrawn:   { base: "bg-gray-100 text-gray-700",            active: "bg-gray-500 text-white" },
+  all:         { base: "bg-white/5 text-notion-muted",               active: "bg-white text-notion-bg" },
+  applied:     { base: "bg-accent-purple/10 text-accent-purple",      active: "bg-accent-purple text-notion-bg" },
+  online_test: { base: "bg-accent-purple/10 text-accent-purple",      active: "bg-accent-purple text-notion-bg" },
+  interview:   { base: "bg-accent-purple/10 text-accent-purple",      active: "bg-accent-purple text-notion-bg" },
+  offer:       { base: "bg-accent-green/10 text-accent-green",        active: "bg-accent-green text-notion-bg" },
+  rejected:    { base: "bg-red-500/10 text-red-400",                  active: "bg-red-500 text-notion-bg" },
+  withdrawn:   { base: "bg-notion-sidebar text-notion-muted",         active: "bg-notion-muted text-notion-bg" },
 };
 
 const selectClass =
-  "h-9 rounded-[9px] border border-[#e8e6e1] bg-white px-3 text-[13px] text-[#37352f] cursor-pointer outline-none shadow-sm appearance-auto focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100";
+  "h-9 rounded-[9px] border border-notion-border bg-notion-card px-3 text-[13px] text-notion-text cursor-pointer outline-none shadow-soft appearance-auto focus:border-accent-purple/50 focus:ring-2 focus:ring-accent-purple/20";
 
 export default function Jobs() {
   const [statusFilter, setStatusFilter] = useState("all");
@@ -80,22 +80,22 @@ export default function Jobs() {
       {/* ── Page header ── */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-extrabold text-[#37352f] tracking-tight mb-1">
+          <h1 className="text-2xl font-extrabold text-notion-text tracking-tight mb-1">
             My Applications
           </h1>
-          <p className="text-[13.5px] text-[#6b6b6b]">
+          <p className="text-[13.5px] text-notion-muted">
             Search, filter, and manage your applications.
           </p>
         </div>
         <Link to="/jobs/new" className="no-underline">
-          <button className="flex items-center justify-center gap-1.5 bg-indigo-500 text-white border-none rounded-[10px] px-4 py-[9px] text-[13.5px] font-semibold cursor-pointer shadow-[0_2px_10px_rgba(99,102,241,0.25)] transition-all hover:bg-indigo-600 hover:scale-[1.03] w-full sm:w-auto">
+          <button className="flex items-center justify-center gap-1.5 bg-accent-purple text-notion-bg border-none rounded-[10px] px-4 py-[9px] text-[14.5px] font-bold cursor-pointer shadow-soft transition-all hover:brightness-110 hover:scale-[1.03] w-full sm:w-auto">
             <Plus size={15} /> Add Job
           </button>
         </Link>
       </div>
 
       {/* ── Filters card ── */}
-      <div className="bg-white border border-[#e8e6e1] rounded-2xl px-4 sm:px-5 py-4 shadow-sm flex flex-col gap-3">
+      <div className="bg-notion-card border border-notion-border rounded-2xl px-4 sm:px-5 py-4 shadow-soft flex flex-col gap-3">
         {/* Search */}
         <Input
           type="text"
@@ -139,24 +139,24 @@ export default function Jobs() {
 
       {/* ── Results ── */}
       {isLoading ? (
-        <div className="text-center py-16 text-[13.5px] text-[#6b6b6b]">
+        <div className="text-center py-16 text-[13.5px] text-notion-muted">
           Loading jobs…
         </div>
       ) : filteredAndSortedJobs.length === 0 ? (
-        <div className="bg-white border border-[#e8e6e1] rounded-2xl py-16 px-5 text-center shadow-sm">
-          <h3 className="text-base font-bold text-[#37352f] mb-2">
+        <div className="bg-notion-card border border-notion-border rounded-2xl py-16 px-5 text-center shadow-soft">
+          <h3 className="text-base font-bold text-notion-text mb-2">
             {searchQuery || statusFilter !== "all" || typeFilter !== "all"
               ? "No jobs match your filters"
               : "No jobs yet"}
           </h3>
-          <p className="text-[13.5px] text-[#6b6b6b] mb-5">
+          <p className="text-[13.5px] text-notion-muted mb-5">
             {searchQuery || statusFilter !== "all" || typeFilter !== "all"
               ? "Try adjusting your search or filters"
               : "Start tracking your job applications"}
           </p>
           {!searchQuery && statusFilter === "all" && typeFilter === "all" && (
             <Link to="/jobs/new" className="no-underline">
-              <button className="bg-indigo-500 text-white border-none rounded-[10px] px-5 py-[9px] text-[13.5px] font-semibold cursor-pointer shadow-[0_2px_8px_rgba(99,102,241,0.25)] hover:bg-indigo-600 transition-colors">
+              <button className="bg-accent-purple text-notion-bg border-none rounded-[10px] px-5 py-[9px] text-[14.5px] font-bold cursor-pointer shadow-soft hover:brightness-110 transition-all">
                 Add Your First Job
               </button>
             </Link>
@@ -164,10 +164,10 @@ export default function Jobs() {
         </div>
       ) : (
         <>
-          <p className="text-[13px] text-[#9b9994]">
+          <p className="text-[13px] text-notion-muted">
             Showing{" "}
-            <strong className="text-[#6b6b6b]">{filteredAndSortedJobs.length}</strong> of{" "}
-            <strong className="text-[#6b6b6b]">{jobs?.length || 0}</strong> applications
+            <strong className="text-notion-text">{filteredAndSortedJobs.length}</strong> of{" "}
+            <strong className="text-notion-text">{jobs?.length || 0}</strong> applications
           </p>
           <div
             className="grid gap-3"

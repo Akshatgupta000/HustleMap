@@ -89,11 +89,8 @@ export default function InterviewHub({ job, onUpdate }) {
   };
 
   const getDifficultyColor = (difficulty) => {
-    if (!difficulty) return "text-black";
-    if (difficulty <= 2) return "text-blue-600";
-    if (difficulty <= 3) return "text-yellow-600";
-    if (difficulty <= 4) return "text-orange-600";
-    return "text-red-600";
+    if (!difficulty) return "text-notion-text";
+    return "text-accent-purple";
   };
 
   const getDifficultyLabel = (difficulty) => {
@@ -107,13 +104,13 @@ export default function InterviewHub({ job, onUpdate }) {
   return (
     <div className="w-full max-w-5xl mx-auto">
       {/* Main Container */}
-      <div className="space-y-6 bg-white border-2 border-black p-4 sm:p-6">
+      <div className="space-y-6 bg-notion-card border-2 border-notion-border p-4 sm:p-6">
         {/* Header */}
-        <div className="border-b-2 border-black pb-3">
-          <h2 className="page-title text-black font-bold mb-1.5">
+        <div className="border-b-2 border-notion-border pb-3">
+          <h2 className="page-title text-notion-text font-bold mb-1.5">
             Interview Summary
           </h2>
-          <p className="helper-text text-gray-700">
+          <p className="helper-text text-notion-muted">
             Difficulty rating and questions asked, with notes or answers.
           </p>
 
@@ -121,8 +118,8 @@ export default function InterviewHub({ job, onUpdate }) {
           {(interviewDifficulty ||
             (interviewQuestions &&
               interviewQuestions.some((q) => q.question))) && (
-            <div className="mt-3 p-2.5 bg-blue-50 border border-blue-200 rounded">
-              <p className="helper-text text-blue-900 font-medium">
+            <div className="mt-3 p-2.5 bg-accent-purple/10 border border-accent-purple/20 rounded">
+              <p className="helper-text text-accent-purple font-medium">
                 Interview Summary:
                 {interviewDifficulty &&
                   ` • Overall Difficulty: ${interviewDifficulty}/5 ${getDifficultyLabel(interviewDifficulty)}`}
@@ -137,8 +134,8 @@ export default function InterviewHub({ job, onUpdate }) {
           {!interviewDifficulty &&
             (!interviewQuestions ||
               !interviewQuestions.some((q) => q.question)) && (
-              <div className="mt-3 p-3 bg-gray-50 border border-gray-200 rounded">
-                <p className="helper-text text-gray-700">
+              <div className="mt-3 p-3 bg-notion-bg/50 border border-notion-border rounded">
+                <p className="helper-text text-notion-muted">
                   No interview summary added yet. Add difficulty rating and
                   questions below.
                 </p>
@@ -147,11 +144,11 @@ export default function InterviewHub({ job, onUpdate }) {
         </div>
 
         {/* Interview Difficulty Rating Section */}
-        <div className="space-y-3 bg-gray-50 border-2 border-black p-3">
-          <label className="block section-heading text-black font-bold">
+        <div className="space-y-3 bg-notion-bg/30 border-2 border-notion-border p-3">
+          <label className="block section-heading text-notion-text font-bold">
             ⭐ Overall Difficulty
           </label>
-          <p className="helper-text text-gray-600 mb-2">
+          <p className="helper-text text-notion-muted mb-2">
             How difficult was this interview? (1 = Easy, 5 = Very Hard)
           </p>
           <div className="flex flex-wrap gap-2">
@@ -170,8 +167,8 @@ export default function InterviewHub({ job, onUpdate }) {
                 }}
                 className={`w-10 h-10 sm:w-12 sm:h-12 border-2 font-bold text-center flex items-center justify-center transition-all ${
                   interviewDifficulty === rating
-                    ? "bg-black text-white border-black scale-110"
-                    : "bg-white text-black border-black hover:bg-gray-200"
+                    ? "bg-accent-purple text-white border-accent-purple scale-110"
+                    : "bg-notion-card text-notion-text border-notion-border hover:bg-notion-bg"
                 }`}
                 title={`Rate as ${rating} star${rating !== 1 ? "s" : ""}`}
               >
@@ -191,15 +188,15 @@ export default function InterviewHub({ job, onUpdate }) {
 
         {/* Interview Questions Section */}
         <div className="space-y-3">
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 border-b-2 border-black pb-3">
-            <label className="block section-heading text-black font-bold">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 border-b-2 border-notion-border pb-3">
+            <label className="block section-heading text-notion-text font-bold">
               Questions Asked (
               {interviewQuestions.filter((q) => q.question).length})
             </label>
             <button
               type="button"
               onClick={addQuestion}
-              className="w-full sm:w-auto form-label px-3 py-1.5 bg-black text-white border-2 border-black hover:bg-gray-800 transition-colors"
+              className="w-full sm:w-auto form-label px-3 py-1.5 bg-accent-purple text-notion-bg border-2 border-accent-purple hover:brightness-110 transition-all font-bold"
             >
               + Add Question
             </button>
@@ -209,7 +206,7 @@ export default function InterviewHub({ job, onUpdate }) {
           <div className="space-y-2 max-h-96 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
             {interviewQuestions.length === 0 ? (
               <div className="text-center py-6">
-                <p className="helper-text text-gray-500">
+                <p className="helper-text text-notion-muted">
                   No questions logged yet. Click "+ Add Question" to record
                   interview questions.
                 </p>
@@ -218,24 +215,24 @@ export default function InterviewHub({ job, onUpdate }) {
               interviewQuestions.map((q, index) => (
                 <div
                   key={index}
-                  className="border-2 border-black bg-white hover:shadow-md transition-shadow"
+                  className="border-2 border-notion-border bg-notion-card hover:shadow-md transition-shadow"
                 >
                   {/* Question Header - Collapsible */}
                   <button
                     type="button"
                     onClick={() => toggleQuestionExpand(index)}
-                    className="w-full px-3 py-2 bg-gray-100 border-b-2 border-black hover:bg-gray-200 transition-colors flex items-center justify-between"
+                    className="w-full px-3 py-2 bg-notion-bg/50 border-b-2 border-notion-border hover:bg-notion-bg transition-colors flex items-center justify-between"
                   >
                     <div className="flex items-center gap-2 text-left flex-1">
-                      <span className="form-label text-black font-bold min-w-fit">
+                      <span className="form-label text-notion-text font-bold min-w-fit">
                         Q {index + 1}
                       </span>
                       {q.round && (
-                        <span className="badge-text bg-black text-white px-1.5 py-0.5 rounded">
+                        <span className="badge-text bg-notion-text text-notion-bg px-1.5 py-0.5 rounded">
                           {q.round}
                         </span>
                       )}
-                      <span className="body-text text-gray-700 line-clamp-1">
+                      <span className="body-text text-notion-text/80 line-clamp-1">
                         {q.question}
                       </span>
                     </div>
@@ -248,10 +245,10 @@ export default function InterviewHub({ job, onUpdate }) {
 
                   {/* Question Content - Collapsible */}
                   {expandedQuestions[index] && (
-                    <div className="p-3 space-y-3 bg-white">
+                    <div className="p-3 space-y-3 bg-notion-card">
                       {/* Round */}
                       <div>
-                        <label className="block form-label text-black mb-1.5 font-semibold">
+                        <label className="block form-label text-notion-text mb-1.5 font-semibold">
                           Interview Round
                         </label>
                         <input
@@ -260,14 +257,14 @@ export default function InterviewHub({ job, onUpdate }) {
                           onChange={(e) =>
                             handleQuestionChange(index, "round", e.target.value)
                           }
-                          className="w-full px-3 py-1.5 body-text border-2 border-black focus:border-black focus:outline-none focus:ring-2 focus:ring-gray-300"
+                          className="w-full px-3 py-1.5 body-text border-2 border-notion-border bg-notion-bg text-notion-text focus:border-accent-purple focus:outline-none focus:ring-2 focus:ring-accent-purple/20"
                           placeholder="e.g., Technical Round, HR Round, etc."
                         />
                       </div>
 
                       {/* Question */}
                       <div>
-                        <label className="block form-label text-black mb-1.5 font-semibold">
+                        <label className="block form-label text-notion-text mb-1.5 font-semibold">
                           Question Asked
                         </label>
                         <input
@@ -280,14 +277,14 @@ export default function InterviewHub({ job, onUpdate }) {
                               e.target.value,
                             )
                           }
-                          className="w-full px-3 py-1.5 body-text border-2 border-black focus:border-black focus:outline-none focus:ring-2 focus:ring-gray-300"
+                          className="w-full px-3 py-1.5 body-text border-2 border-notion-border bg-notion-bg text-notion-text focus:border-accent-purple focus:outline-none focus:ring-2 focus:ring-accent-purple/20"
                           placeholder="What was the question?"
                         />
                       </div>
 
                       {/* Notes / Answer */}
                       <div>
-                        <label className="block form-label text-black mb-1.5 font-semibold">
+                        <label className="block form-label text-notion-text mb-1.5 font-semibold">
                           Notes / Answer
                         </label>
                         <textarea
@@ -300,7 +297,7 @@ export default function InterviewHub({ job, onUpdate }) {
                             )
                           }
                           rows={3}
-                          className="w-full px-3 py-1.5 body-text border-2 border-black focus:border-black focus:outline-none focus:ring-2 focus:ring-gray-300 resize-none"
+                          className="w-full px-3 py-1.5 body-text border-2 border-notion-border bg-notion-bg text-notion-text focus:border-accent-purple focus:outline-none focus:ring-2 focus:ring-accent-purple/20 resize-none"
                           placeholder="Your answer, approach, or notes about this question"
                         />
                       </div>
@@ -308,9 +305,9 @@ export default function InterviewHub({ job, onUpdate }) {
                       {/* Remove Button */}
                       {interviewQuestions.length > 1 && (
                         <button
-                          type="button"
-                          onClick={() => removeQuestion(index)}
-                          className="w-full px-3 py-1.5 form-label border-2 border-red-500 text-red-600 hover:bg-red-50 font-semibold transition-colors"
+                           type="button"
+                           onClick={() => removeQuestion(index)}
+                           className="w-full px-3 py-1.5 form-label border-2 border-red-500/50 text-red-400 hover:bg-red-500/10 font-semibold transition-colors"
                         >
                           🗑️ Remove Question
                         </button>
@@ -326,8 +323,8 @@ export default function InterviewHub({ job, onUpdate }) {
         {/* Summary Footer */}
         {(interviewDifficulty ||
           interviewQuestions.filter((q) => q.question).length > 0) && (
-          <div className="bg-blue-50 border-2 border-blue-300 p-3 rounded-md">
-            <p className="helper-text text-blue-900 font-medium">
+          <div className="bg-accent-purple/10 border-2 border-accent-purple/20 p-3 rounded-md">
+            <p className="helper-text text-accent-purple font-medium">
               Interview logged:
               {interviewDifficulty && ` Difficulty ${interviewDifficulty}/5`}
               {interviewQuestions.filter((q) => q.question).length > 0 &&

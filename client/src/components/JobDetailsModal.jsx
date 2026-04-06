@@ -13,12 +13,12 @@ const STATUS_LABELS = {
 };
 
 const STATUS_COLORS = {
-  applied: "bg-blue-100 text-blue-800 border-blue-300",
-  online_test: "bg-purple-100 text-purple-800 border-purple-300",
-  interview: "bg-yellow-100 text-yellow-800 border-yellow-300",
-  offer: "bg-green-100 text-green-800 border-green-300",
-  rejected: "bg-red-100 text-red-800 border-red-300",
-  withdrawn: "bg-gray-100 text-gray-800 border-gray-300",
+  applied: "bg-accent-purple/10 text-accent-purple border-accent-purple/20",
+  online_test: "bg-accent-purple/10 text-accent-purple border-accent-purple/20",
+  interview: "bg-accent-purple/10 text-accent-purple border-accent-purple/20",
+  offer: "bg-accent-green/10 text-accent-green border-accent-green/20",
+  rejected: "bg-red-500/10 text-red-400 border-red-500/20",
+  withdrawn: "bg-notion-sidebar text-notion-muted border-notion-border",
 };
 
 const APPLICATION_TYPE_LABELS = {
@@ -85,7 +85,7 @@ export default function JobDetailsModal({ job, onClose }) {
               className={cn(
                 "border",
                 STATUS_COLORS[job.status] ||
-                  "bg-gray-100 text-gray-800 border-gray-300",
+                  "bg-notion-sidebar text-notion-muted border-notion-border",
               )}
             >
               {STATUS_LABELS[job.status] || job.status}
@@ -100,8 +100,8 @@ export default function JobDetailsModal({ job, onClose }) {
 
           {/* Interview Status Recommendation */}
           {job.status === "interview" && (
-            <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl">
-              <p className="text-sm text-amber-950 font-medium">
+            <div className="p-3 bg-accent-purple/10 border border-accent-purple/20 rounded-xl">
+              <p className="text-sm text-accent-purple font-medium">
                 ⏰ Interview scheduled — preparation recommended. Consider
                 adding interview questions.
               </p>
@@ -242,7 +242,7 @@ export default function JobDetailsModal({ job, onClose }) {
                     href={job.job_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-3 py-2 rounded-xl border border-notion-border bg-white shadow-soft text-sm text-notion-accent hover:bg-black/5 transition-all duration-200"
+                    className="px-3 py-2 rounded-xl border border-notion-border bg-notion-bg shadow-soft text-sm text-accent-purple hover:bg-white/5 transition-all duration-200"
                   >
                     🔗 Job Posting
                   </a>
@@ -252,7 +252,7 @@ export default function JobDetailsModal({ job, onClose }) {
                     href={job.resume_link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-3 py-2 rounded-xl border border-notion-border bg-white shadow-soft text-sm text-notion-accent hover:bg-black/5 transition-all duration-200"
+                    className="px-3 py-2 rounded-xl border border-notion-border bg-notion-bg shadow-soft text-sm text-accent-purple hover:bg-white/5 transition-all duration-200"
                   >
                     📄 Resume
                   </a>
@@ -262,7 +262,7 @@ export default function JobDetailsModal({ job, onClose }) {
                     href={job.portfolio_link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-3 py-2 rounded-xl border border-notion-border bg-white shadow-soft text-sm text-notion-accent hover:bg-black/5 transition-all duration-200"
+                    className="px-3 py-2 rounded-xl border border-notion-border bg-notion-bg shadow-soft text-sm text-accent-purple hover:bg-white/5 transition-all duration-200"
                   >
                     🎨 Portfolio
                   </a>
@@ -343,12 +343,12 @@ export default function JobDetailsModal({ job, onClose }) {
                       {job.interview_questions.map((qna, index) => (
                         <div
                           key={index}
-                          className="bg-white border border-notion-border p-3 space-y-2 rounded-xl shadow-soft"
+                          className="bg-notion-bg border border-notion-border p-3 space-y-2 rounded-xl shadow-soft"
                         >
                           {/* Round */}
                           {qna.round && (
                             <div className="pb-1.5 border-b border-notion-border">
-                              <p className="text-xs font-semibold text-notion-accent uppercase tracking-wide">
+                              <p className="text-xs font-semibold text-accent-purple uppercase tracking-wide">
                                 {qna.round}
                               </p>
                             </div>
@@ -398,8 +398,8 @@ export default function JobDetailsModal({ job, onClose }) {
                 <h3 className="page-title mb-3">
                   Interview Summary
                 </h3>
-                <div className="p-3 bg-indigo-50 border border-indigo-200 rounded-xl">
-                  <p className="text-sm text-indigo-900">
+                <div className="p-3 bg-accent-purple/10 border border-accent-purple/20 rounded-xl shadow-soft">
+                  <p className="text-sm text-accent-purple">
                     No interview summary added yet. Add difficulty rating and
                     questions below.
                   </p>

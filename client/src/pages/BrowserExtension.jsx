@@ -45,23 +45,23 @@ export default function BrowserExtension() {
       {/* Header Section */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-3 mb-1">
-          <div className="w-10 h-10 rounded-xl bg-white border border-[#e8e6e1] flex items-center justify-center shadow-soft">
-            <Puzzle size={20} className="text-indigo-500" />
+          <div className="w-10 h-10 rounded-xl bg-notion-card border border-notion-border flex items-center justify-center shadow-soft">
+            <Puzzle size={20} className="text-accent-purple" />
           </div>
-          <h1 className="text-2xl font-extrabold text-[#37352f] tracking-tight">
+          <h1 className="text-2xl font-extrabold text-notion-text tracking-tight">
             Browser Extension
           </h1>
         </div>
-        <p className="text-[14px] text-[#6b6b6b] leading-relaxed max-w-2xl">
+        <p className="text-[14px] text-notion-muted leading-relaxed max-w-2xl">
           Capture job listings directly from LinkedIn, Indeed, and Glassdoor without manual data entry. 
           Our extension saves structured details and screenshots directly to your HustleMap dashboard.
         </p>
       </div>
 
       {/* Main Content Card */}
-      <div className="bg-white border border-[#e8e6e1] rounded-2xl overflow-hidden shadow-soft">
-        <div className="px-6 py-5 border-b border-[#f0ede8]">
-          <h2 className="text-[16px] font-bold text-[#37352f] tracking-tight flex items-center gap-2">
+      <div className="bg-notion-card border border-notion-border rounded-2xl overflow-hidden shadow-soft">
+        <div className="px-6 py-5 border-b border-notion-border/50">
+          <h2 className="text-[16px] font-bold text-notion-text tracking-tight flex items-center gap-2">
             HustleMap Job Capture Setup Guide
           </h2>
         </div>
@@ -71,14 +71,14 @@ export default function BrowserExtension() {
             <div className="grid gap-6">
               {steps.map((step, index) => (
                 <div key={index} className="flex gap-5 items-start group">
-                  <div className="shrink-0 w-10 h-10 rounded-xl bg-[#f7f6f3] border border-[#e8e6e1] flex items-center justify-center text-[#6b6b6b] shadow-sm transition-colors group-hover:bg-indigo-50 group-hover:border-indigo-100 group-hover:text-indigo-600">
+                  <div className="shrink-0 w-10 h-10 rounded-xl bg-notion-bg border border-notion-border flex items-center justify-center text-notion-muted shadow-sm transition-all group-hover:bg-accent-purple/10 group-hover:border-accent-purple/30 group-hover:text-accent-purple">
                     <step.icon size={18} strokeWidth={2} />
                   </div>
                   <div className="flex flex-col gap-1.5 pt-0.5">
-                    <h3 className="text-[14.5px] font-bold text-[#37352f] tracking-tight">
+                    <h3 className="text-[14.5px] font-bold text-notion-text tracking-tight">
                       {step.title}
                     </h3>
-                    <p className="text-[13.5px] text-[#6b6b6b] leading-relaxed">
+                    <p className="text-[13.5px] text-notion-muted leading-relaxed">
                       {step.description}
                     </p>
                   </div>
@@ -86,22 +86,22 @@ export default function BrowserExtension() {
               ))}
             </div>
 
-            <div className="mt-4 p-5 bg-amber-50/50 border border-amber-100 rounded-2xl flex gap-4 items-center">
-              <div className="shrink-0 w-9 h-9 rounded-full bg-white border border-amber-200 flex items-center justify-center text-amber-600 shadow-sm">
+            <div className="mt-4 p-5 bg-accent-yellow/5 border border-accent-yellow/20 rounded-2xl flex gap-4 items-center shadow-soft">
+              <div className="shrink-0 w-9 h-9 rounded-full bg-notion-card border border-accent-yellow/30 flex items-center justify-center text-accent-yellow shadow-sm">
                 <Settings size={16} />
               </div>
               <div className="flex-1">
-                <p className="text-[13px] font-bold text-amber-900 tracking-tight">Setup your Extension ID</p>
-                <p className="text-[12.5px] text-amber-800/80 leading-relaxed">
-                  After installing, copy your unique <strong className="text-amber-900">Extension ID</strong> from the dashboard sidebar and paste it into the extension settings.
+                <p className="text-[13px] font-bold text-accent-yellow tracking-tight">Setup your Extension ID</p>
+                <p className="text-[12.5px] text-accent-yellow/80 leading-relaxed">
+                  After installing, copy your unique <strong className="text-accent-yellow font-bold">Extension ID</strong> from the dashboard sidebar and paste it into the extension settings.
                 </p>
               </div>
             </div>
 
-            <div className="pt-6 border-t border-[#f0ede8] flex flex-col sm:flex-row items-center justify-between gap-5">
+            <div className="pt-6 border-t border-notion-border/50 flex flex-col sm:flex-row items-center justify-between gap-5">
               <div>
-                <p className="text-[14px] font-bold text-[#37352f] mb-1">Get the latest version</p>
-                <p className="text-[13px] text-[#6b6b6b]">The extension source code is available on GitHub.</p>
+                <p className="text-[14px] font-bold text-notion-text mb-1">Get the latest version</p>
+                <p className="text-[13px] text-notion-muted">The extension source code is available on GitHub.</p>
               </div>
               <a 
                 href="https://github.com/Akshatgupta000/HustleMap-extension" 
@@ -111,7 +111,7 @@ export default function BrowserExtension() {
               >
                 <Button 
                   variant="default"
-                  className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-semibold flex items-center justify-center gap-2 h-11 px-6 rounded-xl shadow-md transition-all hover:scale-[1.02]"
+                  className="w-full sm:w-auto bg-accent-purple hover:brightness-110 text-notion-bg font-bold flex items-center justify-center gap-2 h-11 px-6 rounded-xl shadow-soft transition-all hover:scale-[1.02]"
                 >
                   View Extension on GitHub
                   <ExternalLink size={16} />
