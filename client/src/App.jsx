@@ -13,6 +13,7 @@ import Jobs from "./pages/Jobs";
 import JobForm from "./pages/JobForm";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AppLayout from "./components/AppLayout";
+import ScrollToTop from "./components/ScrollToTop";
 
 // React Router v7 future flags
 const futureFlags = {
@@ -47,6 +48,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter future={futureFlags}>
+        <ScrollToTop />
         <div className="min-h-screen bg-notion-bg">
           <Routes>
             <Route

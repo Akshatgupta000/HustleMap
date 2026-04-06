@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { jobsAPI } from '../lib/api';
 import { getUser } from '../lib/auth';
@@ -21,8 +21,6 @@ const STATUS_LABELS = {
   withdrawn: 'Withdrawn',
 };
 
-const SCROLL_POSITION_KEY = 'dashboard_scroll_position';
-
 export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -31,7 +29,6 @@ export default function Dashboard() {
   const [showAnalyticsDetails, setShowAnalyticsDetails] = useState(false);
   const [showApplications, setShowApplications] = useState(true);
   const [selectedJob, setSelectedJob] = useState(null);
-  const dashboardRef = useRef(null);
 
   const user = getUser();
 
@@ -44,24 +41,6 @@ export default function Dashboard() {
     queryKey: ['jobStats'],
     queryFn: () => jobsAPI.getStats().then((res) => res.data),
   });
-
-  useEffect(() => {
-    const savedScrollPosition = sessionStorage.getItem(SCROLL_POSITION_KEY);
-    if (savedScrollPosition && dashboardRef.current) {
-      setTimeout(() => {
-        dashboardRef.current?.parentElement?.scrollTo(0, parseInt(savedScrollPosition, 10));
-      }, 0);
-    }
-  }, []);
-
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      const scrollPosition = dashboardRef.current?.parentElement?.scrollY || window.scrollY || 0;
-      sessionStorage.setItem(SCROLL_POSITION_KEY, scrollPosition.toString());
-    };
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, []);
 
   const filteredAndSortedJobs = useMemo(() => {
     if (!jobs || !Array.isArray(jobs)) return [];
@@ -110,7 +89,7 @@ export default function Dashboard() {
     'h-[38px] w-full sm:w-auto rounded-[10px] border border-notion-border bg-notion-card px-3 text-[13.5px] text-notion-text cursor-pointer outline-none transition-all shadow-sm focus:border-accent-purple focus:ring-2 focus:ring-accent-purple/10';
 
   return (
-    <div ref={dashboardRef} className="flex flex-col gap-5">
+    <div className="flex flex-col gap-5">
 
       {/* ── Page header ── */}
       <div className="flex flex-col gap-3">
