@@ -136,7 +136,21 @@ if (process.env.NODE_ENV === 'production') {
     next();
   });
 }
-// Health check
+// Uptime Monitor & Root Health Check
+app.get('/', (req, res) => {
+  res.send('API is running');
+});
+
+// Service Health Check
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    service: 'job-tracker-server',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Health check (existing API version)
 app.get('/api/health', healthCheck);
 
 // Routes
