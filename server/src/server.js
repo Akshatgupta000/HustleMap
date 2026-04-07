@@ -138,14 +138,14 @@ if (process.env.NODE_ENV === 'production') {
 }
 // Uptime Monitor & Root Health Check
 app.get('/', (req, res) => {
-  res.send('API is running');
+  res.send('HustleMap API running');
 });
 
 // Service Health Check
 app.get('/health', (req, res) => {
   res.json({
-    status: 'ok',
-    service: 'job-tracker-server',
+    status: 'OK',
+    service: 'HustleMap API',
     timestamp: new Date().toISOString()
   });
 });
