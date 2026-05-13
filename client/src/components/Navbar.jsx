@@ -4,7 +4,7 @@ import { clearAuth, getUser, setAuth } from "../lib/auth";
 import { authAPI } from "../lib/api";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { LayoutDashboard, Briefcase, LogOut, Copy, Sparkles, Menu, X, Puzzle } from "lucide-react";
+import { LayoutDashboard, Briefcase, LogOut, Copy, Sparkles, Menu, X, Puzzle, Plus } from "lucide-react";
 
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
@@ -72,14 +72,11 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
   return (
     <>
       {/* ── Mobile Header ── */}
-      <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-notion-border bg-notion-bg px-4 lg:hidden">
+      <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-slate-200 bg-white px-4 lg:hidden">
         <Link
           to="/dashboard"
-          className="flex items-center gap-2 text-sm font-semibold tracking-tight text-notion-text"
+          className="flex items-center text-[18px] font-bold tracking-tight text-slate-900"
         >
-          <span className="grid h-7 w-7 place-items-center rounded-xl bg-notion-card shadow-soft border border-notion-border">
-            <Sparkles className="h-4 w-4 text-accent-purple" />
-          </span>
           HustleMap
         </Link>
         <Button
@@ -103,7 +100,7 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
       {/* ── Sidebar ── */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-[272px] border-r border-notion-border bg-notion-sidebar transition-transform duration-300 ease-in-out lg:sticky lg:top-0 lg:h-screen lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 w-[272px] border-r border-slate-200 bg-white transition-transform duration-300 ease-in-out lg:sticky lg:top-0 lg:h-screen lg:translate-x-0",
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
@@ -112,11 +109,8 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
             <Link
               to="/dashboard"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="flex items-center gap-2 rounded-xl px-2 py-1.5 text-sm font-semibold tracking-tight text-notion-text hover:bg-white/5 transition-all duration-200"
+              className="flex items-center rounded-xl px-2 py-1.5 text-[18px] font-bold tracking-tight text-slate-900 hover:bg-slate-100 transition-all duration-200"
             >
-              <span className="grid h-7 w-7 place-items-center rounded-xl bg-notion-card shadow-soft border border-notion-border">
-                <Sparkles className="h-4 w-4 text-accent-purple" />
-              </span>
               HustleMap
             </Link>
             <Button
@@ -129,15 +123,30 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
             </Button>
           </div>
 
+          <div className="mb-6">
+            <Link
+              to="/jobs/new"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="flex items-center justify-between rounded-2xl bg-white p-3 hover:bg-slate-50 transition-colors border border-slate-200 shadow-sm group"
+            >
+              <div className="text-[13px] font-bold leading-tight text-slate-700 group-hover:text-slate-900 ml-1">
+                Add<br />new Job
+              </div>
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-900 text-white shadow-sm transition-transform group-hover:scale-105">
+                <Plus className="h-5 w-5" />
+              </div>
+            </Link>
+          </div>
+
           <nav className="space-y-1">
             <Link
               to="/dashboard"
               onClick={() => setIsMobileMenuOpen(false)}
               className={cn(
-                "flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition-all duration-200",
+                "flex items-center gap-3 rounded-xl px-4 py-2.5 text-[14px] transition-all duration-200",
                 isActive("/dashboard")
-                  ? "bg-accent-purple/10 border-l-4 border-accent-purple text-accent-purple shadow-none rounded-r-xl rounded-l-none"
-                  : "text-notion-text/90 hover:bg-white/5",
+                  ? "bg-slate-100 text-slate-900 font-semibold shadow-sm"
+                  : "text-slate-500 hover:bg-slate-50 hover:text-slate-900 font-medium",
               )}
             >
               <LayoutDashboard className="h-4 w-4" />
@@ -147,10 +156,10 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
               to="/jobs"
               onClick={() => setIsMobileMenuOpen(false)}
               className={cn(
-                "flex items-center gap-2 px-3 py-2 text-sm transition-all duration-200",
+                "flex items-center gap-3 rounded-xl px-4 py-2.5 text-[14px] transition-all duration-200",
                 isActive("/jobs")
-                  ? "bg-accent-purple/10 border-l-4 border-accent-purple text-accent-purple shadow-none rounded-r-xl rounded-l-none"
-                  : "text-notion-text/90 hover:bg-white/5",
+                  ? "bg-slate-100 text-slate-900 font-semibold shadow-sm"
+                  : "text-slate-500 hover:bg-slate-50 hover:text-slate-900 font-medium",
               )}
             >
               <Briefcase className="h-4 w-4" />
@@ -160,10 +169,10 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
               to="/extension"
               onClick={() => setIsMobileMenuOpen(false)}
               className={cn(
-                "flex items-center gap-2 px-3 py-2 text-sm transition-all duration-200",
+                "flex items-center gap-3 rounded-xl px-4 py-2.5 text-[14px] transition-all duration-200",
                 isActive("/extension")
-                  ? "bg-accent-purple/10 border-l-4 border-accent-purple text-accent-purple shadow-none rounded-r-xl rounded-l-none"
-                  : "text-notion-text/90 hover:bg-white/5",
+                  ? "bg-slate-100 text-slate-900 font-semibold shadow-sm"
+                  : "text-slate-500 hover:bg-slate-50 hover:text-slate-900 font-medium",
               )}
             >
               <Puzzle className="h-4 w-4" />
@@ -172,67 +181,46 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
           </nav>
 
           {user && (
-            <div className="mt-4 rounded-xl border border-notion-border bg-notion-card shadow-soft p-3">
-              <div className="flex items-center justify-between gap-2">
-                <div className="min-w-0">
-                  <p className="text-sm font-medium text-notion-text truncate">
-                    {user.name}
-                  </p>
-                  <p className="text-xs text-notion-muted truncate">
-                    Signed in
-                  </p>
-                </div>
-                <LayoutDashboard className="h-4 w-4 text-notion-muted" />
-              </div>
+            <div className="mt-auto pt-4">
+              <div className="rounded-xl border border-slate-200 bg-slate-50 shadow-sm p-3">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[12px] text-slate-500 font-semibold tracking-wide">EXTENSION ID</span>
+                    {user.extensionId ? (
+                      <Badge className="font-mono text-[10px]" variant="muted">
+                        {user.extensionId}
+                      </Badge>
+                    ) : (
+                      <Button
+                        onClick={ensureExtensionId}
+                        variant="outline"
+                        size="sm"
+                        className="h-6 text-[11px] px-2"
+                      >
+                        Generate
+                      </Button>
+                    )}
+                  </div>
 
-              <div className="mt-3 space-y-2">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs text-notion-muted">Extension ID</span>
-                  {user.extensionId ? (
-                    <Badge className="font-mono" variant="muted">
-                      {user.extensionId}
-                    </Badge>
-                  ) : (
+                  {user.extensionId && (
                     <Button
-                      onClick={ensureExtensionId}
-                      variant="outline"
+                      onClick={() => {
+                        navigator.clipboard.writeText(user.extensionId);
+                        toast.success("Extension ID copied to clipboard");
+                      }}
+                      variant="secondary"
                       size="sm"
-                      className="h-8"
+                      className="w-full justify-between h-8 text-[12px]"
+                      title="Copy Extension ID"
                     >
-                      Generate
+                      Copy ID
+                      <Copy className="h-3.5 w-3.5 text-slate-500" />
                     </Button>
                   )}
                 </div>
-
-                {user.extensionId && (
-                  <Button
-                    onClick={() => {
-                      navigator.clipboard.writeText(user.extensionId);
-                      toast.success("Extension ID copied to clipboard");
-                    }}
-                    variant="secondary"
-                    size="sm"
-                    className="w-full justify-between"
-                    title="Copy Extension ID"
-                  >
-                    Copy ID
-                    <Copy className="h-4 w-4 text-notion-muted" />
-                  </Button>
-                )}
               </div>
             </div>
           )}
-
-          <div className="mt-auto pt-4">
-            <Button
-              onClick={handleLogout}
-              variant="secondary"
-              className="w-full justify-between"
-            >
-              Logout
-              <LogOut className="h-4 w-4 text-notion-muted" />
-            </Button>
-          </div>
         </div>
       </aside>
     </>

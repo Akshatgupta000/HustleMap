@@ -112,7 +112,7 @@ export default function QuickAddJob() {
         <form onSubmit={handleSubmit} className="space-y-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <div>
-              <label className="block text-sm font-medium text-notion-text mb-1">
+              <label className="block text-sm font-medium text-slate-900 mb-1">
                 Company Name *
               </label>
               <Input
@@ -127,7 +127,7 @@ export default function QuickAddJob() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-notion-text mb-1">
+              <label className="block text-sm font-medium text-slate-900 mb-1">
                 Job Role *
               </label>
               <Input
@@ -142,7 +142,7 @@ export default function QuickAddJob() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-notion-text mb-1">
+              <label className="block text-sm font-medium text-slate-900 mb-1">
                 Status
               </label>
               <select
@@ -150,7 +150,7 @@ export default function QuickAddJob() {
                 onChange={(e) =>
                   setFormData({ ...formData, status: e.target.value })
                 }
-                className="h-10 w-full rounded-xl border border-notion-border bg-notion-card px-3 text-sm text-notion-text shadow-soft transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-purple/30 focus-visible:ring-offset-2 focus-visible:ring-offset-notion-bg"
+                className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-900 shadow-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-purple/30 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
               >
                 {STATUS_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -161,7 +161,7 @@ export default function QuickAddJob() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-notion-text mb-1">
+              <label className="block text-sm font-medium text-slate-900 mb-1">
                 Date
               </label>
               <Input
@@ -184,11 +184,11 @@ export default function QuickAddJob() {
             >
               {createMutation.isPending ? "Adding..." : "Add Job"}
             </Button>
-            <p className="text-sm text-notion-muted">
+            <p className="text-sm text-slate-500">
               Quick entry for urgent applications
             </p>
           </div>
-          <p className="text-sm text-notion-muted">
+          <p className="text-sm text-slate-500">
             Use "Open Full Form" to add complete job details like interview
             notes, resume links, and preparation materials.
           </p>

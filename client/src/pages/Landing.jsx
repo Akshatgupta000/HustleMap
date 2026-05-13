@@ -44,21 +44,21 @@ function FeatureCard({ icon: Icon, title, desc, delay }) {
       <div
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        className={`bg-notion-card border border-notion-border rounded-2xl p-7 cursor-default transition-all duration-300 ${
+        className={`bg-background-card backdrop-blur-xl border border-border rounded-2xl p-7 cursor-default transition-all duration-300 ${
           hovered
-            ? "shadow-[0_12px_32px_rgba(167,139,250,0.10),0_2px_8px_rgba(0,0,0,0.06)] -translate-y-1 scale-[1.015]"
-            : "shadow-sm"
+            ? "shadow-glow -translate-y-1 scale-[1.015] border-brand-500/30"
+            : "shadow-glass"
         }`}
       >
         <div
           className={`w-10 h-10 rounded-[10px] flex items-center justify-center mb-4 transition-colors duration-300 ${
-            hovered ? "bg-accent-purple/20" : "bg-notion-bg"
+            hovered ? "bg-brand-500/20" : "bg-white/5"
           }`}
         >
-          <Icon size={18} className={`transition-colors duration-300 ${hovered ? "text-accent-purple" : "text-notion-muted"}`} strokeWidth={1.8} />
+          <Icon size={18} className={`transition-colors duration-300 ${hovered ? "text-brand-400" : "text-slate-600"}`} strokeWidth={1.8} />
         </div>
-        <h3 className="text-[15px] font-semibold text-notion-text mb-2 tracking-tight">{title}</h3>
-        <p className="text-[13.5px] text-notion-muted leading-relaxed m-0">{desc}</p>
+        <h3 className="text-[15px] font-semibold text-slate-900 mb-2 tracking-tight">{title}</h3>
+        <p className="text-[13.5px] text-slate-600 leading-relaxed m-0">{desc}</p>
       </div>
     </Reveal>
   );
@@ -69,12 +69,12 @@ function Step({ num, title, desc, delay }) {
   return (
     <Reveal delay={delay}>
       <div className="flex gap-5 items-start">
-        <div className="shrink-0 w-9 h-9 rounded-full bg-accent-purple text-notion-bg flex items-center justify-center text-[13px] font-bold mt-0.5 shadow-soft">
+        <div className="shrink-0 w-9 h-9 rounded-full bg-gradient-to-br from-brand-600 to-brand-400 text-slate-900 flex items-center justify-center text-[13px] font-bold mt-0.5 shadow-glow">
           {num}
         </div>
         <div>
-          <h3 className="text-[15px] font-semibold text-notion-text mb-1.5 tracking-tight">{title}</h3>
-          <p className="text-[13.5px] text-notion-muted leading-relaxed m-0">{desc}</p>
+          <h3 className="text-[15px] font-semibold text-slate-900 mb-1.5 tracking-tight">{title}</h3>
+          <p className="text-[13.5px] text-slate-600 leading-relaxed m-0">{desc}</p>
         </div>
       </div>
     </Reveal>
@@ -127,16 +127,13 @@ export default function Landing() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-notion-bg font-[inherit]">
+    <div className="min-h-screen bg-background font-[inherit]">
 
       {/* ── HEADER ── */}
-      <header className="sticky top-0 z-50 border-b border-notion-border bg-notion-bg/80 backdrop-blur-md">
+      <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
         <div className="max-w-[1080px] mx-auto px-6 h-[58px] flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2.5 no-underline">
-            <div className="w-[30px] h-[30px] rounded-lg bg-notion-card border border-notion-border flex items-center justify-center shadow-soft">
-              <Sparkles size={15} className="text-accent-purple" />
-            </div>
-            <span className="text-[14px] font-bold text-notion-text tracking-tight">HustleMap</span>
+          <Link to="/" className="flex items-center no-underline group">
+            <span className="text-[18px] font-bold text-slate-900 tracking-tight">HustleMap</span>
           </Link>
 
           {/* Desktop Nav */}
@@ -145,20 +142,20 @@ export default function Landing() {
               <a
                 key={href}
                 href={href}
-                className="text-[13.5px] text-notion-muted no-underline px-2.5 py-[5px] rounded-lg transition-all hover:text-notion-text hover:bg-white/[0.06]"
+                className="text-[13.5px] text-slate-600 font-medium no-underline px-2.5 py-[5px] rounded-lg transition-all hover:text-slate-900 hover:bg-white/10"
               >
                 {label}
               </a>
             ))}
             <Link
               to="/login"
-              className="text-[13.5px] text-notion-muted no-underline px-2.5 py-[5px] rounded-lg transition-colors hover:text-notion-text"
+              className="text-[13.5px] text-slate-600 font-medium no-underline px-2.5 py-[5px] rounded-lg transition-colors hover:text-slate-900 hover:bg-white/10"
             >
               Login
             </Link>
-            <Link to="/register" className="no-underline">
-              <button className="bg-notion-card text-notion-text border border-notion-border rounded-[9px] px-[15px] py-[7px] text-[13.5px] font-bold cursor-pointer tracking-tight transition-all hover:bg-notion-sidebar hover:scale-[1.03]">
-                Get Started
+            <Link to="/register" className="no-underline ml-1">
+              <button className="bg-white text-slate-900 border border-slate-900 rounded-lg px-[15px] py-[7px] text-[13.5px] font-semibold cursor-pointer tracking-tight transition-all hover:bg-slate-50 hover:shadow-sm">
+                Get started for free
               </button>
             </Link>
           </nav>
@@ -168,19 +165,19 @@ export default function Landing() {
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="md:hidden p-1.5 rounded-lg hover:bg-white/[0.06] transition-colors"
           >
-            {isMobileMenuOpen ? <X size={20} className="text-notion-text" /> : <Menu size={20} className="text-notion-text" />}
+            {isMobileMenuOpen ? <X size={20} className="text-slate-900" /> : <Menu size={20} className="text-slate-900" />}
           </button>
         </div>
 
         {/* Mobile Nav Overlay */}
         {isMobileMenuOpen && (
-          <div className="md:hidden absolute top-[58px] left-0 right-0 bg-notion-bg border-b border-notion-border shadow-xl px-6 py-6 flex flex-col gap-4 animate-in slide-in-from-top duration-200">
+          <div className="md:hidden absolute top-[58px] left-0 right-0 bg-background/95 backdrop-blur-xl border-b border-border shadow-glass px-6 py-6 flex flex-col gap-4 animate-in slide-in-from-top duration-200">
             {[["#features", "Features"], ["#how-it-works", "How it Works"]].map(([href, label]) => (
               <a
                 key={href}
                 href={href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="text-[15px] font-medium text-notion-text no-underline py-2 border-b border-notion-border/50"
+                className="text-[15px] font-medium text-slate-900 no-underline py-2 border-b border-border/50 hover:text-brand-400 transition-colors"
               >
                 {label}
               </a>
@@ -188,13 +185,13 @@ export default function Landing() {
             <Link
               to="/login"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="text-[15px] font-medium text-notion-text no-underline py-2 border-b border-notion-border/50"
+              className="text-[15px] font-medium text-slate-900 no-underline py-2 border-b border-border/50 hover:text-brand-400 transition-colors"
             >
               Login
             </Link>
             <Link to="/register" onClick={() => setIsMobileMenuOpen(false)} className="no-underline pt-2">
-              <button className="w-full bg-accent-purple text-notion-bg border-none rounded-[11px] py-3 text-[15px] font-bold cursor-pointer tracking-tight">
-                Get Started
+              <button className="w-full bg-white text-slate-900 border border-slate-900 rounded-xl py-3 text-[15px] font-bold cursor-pointer tracking-tight transition-all hover:bg-slate-50">
+                Get started for free
               </button>
             </Link>
           </div>
@@ -203,25 +200,21 @@ export default function Landing() {
 
       {/* ── HERO ── */}
       <section className="relative overflow-hidden pt-16 sm:pt-24 pb-12 sm:pb-20 text-center">
-        <div className="absolute top-[-80px] left-1/2 -translate-x-[60%] w-[400px] sm:w-[700px] h-[300px] sm:h-[500px] rounded-[50%] pointer-events-none"
-          style={{ background: "radial-gradient(ellipse at center, rgba(167,139,250,0.12) 0%, transparent 70%)" }} />
-        <div className="absolute top-[60px] right-[10%] w-[200px] sm:w-[320px] h-[200px] sm:h-[320px] rounded-[50%] pointer-events-none"
-          style={{ background: "radial-gradient(ellipse at center, rgba(167,139,250,0.08) 0%, transparent 70%)" }} />
+
 
         <div className="max-w-[720px] mx-auto px-6 relative z-10">
 
           <Reveal delay={80}>
-            <h1 className="text-[clamp(36px,6vw,62px)] font-extrabold text-notion-text leading-[1.1] tracking-[-2px] mb-5">
+            <h1 className="text-[clamp(36px,6vw,62px)] font-extrabold text-slate-900 leading-[1.1] tracking-[-2px] mb-5">
               Track jobs.{" "}
-              <span className="relative inline-block">
+              <span className="relative inline-block text-slate-900">
                 <span className="relative z-10">Learn faster.</span>
-                <span className="absolute bottom-1 left-0 right-0 h-2.5 bg-accent-purple/[0.15] rounded z-0" />
               </span>
             </h1>
           </Reveal>
 
           <Reveal delay={140}>
-            <p className="text-[17px] text-notion-muted leading-[1.7] mx-auto mb-9 max-w-[520px]">
+            <p className="text-[17px] text-slate-600 leading-[1.7] mx-auto mb-9 max-w-[520px]">
               Manage every application, rate interview difficulty, and log real questions by round. Build your Interview Summary and improve with each opportunity.
             </p>
           </Reveal>
@@ -229,15 +222,15 @@ export default function Landing() {
           <Reveal delay={200}>
             <div className="flex justify-center items-center gap-3 flex-wrap">
               <Link to="/register" className="no-underline">
-                <button className="inline-flex items-center gap-[7px] bg-accent-purple text-notion-bg border-none rounded-[11px] px-[22px] py-[11px] text-[14.5px] font-bold cursor-pointer tracking-tight shadow-soft transition-all hover:brightness-110 hover:scale-[1.04]">
-                  Start for free <ArrowRight size={15} />
+                <button className="inline-flex items-center gap-[7px] bg-white text-slate-900 border border-slate-900 rounded-xl px-[22px] py-[11px] text-[14.5px] font-bold cursor-pointer tracking-tight transition-all hover:bg-slate-50 hover:shadow-sm hover:scale-[1.02]">
+                  Get started for free <ArrowRight size={15} />
                 </button>
               </Link>
               <a
                 href="https://github.com/Akshatgupta000/HustleMap"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-[7px] bg-notion-card text-notion-text border border-notion-border rounded-[11px] px-5 py-[11px] text-[14.5px] font-medium no-underline transition-all hover:bg-notion-bg hover:scale-[1.03]"
+                className="inline-flex items-center gap-[7px] bg-white text-slate-900 border border-slate-900 rounded-xl px-5 py-[11px] text-[14.5px] font-medium no-underline transition-all hover:bg-slate-50 hover:shadow-sm hover:scale-[1.02]"
               >
                 <Github size={15} /> View on GitHub
               </a>
@@ -247,7 +240,7 @@ export default function Landing() {
           <Reveal delay={280}>
             <div className="mt-10 flex justify-center gap-7 flex-wrap">
               {["✓ Free forever", "✓ No setup", "✓ Built for job seekers"].map((text) => (
-                <span key={text} className="text-[13px] text-notion-muted font-medium">{text}</span>
+                <span key={text} className="text-[13px] text-slate-600 font-medium">{text}</span>
               ))}
             </div>
           </Reveal>
@@ -256,7 +249,7 @@ export default function Landing() {
 
       {/* Divider */}
       <div className="max-w-[1080px] mx-auto px-6">
-        <div className="h-px bg-notion-border" />
+        <div className="h-px bg-border" />
       </div>
 
       {/* ── FEATURES ── */}
@@ -264,11 +257,11 @@ export default function Landing() {
         <div className="max-w-[1080px] mx-auto">
           <Reveal delay={0}>
             <div className="text-center mb-14">
-              <p className="text-[12.5px] font-semibold text-accent-purple tracking-[1px] uppercase mb-2.5">Features</p>
-              <h2 className="text-[clamp(26px,4vw,38px)] font-extrabold text-notion-text tracking-tight mx-auto mb-3.5 max-w-[500px]">
+              <p className="text-[12.5px] font-semibold text-brand-400 tracking-[1px] uppercase mb-2.5">Features</p>
+              <h2 className="text-[clamp(26px,4vw,38px)] font-extrabold text-slate-900 tracking-tight mx-auto mb-3.5 max-w-[500px]">
                 Everything you need to land the job
               </h2>
-              <p className="text-[15.5px] text-notion-muted max-w-[440px] mx-auto leading-relaxed">
+              <p className="text-[15.5px] text-slate-600 max-w-[440px] mx-auto leading-relaxed">
                 One organized workspace for your entire job search journey.
               </p>
             </div>
@@ -299,7 +292,7 @@ export default function Landing() {
 
       {/* Divider */}
       <div className="max-w-[1080px] mx-auto px-6">
-        <div className="h-px bg-notion-border" />
+        <div className="h-px bg-border" />
       </div>
 
       {/* ── CHROME EXTENSION ── */}
@@ -309,14 +302,14 @@ export default function Landing() {
           {/* Header */}
           <Reveal delay={0}>
             <div className="text-center mb-14">
-              <div className="inline-flex items-center gap-[7px] bg-accent-purple/10 border border-accent-purple/20 rounded-full px-[13px] py-[5px] mb-5">
-                <div className="w-[7px] h-[7px] rounded-full bg-accent-purple" />
-                <span className="text-[12px] font-semibold text-accent-purple tracking-[0.5px] uppercase">Chrome Extension</span>
+              <div className="inline-flex items-center gap-[7px] bg-brand-500/10 border border-brand-500/20 rounded-full px-[13px] py-[5px] mb-5 shadow-glow">
+                <div className="w-[7px] h-[7px] rounded-full bg-brand-400" />
+                <span className="text-[12px] font-semibold text-brand-400 tracking-[0.5px] uppercase">Chrome Extension</span>
               </div>
-              <h2 className="text-[clamp(26px,4vw,38px)] font-extrabold text-notion-text tracking-tight mx-auto mb-3.5 max-w-[600px]">
+              <h2 className="text-[clamp(26px,4vw,38px)] font-extrabold text-slate-900 tracking-tight mx-auto mb-3.5 max-w-[600px]">
                 Save Jobs Instantly with our Chrome Extension
               </h2>
-              <p className="text-[15.5px] text-notion-muted max-w-[460px] mx-auto leading-relaxed">
+              <p className="text-[15.5px] text-slate-600 max-w-[460px] mx-auto leading-relaxed">
                 Capture jobs from LinkedIn, Indeed, and Glassdoor directly into HustleMap in seconds.
               </p>
             </div>
@@ -350,10 +343,9 @@ export default function Landing() {
             />
           </div>
 
-          {/* Mini Flow Steps */}
           <Reveal delay={0}>
-            <div className="bg-notion-card border border-notion-border rounded-2xl p-8 mb-10 shadow-soft">
-              <p className="text-[12px] font-semibold text-accent-purple tracking-[1px] uppercase mb-6 text-center">How it works</p>
+            <div className="bg-background-card backdrop-blur-xl border border-border rounded-2xl p-8 mb-10 shadow-glass">
+              <p className="text-[12px] font-semibold text-brand-400 tracking-[1px] uppercase mb-6 text-center">How it works</p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-0">
                 {[
                   {
@@ -374,21 +366,21 @@ export default function Landing() {
                 ].map(({ num, label, sub }, i) => (
                   <div key={num} className="flex sm:flex-row flex-col items-center gap-3 sm:gap-0 w-full sm:w-auto">
                     <div className="flex flex-col items-center text-center px-6 flex-1 min-w-[160px]">
-                      <div className="w-9 h-9 rounded-full bg-accent-purple text-notion-bg flex items-center justify-center text-[13px] font-bold mb-2.5 shadow-soft">
+                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-brand-600 to-brand-400 text-slate-900 flex items-center justify-center text-[13px] font-bold mb-2.5 shadow-glow">
                         {num}
                       </div>
-                      <p className="text-[13.5px] font-semibold text-notion-text mb-1 tracking-tight">{label}</p>
-                      <p className="text-[12.5px] text-notion-muted leading-relaxed">{sub}</p>
+                      <p className="text-[13.5px] font-semibold text-slate-900 mb-1 tracking-tight">{label}</p>
+                      <p className="text-[12.5px] text-slate-600 leading-relaxed">{sub}</p>
                     </div>
                     {i < 2 && (
-                      <div className="hidden sm:flex items-center text-accent-purple/30">
+                      <div className="hidden sm:flex items-center text-slate-900/30">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                           <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
                         </svg>
                       </div>
                     )}
                     {i < 2 && (
-                      <div className="flex sm:hidden items-center text-accent-purple/30">
+                      <div className="flex sm:hidden items-center text-slate-900/30">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                           <line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>
                         </svg>
@@ -409,7 +401,7 @@ export default function Landing() {
                 rel="noopener noreferrer"
                 className="no-underline"
               >
-                <button className="inline-flex items-center gap-[7px] bg-accent-purple text-notion-bg border-none rounded-[11px] px-[22px] py-[11px] text-[14.5px] font-bold cursor-pointer tracking-tight shadow-soft transition-all hover:brightness-110 hover:scale-[1.04]">
+                <button className="inline-flex items-center gap-[7px] bg-white text-slate-900 border border-slate-900 rounded-xl px-[22px] py-[11px] text-[14.5px] font-bold cursor-pointer tracking-tight transition-all hover:bg-slate-50 hover:shadow-sm hover:scale-[1.02]">
                   <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
                   </svg>
@@ -420,7 +412,7 @@ export default function Landing() {
                 href="https://github.com/Akshatgupta000/HustleMap"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-[7px] bg-notion-card text-notion-text border border-notion-border rounded-[11px] px-5 py-[11px] text-[14.5px] font-medium no-underline transition-all hover:bg-notion-bg hover:scale-[1.03]"
+                className="inline-flex items-center gap-[7px] bg-white text-slate-900 border border-slate-900 rounded-xl px-5 py-[11px] text-[14.5px] font-medium no-underline transition-all hover:bg-slate-50 hover:shadow-sm hover:scale-[1.02]"
               >
                 <Github size={15} /> View Source
               </a>
@@ -440,10 +432,10 @@ export default function Landing() {
         <div className="max-w-[1080px] mx-auto">
           <Reveal delay={0}>
             <div className="text-center mb-[52px]">
-              <h2 className="text-[clamp(24px,4vw,36px)] font-extrabold text-notion-text tracking-tight mb-3">
+              <h2 className="text-[clamp(24px,4vw,36px)] font-extrabold text-slate-900 tracking-tight mb-3">
                 Learn from every interview
               </h2>
-              <p className="text-[15.5px] text-notion-muted max-w-[460px] mx-auto leading-relaxed">
+              <p className="text-[15.5px] text-slate-600 max-w-[460px] mx-auto leading-relaxed">
                 Build a structured record with difficulty ratings and real questions. Reflect and improve with each round.
               </p>
             </div>
@@ -452,36 +444,38 @@ export default function Landing() {
           <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
             {[
               {
-                emoji: "📝",
+                icon: FileText,
                 title: "Preparation Notes",
                 desc: "Store everything before your interview — company background, technical topics, behavioral questions, salary expectations, and what to ask the interviewer.",
                 bullets: ["Company background & culture", "Technical topics to revise", "Behavioral questions to practice", "Questions to ask the interviewer"],
                 delay: 0,
               },
               {
-                emoji: "⭐",
+                icon: Star,
                 title: "Difficulty Rating",
                 desc: "Rate each interview round 1–5 to quickly compare experiences and prepare better for future rounds.",
                 bullets: ["Compare difficulty across companies", "Identify patterns in your process", "Track improvement over time", "Build realistic expectations"],
                 delay: 80,
               },
               {
-                emoji: "📊",
+                icon: BarChart2,
                 title: "Interview Summary",
                 desc: "Log questions by round. Add notes or answers. Review your history to see how you've grown.",
                 bullets: ["Log questions by round type", "Add your notes per question", "Review past summaries", "Identify improvement areas"],
                 delay: 160,
               },
-            ].map(({ emoji, title, desc, bullets, delay }) => (
+            ].map(({ icon: Icon, title, desc, bullets, delay }) => (
               <Reveal key={title} delay={delay}>
-                <div className="bg-notion-card border border-notion-border rounded-2xl p-7 h-full shadow-soft">
-                  <div className="text-2xl mb-3.5">{emoji}</div>
-                  <h3 className="text-[15px] font-bold text-notion-text mb-2.5 tracking-tight">{title}</h3>
-                  <p className="text-[13.5px] text-notion-muted leading-relaxed mb-4">{desc}</p>
+                <div className="bg-background-card backdrop-blur-xl border border-border rounded-2xl p-7 h-full shadow-glass transition-all hover:border-slate-900/10 hover:shadow-glow">
+                  <div className="mb-4 inline-flex items-center justify-center w-[38px] h-[38px] rounded-[10px] bg-slate-50 border border-slate-200">
+                    <Icon size={18} className="text-slate-900" strokeWidth={1.8} />
+                  </div>
+                  <h3 className="text-[15px] font-bold text-slate-900 mb-2.5 tracking-tight">{title}</h3>
+                  <p className="text-[13.5px] text-slate-600 leading-relaxed mb-4">{desc}</p>
                   <ul className="list-none p-0 m-0 flex flex-col gap-2">
                     {bullets.map((b) => (
-                      <li key={b} className="flex items-start gap-2.5 text-[13px] text-notion-muted">
-                        <CheckCircle size={13} className="text-accent-purple mt-0.5 shrink-0" />
+                      <li key={b} className="flex items-start gap-2.5 text-[13px] text-slate-600">
+                        <CheckCircle size={13} className="text-brand-400 mt-0.5 shrink-0" />
                         <span>{b}</span>
                       </li>
                     ))}
@@ -503,8 +497,8 @@ export default function Landing() {
         <div className="max-w-[560px] mx-auto">
           <Reveal delay={0}>
             <div className="text-center mb-[52px]">
-              <p className="text-[12.5px] font-semibold text-accent-purple tracking-[1px] uppercase mb-2.5">How it Works</p>
-              <h2 className="text-[clamp(24px,4vw,36px)] font-extrabold text-notion-text tracking-tight">
+              <p className="text-[12.5px] font-semibold text-brand-400 tracking-[1px] uppercase mb-2.5">How it Works</p>
+              <h2 className="text-[clamp(24px,4vw,36px)] font-extrabold text-slate-900 tracking-tight">
                 Up and running in minutes
               </h2>
             </div>
@@ -517,14 +511,14 @@ export default function Landing() {
               desc="Create an account in seconds. No credit card or setup required."
               delay={0}
             />
-            <div className="ml-[18px] w-px h-4 border-l-2 border-dashed border-accent-purple/30" />
+            <div className="ml-[18px] w-px h-4 border-l-2 border-dashed border-brand-500/30" />
             <Step
               num={2}
               title="Add your applications"
               desc="Start logging job applications with company, position, status, and notes."
               delay={80}
             />
-            <div className="ml-[18px] w-px h-4 border-l-2 border-dashed border-accent-purple/30" />
+            <div className="ml-[18px] w-px h-4 border-l-2 border-dashed border-brand-500/30" />
             <Step
               num={3}
               title="Track and improve"
@@ -535,50 +529,24 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── FINAL CTA ── */}
-      <section className="px-6 pb-24">
-        <div className="max-w-[640px] mx-auto">
-          <Reveal delay={0}>
-            <div className="bg-notion-card border border-notion-border rounded-[20px] py-[52px] px-10 text-center relative overflow-hidden shadow-soft">
-              <div
-                className="absolute top-[-60px] right-[-60px] w-[280px] h-[280px] rounded-full pointer-events-none"
-                style={{ background: "radial-gradient(ellipse at center, rgba(167,139,250,0.25) 0%, transparent 70%)" }}
-              />
-              <h2 className="text-[clamp(22px,4vw,32px)] font-extrabold text-notion-text tracking-tight mb-3 relative">
-                Ready to start tracking?
-              </h2>
-              <p className="text-[15px] text-notion-muted mb-8 leading-relaxed relative">
-                Join job seekers who use HustleMap to stay organised and learn from every interview.
-              </p>
-              <Link to="/register" className="no-underline relative">
-                <button className="inline-flex items-center gap-2 bg-accent-purple text-notion-bg border-none rounded-[11px] px-[26px] py-3 text-[15px] font-bold cursor-pointer tracking-tight shadow-soft transition-all hover:brightness-110 hover:scale-[1.04]">
-                  Create free account <ArrowRight size={15} />
-                </button>
-              </Link>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+
 
       {/* ── FOOTER ── */}
-      <footer className="border-t border-notion-border py-8 px-6 bg-notion-bg">
+      <footer className="border-t border-border py-8 px-6 bg-background">
         <div className="max-w-[1080px] mx-auto flex flex-col md:flex-row justify-between items-center gap-6 text-center md:text-left">
-          <div className="flex items-center gap-2">
-            <div className="w-[22px] h-[22px] rounded-[6px] bg-notion-card border border-notion-border flex items-center justify-center shadow-soft">
-              <Sparkles size={11} className="text-accent-purple" />
-            </div>
-            <span className="text-[13px] font-bold text-notion-text">HustleMap</span>
+          <div className="flex items-center">
+            <span className="text-[16px] font-bold text-slate-900">HustleMap</span>
           </div>
           <div className="flex gap-5 items-center">
             <a
               href="https://github.com/Akshatgupta000/HustleMap"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[13px] text-notion-muted no-underline flex items-center gap-1.5 hover:text-notion-text transition-colors"
+              className="text-[13px] text-slate-600 no-underline flex items-center gap-1.5 hover:text-slate-900 transition-colors"
             >
               <Github size={13} /> GitHub
             </a>
-            <span className="text-[13px] text-notion-muted">Built with React · Node.js · MongoDB</span>
+            <span className="text-[13px] text-slate-600">Built with React · Node.js · MongoDB</span>
           </div>
         </div>
       </footer>

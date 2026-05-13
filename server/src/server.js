@@ -70,39 +70,37 @@ console.log(`[CORS] Allowed origins: ${clientOrigins.join(', ')}`);
 
 const corsOptions = {
   origin: (origin, cb) => {
-    // Log EVERY cors request for debugging production issues
-    console.log(`[CORS Request] Origin: "${origin || 'no-origin'}"`);
-
     // 1. Allow server-to-server, curl, Postman, or same-origin requests
     if (!origin) {
-      console.log('[CORS] Allowed: No origin (server-to-server)');
       return cb(null, true);
     }
 
     const normalizedOrigin = origin.replace(/\/+$/, '');
-    
+
     // 2. Allow any localhost for easier development/testing
     if (normalizedOrigin.startsWith('http://localhost:')) {
-      console.log(`[CORS] Allowed: Localhost origin "${normalizedOrigin}"`);
       return cb(null, true);
     }
 
     // 3. Allow Chrome extensions
     if (normalizedOrigin.startsWith('chrome-extension://')) {
-      console.log(`[CORS] Allowed: Chrome extension "${normalizedOrigin}"`);
       return cb(null, true);
     }
 
-    // 4. Check explicit whitelist from CLIENT_URL
-    if (clientOrigins.includes(normalizedOrigin)) {
-      console.log(`[CORS] Allowed: Whitelisted origin "${normalizedOrigin}"`);
+    // 4. Check explicit whitelist from CLIENT_URL or known deployments
+    if (
+      clientOrigins.includes(normalizedOrigin) ||
+      normalizedOrigin === 'https://hustle-map-khaki.vercel.app' ||
+      normalizedOrigin.endsWith('.vercel.app') ||
+      normalizedOrigin.endsWith('.onrender.com')
+    ) {
       return cb(null, true);
     }
 
     // 5. Fail closed but log details for debugging production mismatches
     console.error(`[CORS REJECTED] Origin: "${origin}"`);
     console.error(`[CORS REJECTED] Whitelist: [${clientOrigins.join(', ')}]`);
-    
+
     // Instead of throwing an error that might break the app, we just fail the CORS check
     cb(null, false);
   },
@@ -127,15 +125,6 @@ app.use(morgan('dev'));
 // Chrome extension screenshots can be large base64 payloads; raise limits safely.
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-// Log all requests in production for debugging
-if (process.env.NODE_ENV === 'production') {
-  app.use((req, res, next) => {
-    console.log(
-      `[${new Date().toISOString()}] ${req.method} ${req.path} from ${req.get('origin') || 'unknown'}`,
-    );
-    next();
-  });
-}
 // Uptime Monitor & Root Health Check
 app.get('/', (req, res) => {
   res.send('HustleMap API running');
@@ -163,8 +152,8 @@ app.use((err, req, res, next) => {
   if (err.stack) {
     console.error(err.stack);
   }
-  
-  res.status(err.status || 500).json({ 
+
+  res.status(err.status || 500).json({
     error: err.message || 'Internal server error',
     ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
   });
@@ -213,7 +202,7 @@ const startServer = async () => {
   try {
     console.log('[STARTUP] Connecting to MongoDB...');
     await connectDB();
-    
+
     console.log(`[STARTUP] Attempting to listen on port ${PORT}...`);
     const usedPort = await attemptListen(Number(PORT), 10);
     process.env.PORT = String(usedPort);

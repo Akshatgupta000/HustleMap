@@ -8,9 +8,9 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: "border-notion-border bg-notion-card text-notion-text",
-        muted: "border-notion-border bg-notion-sidebar text-notion-muted",
-        accent: "border-accent-purple/20 bg-accent-purple/10 text-accent-purple",
+        default: "border-slate-200 bg-white text-slate-900",
+        muted: "border-slate-200 bg-slate-50 text-slate-500",
+        accent: "border-slate-200 bg-slate-100 text-slate-900",
         success: "border-accent-green/20 bg-accent-green/10 text-accent-green",
         warning: "border-accent-yellow/20 bg-accent-yellow/10 text-accent-yellow",
         danger: "border-red-500/20 bg-red-500/10 text-red-400",

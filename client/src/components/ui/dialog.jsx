@@ -29,7 +29,7 @@ const DialogContent = React.forwardRef(
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
-          "fixed left-1/2 top-1/2 z-50 w-[calc(100%-1.5rem)] max-w-3xl -translate-x-1/2 -translate-y-1/2 rounded-xl border border-notion-border bg-notion-card shadow-soft outline-none",
+          "fixed left-1/2 top-1/2 z-50 w-[calc(100%-1.5rem)] max-w-3xl -translate-x-1/2 -translate-y-1/2 rounded-xl border border-slate-200 bg-white shadow-sm outline-none",
           "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
           className,
         )}
@@ -40,7 +40,7 @@ const DialogContent = React.forwardRef(
           <Button
             variant="ghost"
             size="icon"
-            className="absolute right-3 top-3 h-9 w-9 rounded-xl text-notion-muted hover:text-notion-text"
+            className="absolute right-3 top-3 h-9 w-9 rounded-xl text-slate-500 hover:text-slate-900"
             aria-label="Close"
           >
             <X className="h-4 w-4" />
@@ -71,7 +71,7 @@ function DialogFooter({ className, ...props }) {
 const DialogTitle = React.forwardRef(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={cn("text-lg font-semibold tracking-tight text-notion-text", className)}
+    className={cn("text-lg font-semibold tracking-tight text-slate-900", className)}
     {...props}
   />
 ));
@@ -80,7 +80,7 @@ DialogTitle.displayName = DialogPrimitive.Title.displayName;
 const DialogDescription = React.forwardRef(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={cn("mt-1 text-sm text-notion-muted", className)}
+    className={cn("mt-1 text-sm text-slate-500", className)}
     {...props}
   />
 ));

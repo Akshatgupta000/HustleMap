@@ -18,13 +18,13 @@ const STATUS_LABELS = {
 };
 
 const STATUS_COLORS = {
-  saved: "bg-notion-sidebar text-notion-muted border-notion-border",
-  applied: "bg-accent-purple/10 text-accent-purple border-accent-purple/20",
-  online_test: "bg-accent-purple/10 text-accent-purple border-accent-purple/20",
-  interview: "bg-accent-purple/10 text-accent-purple border-accent-purple/20",
+  saved: "bg-slate-50 text-slate-500 border-slate-200",
+  applied: "bg-slate-100 text-slate-900 border-slate-200",
+  online_test: "bg-slate-100 text-slate-900 border-slate-200",
+  interview: "bg-slate-100 text-slate-900 border-slate-200",
   offer: "bg-accent-green/10 text-accent-green border-accent-green/20",
   rejected: "bg-red-500/10 text-red-400 border-red-500/20",
-  withdrawn: "bg-notion-bg text-notion-muted border-notion-border",
+  withdrawn: "bg-slate-50 text-slate-500 border-slate-200",
 };
 
 const APPLICATION_TYPE_LABELS = {
@@ -87,7 +87,7 @@ export default function JobCard({ job, onViewDetails }) {
       return { bg: "bg-accent-green", border: "border-accent-green" };
     if (isManuallyTicked)
       return { bg: "bg-accent-blue", border: "border-accent-blue" };
-    return { bg: "bg-notion-card", border: "border-notion-border" };
+    return { bg: "bg-white", border: "border-slate-200" };
   };
 
   const tickColor = getTickColor();
@@ -109,14 +109,14 @@ export default function JobCard({ job, onViewDetails }) {
     <div
       onClick={() => onViewDetails(job)}
       className={cn(
-        "rounded-xl border border-notion-border bg-notion-card p-4 shadow-soft transition-all duration-200 hover:bg-white/[0.02] hover:-translate-y-[1px] cursor-pointer flex flex-col h-full",
+        "rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:bg-white/[0.02] hover:-translate-y-[1px] cursor-pointer flex flex-col h-full",
         isUpcomingInterview() && "ring-2 ring-accent-yellow/50",
       )}
     >
       <div className="flex justify-between items-start gap-3 mb-3">
         <div className="flex-1 min-w-0">
           <h3 className="subtitle mb-0.5 truncate">{job.company}</h3>
-          <p className="text-sm text-notion-muted truncate">{job.position}</p>
+          <p className="text-sm text-slate-500 truncate">{job.position}</p>
         </div>
         <div className="flex items-center gap-2">
           {/* Tick Checkbox */}
@@ -126,7 +126,7 @@ export default function JobCard({ job, onViewDetails }) {
             className={`flex-shrink-0 w-5 h-5 border-2 rounded-md flex items-center justify-center transition-colors ${
               isTicked
                 ? `${tickColor.bg} ${tickColor.border}`
-                : `${tickColor.border} hover:border-notion-muted`
+                : `${tickColor.border} hover:border-slate-500`
             } ${!isAutomatic && !isTicked ? "cursor-pointer" : ""} ${
               isAutomatic ? "cursor-not-allowed" : ""
             }`}
@@ -145,7 +145,7 @@ export default function JobCard({ job, onViewDetails }) {
             )}
           </button>
           {isCaptured && (
-            <Badge className="border bg-accent-purple/10 text-accent-purple border-accent-purple/20">
+            <Badge className="border bg-slate-100 text-slate-900 border-slate-200">
               📸 Captured
             </Badge>
           )}
@@ -153,7 +153,7 @@ export default function JobCard({ job, onViewDetails }) {
             className={cn(
               "border",
               STATUS_COLORS[job.status] ||
-                "bg-notion-bg text-notion-muted border-notion-border",
+                "bg-slate-50 text-slate-500 border-slate-200",
             )}
           >
             {STATUS_LABELS[job.status] || job.status}
@@ -166,20 +166,20 @@ export default function JobCard({ job, onViewDetails }) {
           <img
             src={job.screenshot}
             alt="Captured job"
-            className="rounded-xl mb-2 max-h-40 object-cover border border-notion-border"
+            className="rounded-xl mb-2 max-h-40 object-cover border border-slate-200"
           />
         )}
-        <div className="text-sm text-notion-text">
+        <div className="text-sm text-slate-900">
           <span className="font-medium">Applied:</span>{" "}
           {formatDate(job.date_applied)}
         </div>
         {job.location && (
-          <div className="text-sm text-notion-text">
+          <div className="text-sm text-slate-900">
             <span className="font-medium">Location:</span> {job.location}
           </div>
         )}
         {job.application_type && (
-          <div className="text-sm text-notion-text">
+          <div className="text-sm text-slate-900">
             <span className="font-medium">Type:</span>{" "}
             {APPLICATION_TYPE_LABELS[job.application_type] ||
               job.application_type}
@@ -191,7 +191,7 @@ export default function JobCard({ job, onViewDetails }) {
               "text-sm",
               isUpcomingInterview()
                 ? "text-accent-yellow font-medium"
-                : "text-notion-text",
+                : "text-slate-900",
             )}
           >
             <span className="font-medium">Interview:</span>{" "}
@@ -200,7 +200,7 @@ export default function JobCard({ job, onViewDetails }) {
           </div>
         )}
         {job.interview_rounds && job.interview_rounds.length > 0 && (
-          <div className="text-sm text-notion-text">
+          <div className="text-sm text-slate-900">
             <span className="font-medium">Rounds:</span>{" "}
             {job.interview_rounds.length}
           </div>
@@ -208,15 +208,15 @@ export default function JobCard({ job, onViewDetails }) {
       </div>
 
       {job.notes && (
-        <p className="text-sm text-notion-text mb-3 line-clamp-2">
+        <p className="text-sm text-slate-900 mb-3 line-clamp-2">
           {job.notes}
         </p>
       )}
 
       {/* Interview Prep Indicator */}
       {job.interview_questions && job.interview_questions.length > 0 && (
-        <div className="mb-3 p-2 bg-accent-purple/10 border border-accent-purple/20 rounded-xl">
-          <p className="text-xs text-accent-purple font-medium">
+        <div className="mb-3 p-2 bg-slate-100 border border-slate-200 rounded-xl">
+          <p className="text-xs text-slate-900 font-medium">
             📝 Interview Summary: {job.interview_questions.length} question
             {job.interview_questions.length !== 1 ? "s" : ""}
           </p>
@@ -226,7 +226,7 @@ export default function JobCard({ job, onViewDetails }) {
       {/* Interview Difficulty Summary */}
       {job.interview_difficulty && (
         <div className="mb-3">
-          <p className="text-xs text-notion-muted font-medium">
+          <p className="text-xs text-slate-500 font-medium">
             Difficulty: {job.interview_difficulty}/5
           </p>
         </div>
@@ -234,8 +234,8 @@ export default function JobCard({ job, onViewDetails }) {
 
       {/* Interview Status Recommendation */}
       {job.status === "interview" && (
-        <div className="mb-3 p-2 bg-accent-purple/10 border border-accent-purple/20 rounded-xl">
-          <p className="text-xs text-accent-purple font-medium">
+        <div className="mb-3 p-2 bg-slate-100 border border-slate-200 rounded-xl">
+          <p className="text-xs text-slate-900 font-medium">
             Interview scheduled — preparation recommended
           </p>
         </div>
@@ -260,7 +260,7 @@ export default function JobCard({ job, onViewDetails }) {
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="text-xs text-notion-accent hover:underline"
+              className="text-xs text-slate-900 hover:underline"
             >
               📄 Resume
             </a>
@@ -271,7 +271,7 @@ export default function JobCard({ job, onViewDetails }) {
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="text-xs text-notion-accent hover:underline"
+              className="text-xs text-slate-900 hover:underline"
             >
               🎨 Portfolio
             </a>

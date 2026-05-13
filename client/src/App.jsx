@@ -49,7 +49,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter future={futureFlags}>
         <ScrollToTop />
-        <div className="min-h-screen bg-notion-bg">
+        <div className="min-h-screen bg-background">
           <Routes>
             <Route
               path="/"

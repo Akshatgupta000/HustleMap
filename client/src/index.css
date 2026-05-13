@@ -4,7 +4,9 @@
 
 @layer base {
   body {
-    @apply bg-notion-bg text-notion-text font-sans tracking-tight leading-relaxed;
+    background-color: #FAFAFA;
+    color: #0f172a;
+    @apply font-sans tracking-tight leading-relaxed;
     overflow-x: hidden;
   }
 }
@@ -13,37 +15,37 @@
   /* Page Title / Main Heading */
   .page-title {
     font-size: clamp(1.5rem, 4vw, 2rem);
-    @apply font-semibold leading-tight tracking-tight text-notion-text;
+    @apply font-semibold leading-tight tracking-tight text-slate-900;
   }
 
   /* Section Heading / Subtitle */
   .section-heading {
     font-size: clamp(1.25rem, 3.5vw, 1.5rem);
-    @apply font-semibold leading-snug tracking-tight text-notion-text;
+    @apply font-semibold leading-snug tracking-tight text-slate-900;
   }
 
   /* Subtitle / Subheading */
   .subtitle {
     font-size: clamp(1rem, 2.5vw, 1.25rem);
-    @apply font-semibold leading-snug text-notion-text;
+    @apply font-semibold leading-snug text-slate-900;
   }
 
   /* Form Label / Field Names */
   .form-label {
     font-size: clamp(0.875rem, 2vw, 1rem);
-    @apply font-medium text-notion-text;
+    @apply font-medium text-slate-900;
   }
 
   /* Body Text / Regular Content */
   .body-text {
     font-size: clamp(0.875rem, 1.75vw, 0.9375rem);
-    @apply leading-relaxed text-notion-text;
+    @apply leading-relaxed text-slate-900;
   }
 
   /* Small Helper Text / Instructions */
   .helper-text {
     font-size: clamp(0.75rem, 1.5vw, 0.875rem);
-    @apply leading-relaxed text-notion-muted;
+    @apply leading-relaxed text-slate-600;
   }
 
   /* Badge / Small Label */
@@ -56,7 +58,7 @@
 /* Custom scrollbar styling for Interview Questions */
 .scrollbar-thin {
   scrollbar-width: thin;
-  scrollbar-color: #1A1A24 #000000;
+  scrollbar-color: #E2E8F0 transparent;
 }
 
 .scrollbar-thin::-webkit-scrollbar {
@@ -64,13 +66,13 @@
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
-  @apply bg-notion-bg;
+  @apply bg-transparent;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  @apply bg-notion-border rounded;
+  @apply bg-slate-200 rounded;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  @apply bg-notion-muted;
+  @apply bg-slate-300;
 }

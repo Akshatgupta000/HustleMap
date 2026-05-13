@@ -3,10 +3,30 @@ import User from '../models/User.js';
 import mongoose from 'mongoose';
 import { createWorker } from 'tesseract.js';
 import { formatJobForResponse, formatDate } from '../utils/formatJob.js';
+import { clearCacheByPrefix, getCache, setCache } from '../utils/memoryCache.js';
 
 const safeUserId = (id) => {
   if (!id || typeof id !== 'string') return null;
   return mongoose.Types.ObjectId.isValid(id) ? id : null;
+};
+
+const STATS_CACHE_TTL_MS = 30 * 1000;
+const LIST_MAX_LIMIT = 100;
+const DEFAULT_LIST_LIMIT = 25;
+const JOB_LIST_SELECT =
+  '_id company position location status applicationType dateApplied interviewDate applicationSource notes resumeLink portfolioLink interviewRounds interviewQuestions preparationNotes interviewDifficulty interviewStatus jobUrl salary companyLogo screenshot isCaptured createdAt updatedAt';
+
+const getPagination = (query = {}) => {
+  const page = Math.max(1, Number.parseInt(query.page, 10) || 1);
+  const rawLimit = Number.parseInt(query.limit, 10) || DEFAULT_LIST_LIMIT;
+  const limit = Math.min(Math.max(rawLimit, 1), LIST_MAX_LIMIT);
+  return { page, limit, skip: (page - 1) * limit };
+};
+
+const statsCacheKey = (userId) => `jobStats:${userId}`;
+const invalidateUserStatsCache = (userId) => {
+  if (!userId) return;
+  clearCacheByPrefix(`jobStats:${userId}`);
 };
 
 // Get all jobs for authenticated user
@@ -17,8 +37,12 @@ export const getAllJobs = async (req, res) => {
       return res.status(401).json({ error: 'Invalid or missing user context' });
     }
 
+    const { skip, limit } = getPagination(req.query);
     const jobs = await Job.find({ user: userId })
+      .select(JOB_LIST_SELECT)
       .sort({ dateApplied: -1, createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
       .lean();
 
     const formattedJobs = jobs.map((job) => formatJobForResponse(job));
@@ -37,8 +61,12 @@ export const getCapturedJobs = async (req, res) => {
       return res.status(401).json({ error: 'Invalid or missing user context' });
     }
 
+    const { skip, limit } = getPagination(req.query);
     const jobs = await Job.find({ user: userId, isCaptured: true })
+      .select(JOB_LIST_SELECT)
       .sort({ dateApplied: -1, createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
       .lean();
 
     const formattedJobs = jobs.map((job) => formatJobForResponse(job));
@@ -57,19 +85,76 @@ export const getStats = async (req, res) => {
       return res.status(401).json({ error: 'Invalid or missing user context' });
     }
     const userId = new mongoose.Types.ObjectId(userIdStr);
+    const cacheKey = statsCacheKey(userIdStr);
+    const cached = getCache(cacheKey);
+    if (cached) {
+      return res.json(cached);
+    }
 
-    // Total count
-    const total = await Job.countDocuments({ user: userId });
+    const now = new Date();
+    const sevenDaysAgo = new Date(now);
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const sevenDaysFromNow = new Date(now);
+    sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
+    const fourWeeksAgo = new Date(now);
+    fourWeeksAgo.setDate(fourWeeksAgo.getDate() - 28);
 
-    // Count by status using aggregation
-    const byStatusResult = await Job.aggregate([
-      { $match: { user: userId } },
-      {
-        $group: {
-          _id: '$status',
-          count: { $sum: 1 },
+    const [
+      total,
+      byStatusResult,
+      recentJobs,
+      weeklyResult,
+      upcomingInterviews,
+      interviewsScheduled,
+      weeklyApplications,
+    ] = await Promise.all([
+      Job.countDocuments({ user: userId }),
+      Job.aggregate([
+        { $match: { user: userId } },
+        { $group: { _id: '$status', count: { $sum: 1 } } },
+      ]),
+      Job.find({ user: userId })
+        .select('_id company position interviewDate updatedAt')
+        .sort({ updatedAt: -1 })
+        .limit(5)
+        .lean(),
+      Job.aggregate([
+        { $match: { user: userId, dateApplied: { $gte: sevenDaysAgo } } },
+        {
+          $group: {
+            _id: { $dateToString: { format: '%Y-%m-%d', date: '$dateApplied' } },
+            count: { $sum: 1 },
+          },
         },
-      },
+        { $sort: { _id: -1 } },
+      ]),
+      Job.find({
+        user: userId,
+        interviewDate: { $gte: now, $lte: sevenDaysFromNow },
+      })
+        .select('_id company position interviewDate')
+        .sort({ interviewDate: 1 })
+        .limit(10)
+        .lean(),
+      Job.countDocuments({
+        user: userId,
+        $or: [
+          { status: 'interview' },
+          { interviewDate: { $ne: null, $gte: now } },
+          { interviewRounds: { $elemMatch: { status: 'scheduled' } } },
+        ],
+      }),
+      Job.aggregate([
+        { $match: { user: userId, dateApplied: { $gte: fourWeeksAgo } } },
+        {
+          $group: {
+            _id: { $dateToString: { format: '%Y-W%V', date: '$dateApplied' } },
+            count: { $sum: 1 },
+          },
+        },
+        { $sort: { _id: -1 } },
+        { $limit: 4 },
+      ]),
     ]);
 
     const byStatus = byStatusResult.reduce((acc, item) => {
@@ -77,112 +162,8 @@ export const getStats = async (req, res) => {
       return acc;
     }, {});
 
-    // Recent jobs (last 5)
-    const recentJobs = await Job.find({ user: userId })
-      .sort({ updatedAt: -1 })
-      .limit(5)
-      .lean();
-
     const recent = recentJobs.map((job) => formatJobForResponse(job));
-
-    // Weekly stats (last 7 days)
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
-    const weeklyResult = await Job.aggregate([
-      {
-        $match: {
-          user: userId,
-          dateApplied: { $gte: sevenDaysAgo },
-        },
-      },
-      {
-        $group: {
-          _id: {
-            $dateToString: { format: '%Y-%m-%d', date: '$dateApplied' },
-          },
-          count: { $sum: 1 },
-        },
-      },
-      { $sort: { _id: -1 } },
-    ]);
-
-    const weekly = weeklyResult.map((item) => ({
-      date: item._id,
-      count: item.count,
-    }));
-
-    // Interviews scheduled: Count applications that have an interview scheduled
-    // Count if ANY of the following is true:
-    // 1. status === "interview"
-    // 2. interviewDate exists AND is in the future
-    // 3. interviewRounds has at least one round with status === "scheduled"
-    const now = new Date();
-
-    // Get unique job IDs that match any condition to avoid double counting
-    const uniqueJobIds = new Set();
-
-    // Get jobs with interview status
-    const interviewStatusJobs = await Job.find({
-      user: userId,
-      status: 'interview',
-    })
-      .select('_id')
-      .lean();
-    interviewStatusJobs.forEach((job) => uniqueJobIds.add(job._id.toString()));
-
-    // Get jobs with future interview date
-    const futureDateJobs = await Job.find({
-      user: userId,
-      interviewDate: { $ne: null, $gte: now },
-    })
-      .select('_id')
-      .lean();
-    futureDateJobs.forEach((job) => uniqueJobIds.add(job._id.toString()));
-
-    // Get jobs with scheduled rounds using aggregation
-    const scheduledRoundsJobs = await Job.aggregate([
-      { $match: { user: userId } },
-      {
-        $addFields: {
-          hasScheduledRound: {
-            $gt: [
-              {
-                $size: {
-                  $filter: {
-                    input: { $ifNull: ['$interviewRounds', []] },
-                    as: 'round',
-                    cond: { $eq: ['$$round.status', 'scheduled'] },
-                  },
-                },
-              },
-              0,
-            ],
-          },
-        },
-      },
-      {
-        $match: {
-          hasScheduledRound: true,
-        },
-      },
-      { $project: { _id: 1 } },
-    ]);
-    scheduledRoundsJobs.forEach((job) => uniqueJobIds.add(job._id.toString()));
-
-    const interviewsScheduled = uniqueJobIds.size;
-
-    // Upcoming interviews (next 7 days)
-    const sevenDaysFromNow = new Date();
-    sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
-    const upcomingInterviews = await Job.find({
-      user: userId,
-      interviewDate: { $gte: now, $lte: sevenDaysFromNow },
-    })
-      .sort({ interviewDate: 1 })
-      .limit(10)
-      .lean();
-
+    const weekly = weeklyResult.map((item) => ({ date: item._id, count: item.count }));
     const upcoming = upcomingInterviews
       .filter((job) => job.interviewDate)
       .map((job) => ({
@@ -192,82 +173,40 @@ export const getStats = async (req, res) => {
         interview_date: formatDate(job.interviewDate),
       }));
 
-    // Calculate conversion rates
-    const appliedCount = byStatus.applied || 0;
-    const interviewCount = byStatus.interview || 0;
-    const offerCount = byStatus.offer || 0;
-    const onlineTestCount = byStatus.online_test || 0;
-    const rejectedCount = byStatus.rejected || 0;
     const withdrawnCount = byStatus.withdrawn || 0;
-
-    // Interview Conversion Rate Calculation:
-    // Count unique job applications that reached at least the "Interview" stage
-    // Statuses that count as "interview-converted": ["interview", "offer", "rejected"]
-    // Statuses that do NOT count: ["applied", "online_test", "withdrawn"]
-    const interviewConvertedStatuses = ['interview', 'offer', 'rejected'];
-    const jobsReachedInterviewStage = await Job.countDocuments({
-      user: userId,
-      status: { $in: interviewConvertedStatuses },
-    });
-
-    // Total number of job applications (excluding withdrawn applications)
-    // This represents all applications that were actually submitted
+    const offerCount = byStatus.offer || 0;
+    const jobsReachedInterviewStage =
+      (byStatus.interview || 0) + (byStatus.offer || 0) + (byStatus.rejected || 0);
     const totalApplicationsExcludingWithdrawn = total - withdrawnCount;
-
-    // Calculate interview conversion rate as percentage
-    // Formula: (Jobs that reached interview stage / Total applications) × 100
-    // Handle division-by-zero safely (return 0% if total applications = 0)
     const interviewConversionRate =
       totalApplicationsExcludingWithdrawn > 0
-        ? parseFloat(
+        ? Number(
             (
-              (jobsReachedInterviewStage /
-                totalApplicationsExcludingWithdrawn) *
+              (jobsReachedInterviewStage / totalApplicationsExcludingWithdrawn) *
               100
             ).toFixed(1),
           )
-        : 0.0;
-
-    const offerRatio = total > 0 ? ((offerCount / total) * 100).toFixed(1) : 0;
-
-    // Applications per week (last 4 weeks)
-    const fourWeeksAgo = new Date();
-    fourWeeksAgo.setDate(fourWeeksAgo.getDate() - 28);
-    const weeklyApplications = await Job.aggregate([
-      {
-        $match: {
-          user: userId,
-          dateApplied: { $gte: fourWeeksAgo },
-        },
-      },
-      {
-        $group: {
-          _id: {
-            $dateToString: { format: '%Y-W%V', date: '$dateApplied' },
-          },
-          count: { $sum: 1 },
-        },
-      },
-      { $sort: { _id: -1 } },
-      { $limit: 4 },
-    ]);
-
+        : 0;
+    const offerRatio = total > 0 ? Number(((offerCount / total) * 100).toFixed(1)) : 0;
     const applicationsPerWeek = weeklyApplications.map((item) => ({
       week: item._id,
       count: item.count,
     }));
 
-    res.json({
+    const payload = {
       total,
       byStatus,
       recent,
       weekly,
       interviewsScheduled,
       upcomingInterviews: upcoming,
-      interviewConversionRate: parseFloat(interviewConversionRate),
-      offerRatio: parseFloat(offerRatio),
+      interviewConversionRate,
+      offerRatio,
       applicationsPerWeek,
-    });
+    };
+
+    setCache(cacheKey, payload, STATS_CACHE_TTL_MS);
+    res.json(payload);
   } catch (error) {
     console.error('Get stats error:', {
       error: error.message,
@@ -332,15 +271,6 @@ export const createJob = async (req, res) => {
       job_url,
     } = req.body;
 
-    // Log incoming request for debugging
-    console.log('CreateJob: Received request:', {
-      company,
-      position,
-      status,
-      date_applied,
-      application_type,
-    });
-
     // Validate required fields
     if (!company || !company.trim()) {
       return res.status(400).json({ error: 'Company name is required' });
@@ -400,14 +330,8 @@ export const createJob = async (req, res) => {
       isCaptured: false,
     };
 
-    console.log('CreateJob: Creating job with data:', {
-      ...jobData,
-      user: '[REDACTED]',
-    });
-
     const job = await Job.create(jobData);
-
-    console.log('CreateJob: Job created successfully:', job._id.toString());
+    invalidateUserStatsCache(req.user?.id);
     res.status(201).json(formatJobForResponse(job));
   } catch (error) {
     console.error('CreateJob: Error creating job:', {
@@ -535,6 +459,7 @@ export const captureJob = async (req, res) => {
     };
 
     const created = await Job.create(jobData);
+    invalidateUserStatsCache(userId);
     return res.status(201).json({
       duplicated: false,
       job: formatJobForResponse(created),
@@ -607,6 +532,7 @@ export const saveScreenshotFromExtension = async (req, res) => {
     };
 
     const created = await Job.create(jobData);
+    invalidateUserStatsCache(uid);
     return res.status(201).json({
       job: formatJobForResponse(created),
       message: 'Screenshot saved.',
@@ -682,6 +608,7 @@ export const saveSimpleExtensionJob = async (req, res) => {
     };
 
     const created = await Job.create(jobData);
+    invalidateUserStatsCache(uid);
 
     return res.status(201).json({
       message: 'Job saved from extension',
@@ -704,15 +631,6 @@ export const saveSimpleExtensionJob = async (req, res) => {
 // Extension screenshot save with structured job data (no auth; uses userId in body)
 export const saveScreenshotJob = async (req, res) => {
   try {
-    console.log("Incoming request to /api/jobs/screenshot:", {
-      userId: req.body?.userId || req.body?.extensionId,
-      hasScreenshot: !!req.body?.screenshotBase64,
-      jobUrl: req.body?.jobUrl,
-      source: req.body?.source,
-      company: req.body?.company,
-      position: req.body?.position
-    });
-
     const {
       userId,
       extensionId,
@@ -797,6 +715,7 @@ export const saveScreenshotJob = async (req, res) => {
       screenshot: screenshotBase64,
       isCaptured: true,
     });
+    invalidateUserStatsCache(uid);
 
     return res.status(201).json({
       message: 'Screenshot job saved successfully',
@@ -929,6 +848,7 @@ export const saveFromExtension = async (req, res) => {
       dateApplied: new Date(),
       isCaptured: true,
     });
+    invalidateUserStatsCache(user._id.toString());
 
     res.status(201).json({
       success: true,
@@ -981,7 +901,6 @@ function parseJobDetails(text) {
 // Update job
 export const updateJob = async (req, res) => {
   try {
-    console.log("Incoming body:", req.body);
     const { id } = req.params;
     const {
       company,
@@ -1064,6 +983,7 @@ export const updateJob = async (req, res) => {
       return res.status(404).json({ error: 'Job not found' });
     }
 
+    invalidateUserStatsCache(req.user?.id);
     res.json(formatJobForResponse(job));
   } catch (error) {
     console.error('Update job error:', error);
@@ -1094,6 +1014,7 @@ export const deleteJob = async (req, res) => {
       return res.status(404).json({ error: 'Job not found' });
     }
 
+    invalidateUserStatsCache(req.user?.id);
     res.json({ message: 'Job deleted successfully' });
   } catch (error) {
     console.error('Delete job error:', error);

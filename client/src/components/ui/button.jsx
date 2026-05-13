@@ -5,19 +5,19 @@ import { cva } from "class-variance-authority";
 import { cn } from "../../lib/cn";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-notion-accent/30 focus-visible:ring-offset-2 focus-visible:ring-offset-notion-bg disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900/30 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
         default:
-          "bg-accent-purple text-notion-bg shadow-soft hover:brightness-110 active:translate-y-[0.5px] font-bold",
+          "bg-slate-900 text-white shadow-sm hover:brightness-110 active:translate-y-[0.5px] font-bold",
         secondary:
-          "bg-notion-card text-notion-text border border-notion-border shadow-soft hover:bg-white/5 active:translate-y-[0.5px]",
-        ghost: "hover:bg-white/5 text-notion-text",
+          "bg-white text-slate-900 border border-slate-200 shadow-sm hover:bg-white/5 active:translate-y-[0.5px]",
+        ghost: "hover:bg-white/5 text-slate-900",
         destructive:
-          "bg-red-500 text-white shadow-soft hover:bg-red-600 active:translate-y-[0.5px]",
+          "bg-red-500 text-white shadow-sm hover:bg-red-600 active:translate-y-[0.5px]",
         outline:
-          "bg-transparent border border-notion-border text-notion-text hover:bg-white/5 active:translate-y-[0.5px]",
+          "bg-transparent border border-slate-200 text-slate-900 hover:bg-white/5 active:translate-y-[0.5px]",
       },
       size: {
         sm: "h-9 px-3",

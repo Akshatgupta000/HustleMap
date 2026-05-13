@@ -17,8 +17,6 @@ const STATUS_LABELS = {
 export default function AnalyticsWidgets({
   statusFilter,
   onFilterClick,
-  showDetails = false,
-  onToggleDetails,
 }) {
   const { data: stats, isLoading, error } = useQuery({
     queryKey: ["jobStats"],
@@ -30,7 +28,7 @@ export default function AnalyticsWidgets({
   if (isLoading) {
     return (
       <Card>
-        <CardContent className="py-10 text-center text-sm text-notion-muted">
+        <CardContent className="py-10 text-center text-sm text-slate-500">
           Loading analytics...
         </CardContent>
       </Card>
@@ -106,12 +104,9 @@ export default function AnalyticsWidgets({
   return (
     <div className="space-y-4">
       {/* Key Metrics - Enhanced Styling */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="section-heading">Analytics Overview</CardTitle>
-        </CardHeader>
-        <CardContent className="pt-0">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+      <div>
+        <h2 className="text-[16px] font-bold text-slate-900 mb-4 tracking-tight px-1">Overview</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {widgets.map((widget, index) => {
           const isActive =
             widget.filterValue === statusFilter ||
@@ -129,157 +124,33 @@ export default function AnalyticsWidgets({
                 }
               }}
               className={cn(
-                "rounded-xl border border-notion-border bg-notion-card p-4 shadow-soft transition-all duration-200",
+                "rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_2px_10px_-3px_rgba(0,0,0,0.05)] transition-all duration-300 flex flex-col justify-between min-h-[100px]",
                 (isClickable || widget.filterValue === null) &&
-                  "cursor-pointer hover:bg-white/5 hover:-translate-y-[1px]",
-                isActive && "border-accent-purple/30 bg-accent-purple/10",
+                  "cursor-pointer hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.08)] hover:-translate-y-1 hover:border-slate-300",
+                isActive && "border-slate-500 bg-slate-50/50 ring-1 ring-slate-500",
                 !isClickable && widget.filterValue !== null && "opacity-75",
               )}
             >
-              <p
-                className={cn(
-                  "text-xs font-medium",
-                  isActive ? "text-accent-purple" : "text-notion-muted",
-                )}
-              >
-                {widget.label}
-              </p>
-              <p
-                className="text-2xl sm:text-3xl font-semibold tracking-tight text-notion-text"
-              >
-                {widget.value}
-              </p>
-              {isClickable && (
+              <div>
                 <p
                   className={cn(
-                    "mt-1 text-xs",
-                    isActive ? "text-notion-muted" : "text-notion-muted",
+                    "text-[13px] font-semibold mb-2",
+                    isActive ? "text-slate-900" : "text-slate-500",
                   )}
                 >
-                  Click to filter
+                  {widget.label}
                 </p>
-              )}
+                <p
+                  className="text-3xl font-extrabold tracking-tight text-slate-900"
+                >
+                  {widget.value}
+                </p>
+              </div>
             </div>
           );
         })}
         </div>
-        </CardContent>
-      </Card>
-
-      {/* Expandable Detailed Analytics */}
-      {onToggleDetails && (
-        <Card className="p-0">
-          <button
-            onClick={onToggleDetails}
-            className="w-full px-4 sm:px-6 py-4 flex items-center justify-between text-left hover:bg-white/5 transition-all duration-200 rounded-xl"
-          >
-            <h3 className="section-heading">Detailed Analytics & Insights</h3>
-            <span className="text-notion-muted text-sm">
-              {showDetails ? "Hide" : "Show"}
-            </span>
-          </button>
-          {showDetails && (
-            <div className="px-4 sm:px-6 pb-6 pt-2 space-y-4 border-t border-notion-border">
-              {/* Applications Per Week */}
-              {safeStats.applicationsPerWeek &&
-                safeStats.applicationsPerWeek.length > 0 && (
-                  <div className="rounded-xl border border-notion-border bg-notion-bg/50 p-4">
-                    <h4 className="subtitle mb-3">
-                      Applications Per Week (Last 4 Weeks)
-                    </h4>
-                    <div className="space-y-2">
-                      {safeStats.applicationsPerWeek.map((week, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center justify-between rounded-xl bg-notion-card border border-notion-border px-3 py-2 shadow-soft"
-                        >
-                          <span className="text-sm text-notion-text">
-                            Week {week.week}
-                          </span>
-                          <span className="text-sm font-medium text-notion-text">
-                            {week.count} {week.count === 1 ? "application" : "applications"}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-              {/* Status Distribution */}
-              {safeStats.byStatus && Object.keys(safeStats.byStatus).length > 0 && (
-                <div className="rounded-xl border border-notion-border bg-notion-bg/50 p-4">
-                  <h4 className="subtitle mb-3">Status Distribution</h4>
-                  <div className="space-y-2">
-                    {Object.entries(safeStats.byStatus)
-                      .sort((a, b) => b[1] - a[1])
-                      .map(([status, count]) => {
-                        const isClickableStatus = onFilterClick;
-                        const isActive = statusFilter === status;
-                        return (
-                          <div
-                            key={status}
-                            onClick={() => {
-                              if (isClickableStatus) {
-                                handleCardClick(status);
-                              }
-                            }}
-                            className={cn(
-                              "flex items-center justify-between rounded-xl px-3 py-2 border border-notion-border bg-notion-card shadow-soft transition-all duration-200",
-                              isClickableStatus && "cursor-pointer hover:bg-white/5",
-                              isActive && "border-accent-purple/30 bg-accent-purple/10",
-                            )}
-                          >
-                            <span
-                              className="text-sm text-notion-text"
-                            >
-                              {STATUS_LABELS[status] || status}
-                            </span>
-                            <span
-                              className="text-sm font-medium text-notion-text"
-                            >
-                              {count}
-                            </span>
-                          </div>
-                        );
-                      })}
-                  </div>
-                </div>
-              )}
-
-              {/* Additional Stats */}
-              {(safeStats.interviewConversionRate !== undefined ||
-                safeStats.offerRatio !== undefined) && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {safeStats.interviewConversionRate !== undefined && (
-                    <div className="rounded-xl border border-notion-border bg-notion-bg/50 p-4">
-                      <h4 className="subtitle mb-2">
-                        Interview Conversion Rate
-                      </h4>
-                      <p className="text-2xl font-semibold tracking-tight text-notion-text">
-                        {safeStats.interviewConversionRate}%
-                      </p>
-                      <p className="text-sm text-notion-muted mt-1">
-                        Applied → Interview
-                      </p>
-                    </div>
-                  )}
-                  {safeStats.offerRatio !== undefined && (
-                    <div className="rounded-xl border border-notion-border bg-notion-bg/50 p-4">
-                      <h4 className="subtitle mb-2">Offer Rate</h4>
-                      <p className="text-2xl font-semibold tracking-tight text-notion-text">
-                        {safeStats.offerRatio}%
-                      </p>
-                      <p className="text-sm text-notion-muted mt-1">
-                        Total → Offer
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-        </Card>
-      )}
+      </div>
     </div>
   );
 }

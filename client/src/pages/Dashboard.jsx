@@ -2,8 +2,8 @@ import { useState, useMemo, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { jobsAPI } from '../lib/api';
 import { getUser } from '../lib/auth';
-import QuickAddJob from '../components/QuickAddJob';
 import AnalyticsWidgets from '../components/AnalyticsWidgets';
+import DetailedAnalytics from '../components/DetailedAnalytics';
 import JobCard from '../components/JobCard';
 import JobDetailsModal from '../components/JobDetailsModal';
 import CapturedJobs from '../components/CapturedJobs';
@@ -26,7 +26,6 @@ export default function Dashboard() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
   const [sortBy, setSortBy] = useState('date');
-  const [showAnalyticsDetails, setShowAnalyticsDetails] = useState(false);
   const [showApplications, setShowApplications] = useState(true);
   const [selectedJob, setSelectedJob] = useState(null);
 
@@ -86,23 +85,26 @@ export default function Dashboard() {
   };
 
   const selectClass =
-    'h-[38px] w-full sm:w-auto rounded-[10px] border border-notion-border bg-notion-card px-3 text-[13.5px] text-notion-text cursor-pointer outline-none transition-all shadow-sm focus:border-accent-purple focus:ring-2 focus:ring-accent-purple/10';
+    'h-[40px] w-full sm:w-auto rounded-xl border border-slate-200 bg-white px-4 text-[13.5px] font-medium text-slate-700 cursor-pointer outline-none transition-all shadow-sm hover:border-slate-300 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10';
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col xl:flex-row gap-6 items-start w-full">
+      {/* ── Left Column ── */}
+      <div className="flex-1 min-w-0 w-full flex flex-col gap-5">
 
-      {/* ── Page header ── */}
-      <div className="flex flex-col gap-3">
-        <div className="flex items-end justify-between flex-wrap gap-3">
-          <div>
-            <h1 className="text-2xl font-extrabold text-notion-text tracking-tight mb-1">
-              Dashboard
-            </h1>
-            <p className="text-[13.5px] text-notion-muted">
-              Track and manage your job applications
-            </p>
-          </div>
+      {/* ── Welcome Banner ── */}
+      <div className="bg-gradient-to-br from-slate-100 via-slate-50 to-slate-100 border border-slate-200 rounded-[24px] p-8 sm:p-10 flex flex-col justify-center relative overflow-hidden mb-2 shadow-sm">
+        <div className="relative z-10 max-w-xl">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-2">
+            Hi, {user?.name ? user.name.split(' ')[0] : 'there'}
+          </h1>
+          <p className="text-[15px] text-slate-600 font-medium">
+            Ready to track your job search and conquer your day?
+          </p>
         </div>
+        {/* Subtle decorative elements for modern SaaS feel */}
+        <div className="absolute right-0 top-0 w-[400px] h-[400px] bg-gradient-to-b from-white to-transparent opacity-60 rounded-full blur-3xl -mr-20 -mt-20"></div>
+        <div className="absolute right-40 bottom-0 w-[300px] h-[300px] bg-gradient-to-t from-slate-200/50 to-transparent opacity-40 rounded-full blur-3xl -mb-20"></div>
       </div>
 
       {/* ── Analytics ── */}
@@ -110,23 +112,19 @@ export default function Dashboard() {
         <AnalyticsWidgets
           statusFilter={statusFilter}
           onFilterClick={handleFilterClick}
-          showDetails={showAnalyticsDetails}
-          onToggleDetails={() => setShowAnalyticsDetails(!showAnalyticsDetails)}
         />
       </div>
 
-      {/* ── Quick Add ── */}
-      <QuickAddJob />
 
       {/* ── Captured Jobs ── */}
       <CapturedJobs />
 
       {/* ── Upcoming Interviews ── */}
       {upcomingInterviews.length > 0 && (
-        <div className="bg-accent-purple/10 border border-accent-purple/20 rounded-2xl overflow-hidden shadow-soft">
-          <div className="px-5 py-4 border-b border-accent-purple/20 flex items-center gap-2">
-            <Calendar size={15} className="text-accent-purple" />
-            <span className="text-sm font-bold text-accent-purple tracking-tight">
+        <div className="bg-slate-100 border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+          <div className="px-5 py-4 border-b border-slate-200 flex items-center gap-2">
+            <Calendar size={15} className="text-slate-900" />
+            <span className="text-sm font-bold text-slate-900 tracking-tight">
               Upcoming Interviews ({upcomingInterviews.length})
             </span>
           </div>
@@ -137,13 +135,13 @@ export default function Dashboard() {
               return (
                 <div
                   key={job.id}
-                  className="flex items-center justify-between bg-notion-card border border-accent-purple/20 rounded-[10px] px-[14px] py-[10px] text-[13.5px]"
+                  className="flex items-center justify-between bg-white border border-slate-200 rounded-[10px] px-[14px] py-[10px] text-[13.5px]"
                 >
                   <div className="min-w-0">
-                    <span className="font-semibold text-accent-purple">{job.company}</span>
-                    <span className="text-notion-text ml-1.5">— {job.position}</span>
+                    <span className="font-semibold text-slate-900">{job.company}</span>
+                    <span className="text-slate-900 ml-1.5">— {job.position}</span>
                   </div>
-                  <span className="shrink-0 font-extrabold text-notion-bg bg-accent-purple px-2.5 py-0.5 rounded-full text-[10.5px] uppercase tracking-wider">
+                  <span className="shrink-0 font-extrabold text-white bg-slate-900 px-2.5 py-0.5 rounded-full text-[10.5px] uppercase tracking-wider">
                     {daysUntil === 0 ? 'Today' : daysUntil === 1 ? 'Tomorrow' : `${daysUntil}d`}
                   </span>
                 </div>
@@ -154,20 +152,20 @@ export default function Dashboard() {
       )}
 
       {/* ── Applications card ── */}
-      <div className="bg-notion-card border border-notion-border rounded-2xl overflow-hidden shadow-sm">
+      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
         {/* Card header */}
         <div
-          className={`flex items-center justify-between px-5 py-4 ${showApplications ? 'border-b border-notion-border/50' : ''}`}
+          className={`flex items-center justify-between px-5 py-4 ${showApplications ? 'border-b border-slate-200/50' : ''}`}
         >
-          <h2 className="text-[15px] font-bold text-notion-text tracking-tight">
+          <h2 className="text-[15px] font-bold text-slate-900 tracking-tight">
             My Applications{' '}
-            <span className="text-[12.5px] font-medium text-notion-muted bg-notion-bg px-2 py-0.5 rounded-full border border-notion-border ml-1.5">
+            <span className="text-[12.5px] font-medium text-slate-500 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-200 ml-1.5">
               {filteredAndSortedJobs.length}
             </span>
           </h2>
           <button
             onClick={() => setShowApplications(!showApplications)}
-            className="flex items-center gap-1.5 bg-transparent border border-notion-border rounded-lg px-[11px] py-[5px] text-[13px] font-medium text-notion-muted cursor-pointer transition-all hover:bg-notion-bg hover:text-notion-text"
+            className="flex items-center gap-1.5 bg-transparent border border-slate-200 rounded-lg px-[11px] py-[5px] text-[13px] font-medium text-slate-500 cursor-pointer transition-all hover:bg-slate-50 hover:text-slate-900"
           >
             {showApplications ? (
               <><ChevronUp size={13} /> Hide</>
@@ -186,7 +184,7 @@ export default function Dashboard() {
                 placeholder="Search by company or role…"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full"
+                className="w-full h-[40px] rounded-xl border-slate-200 text-[13.5px] shadow-sm"
               />
               <div className="flex gap-2 flex-wrap">
                 <select
@@ -221,22 +219,22 @@ export default function Dashboard() {
 
             {/* Job list */}
             {isLoading ? (
-              <div className="text-center py-10 text-[13.5px] text-notion-muted">
+              <div className="text-center py-10 text-[13.5px] text-slate-500">
                 Loading jobs…
               </div>
             ) : filteredAndSortedJobs.length === 0 ? (
-              <div className="text-center py-10 px-5 bg-notion-bg rounded-xl border border-notion-border">
-                <h3 className="text-[15px] font-semibold text-notion-text mb-1.5">
+              <div className="text-center py-10 px-5 bg-slate-50 rounded-xl border border-slate-200">
+                <h3 className="text-[15px] font-semibold text-slate-900 mb-1.5">
                   No jobs found
                 </h3>
-                <p className="text-[13px] text-notion-muted mb-4">
+                <p className="text-[13px] text-slate-500 mb-4">
                   {searchQuery || statusFilter !== 'all' || typeFilter !== 'all'
                     ? 'Try adjusting your filters'
                     : 'Start tracking your job applications'}
                 </p>
                 {!searchQuery && statusFilter === 'all' && typeFilter === 'all' && (
                   <Link to="/jobs/new" className="no-underline">
-                    <button className="bg-accent-purple text-notion-bg border-none rounded-[9px] px-[18px] py-2 text-[13.5px] font-semibold cursor-pointer shadow-soft hover:brightness-110 transition-all">
+                    <button className="bg-slate-900 text-white border-none rounded-[9px] px-[18px] py-2 text-[13.5px] font-semibold cursor-pointer shadow-sm hover:brightness-110 transition-all">
                       Add Your First Job
                     </button>
                   </Link>
@@ -251,6 +249,13 @@ export default function Dashboard() {
             )}
           </div>
         )}
+      </div>
+
+      </div>
+
+      {/* ── Right Column ── */}
+      <div className="w-full xl:w-[320px] 2xl:w-[360px] shrink-0 xl:sticky top-[88px]">
+        <DetailedAnalytics />
       </div>
 
       <JobDetailsModal job={selectedJob} onClose={() => setSelectedJob(null)} />

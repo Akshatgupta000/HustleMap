@@ -6,7 +6,7 @@ function Card({ className, ...props }) {
   return (
     <div
       className={cn(
-        "rounded-xl border border-notion-border bg-notion-card shadow-soft",
+        "rounded-xl border border-slate-200 bg-white shadow-sm",
         className,
       )}
       {...props}
@@ -20,13 +20,13 @@ function CardHeader({ className, ...props }) {
 
 function CardTitle({ className, ...props }) {
   return (
-    <div className={cn("text-base font-semibold text-notion-text", className)} {...props} />
+    <div className={cn("text-base font-semibold text-slate-900", className)} {...props} />
   );
 }
 
 function CardDescription({ className, ...props }) {
   return (
-    <div className={cn("text-sm text-notion-muted", className)} {...props} />
+    <div className={cn("text-sm text-slate-500", className)} {...props} />
   );
 }
 

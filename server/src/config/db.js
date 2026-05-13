@@ -2,6 +2,14 @@ import mongoose from "mongoose";
 
 const connectDB = async () => {
   try {
+    // Reuse existing connection if already connected/connecting.
+    if (mongoose.connection.readyState === 1) {
+      return mongoose.connection;
+    }
+    if (mongoose.connection.readyState === 2) {
+      return mongoose.connection;
+    }
+
     const mongoUri = (process.env.MONGO_URI || "").trim();
 
     if (!mongoUri) {
@@ -14,6 +22,8 @@ const connectDB = async () => {
     const conn = await mongoose.connect(mongoUri, {
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
+      maxPoolSize: 5,
+      minPoolSize: 1,
     });
 
     console.log(`MongoDB Connected: ${conn.connection.host}`);
