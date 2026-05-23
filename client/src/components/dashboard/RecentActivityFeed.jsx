@@ -50,13 +50,13 @@ export default function RecentActivityFeed() {
   const activities = feed?.recentActivity || [];
 
   return (
-    <div className="bg-transparent border border-charcoal rounded-[32px] overflow-hidden">
-      <div className="px-6 py-5 border-b border-charcoal/20 flex items-center gap-2">
+    <div className="bg-transparent border border-charcoal rounded-[32px] overflow-hidden flex flex-col h-full min-h-0">
+      <div className="px-6 py-5 border-b border-charcoal/20 flex items-center gap-2 shrink-0">
         <Activity size={16} className="text-charcoal" />
         <span className="text-[15px] font-extrabold text-charcoal tracking-tight">Recent Activity</span>
       </div>
 
-      <div className="p-5 sm:p-6">
+      <div className="p-5 sm:p-6 flex-1 overflow-y-auto custom-scrollbar">
         {activities.length === 0 ? (
           <div className="text-center py-6 text-charcoal/60 text-[13.5px] font-medium">
             No recent activity found.

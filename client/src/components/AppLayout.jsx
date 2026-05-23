@@ -22,7 +22,7 @@ export default function AppLayout({ onLogout, children }) {
         setIsMobileMenuOpen={setIsMobileMenuOpen} 
       />
       <main ref={mainRef} className="min-w-0 flex-1 bg-sage flex flex-col overflow-y-auto relative scroll-smooth">
-        <div className="w-full max-w-[1600px] mx-auto px-4 py-8 sm:px-8 lg:px-12 flex-1">
+        <div className="w-full max-w-[1600px] mx-auto px-4 pb-8 pt-0 sm:px-8 lg:px-12 flex-1">
           {children}
         </div>
       </main>

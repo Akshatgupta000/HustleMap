@@ -22,6 +22,10 @@ export default function InterviewRounds({ rounds = [], onChange }) {
   };
 
   const addRound = () => {
+    const last = localRounds[localRounds.length - 1];
+    if (!last?.round?.trim()) {
+      return; // don't add until the previous stage name is filled
+    }
     const newRound = {
       round: '',
       date: '',
@@ -44,13 +48,18 @@ export default function InterviewRounds({ rounds = [], onChange }) {
   return (
     <div className="space-y-3">
       <div className="flex justify-between items-center">
-        <label className="block text-sm font-semibold text-slate-900">Interview Rounds</label>
+        <label className="block text-sm font-semibold text-slate-900">Application Stages</label>
         <button
           type="button"
           onClick={addRound}
-          className="text-xs font-semibold text-slate-900 border border-slate-200 px-2.5 py-1 rounded-lg hover:bg-white/5 transition-all"
+          disabled={!localRounds[localRounds.length - 1]?.round?.trim()}
+          className={`text-xs font-semibold border px-2.5 py-1 rounded-lg transition-all ${
+            localRounds[localRounds.length - 1]?.round?.trim()
+              ? 'text-slate-900 border-slate-200 hover:bg-white/5 cursor-pointer'
+              : 'text-slate-300 border-slate-100 cursor-not-allowed'
+          }`}
         >
-          + Add Round
+          + Add Stage
         </button>
       </div>
 

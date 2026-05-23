@@ -109,14 +109,14 @@ export default function JobCard({ job, onViewDetails }) {
     <div
       onClick={() => onViewDetails(job)}
       className={cn(
-        "rounded-[24px] border border-charcoal bg-white p-5 transition-all duration-200 hover:-translate-y-[2px] cursor-pointer flex flex-col h-full relative overflow-hidden",
+        "rounded-[20px] border border-charcoal bg-white p-4 transition-all duration-200 hover:-translate-y-[2px] cursor-pointer flex flex-col h-full relative overflow-hidden",
         isUpcomingInterview() && "ring-2 ring-accent-yellow",
       )}
     >
-      <div className="flex justify-between items-start gap-3 mb-4">
+      <div className="flex justify-between items-start gap-2 mb-3">
         <div className="flex-1 min-w-0">
-          <h3 className="text-[18px] font-extrabold text-charcoal leading-tight mb-1 truncate">{job.company}</h3>
-          <p className="text-[14px] text-charcoal/70 font-semibold truncate">{job.position}</p>
+          <h3 className="text-[15px] font-extrabold text-charcoal leading-tight mb-0.5 truncate">{job.company}</h3>
+          <p className="text-[12px] text-charcoal/70 font-semibold truncate">{job.position}</p>
         </div>
         <div className="flex items-center gap-2">
           {/* Tick Checkbox */}
@@ -161,7 +161,7 @@ export default function JobCard({ job, onViewDetails }) {
         </div>
       </div>
 
-      <div className="space-y-1.5 mb-3">
+      <div className="space-y-1 mb-2">
         {job.screenshot && (
           <img
             src={job.screenshot}

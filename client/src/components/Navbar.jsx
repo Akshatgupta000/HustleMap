@@ -110,7 +110,7 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
       {/* ── Top Horizontal Navbar (Desktop) / Slide-over (Mobile) ── */}
       <nav
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-[272px] bg-black transition-transform duration-300 ease-in-out lg:static lg:w-auto lg:mx-6 lg:mt-6 lg:mb-2 lg:h-[80px] lg:flex lg:items-center lg:justify-between lg:px-8 lg:translate-x-0 lg:rounded-[32px] shadow-[4px_4px_0px_0px_#1c1c1c]",
+          "fixed inset-y-0 left-0 z-50 w-[272px] bg-black transition-transform duration-300 ease-in-out lg:static lg:w-auto lg:mx-6 lg:mt-6 lg:mb-6 lg:h-[64px] lg:flex lg:items-center lg:justify-between lg:px-6 lg:translate-x-0 lg:rounded-[24px] shadow-[4px_4px_0px_0px_#1c1c1c]",
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
@@ -136,18 +136,18 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
         {/* Desktop Logo */}
         <Link
           to="/dashboard"
-          className="hidden lg:flex items-center px-4 text-[24px] font-extrabold tracking-tight text-white hover:text-white/80 transition-colors"
+          className="hidden lg:flex items-center px-2 text-[20px] font-extrabold tracking-tight text-white hover:text-white/80 transition-colors"
         >
           HustleMap
         </Link>
 
         {/* Navigation Links */}
-        <div className="flex flex-col gap-2 px-6 lg:flex-row lg:items-center lg:gap-2 lg:px-0 lg:mx-auto">
+        <div className="flex flex-col gap-2 px-6 lg:flex-row lg:items-center lg:gap-1 lg:px-0 lg:mx-auto">
           <Link
             to="/dashboard"
             onClick={() => setIsMobileMenuOpen(false)}
             className={cn(
-              "flex items-center gap-2 rounded-full px-5 py-2.5 text-[14px] transition-all duration-200 font-bold",
+              "flex items-center gap-2 rounded-full px-4 py-2 text-[13px] transition-all duration-200 font-bold",
               isActive("/dashboard")
                 ? "bg-white text-black shadow-sm"
                 : "text-white/70 hover:bg-white/10 hover:text-white",
@@ -159,7 +159,7 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
             to="/jobs"
             onClick={() => setIsMobileMenuOpen(false)}
             className={cn(
-              "flex items-center gap-2 rounded-full px-5 py-2.5 text-[14px] transition-all duration-200 font-bold",
+              "flex items-center gap-2 rounded-full px-4 py-2 text-[13px] transition-all duration-200 font-bold",
               isActive("/jobs")
                 ? "bg-white text-black shadow-sm"
                 : "text-white/70 hover:bg-white/10 hover:text-white",
@@ -171,7 +171,7 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
             to="/analytics"
             onClick={() => setIsMobileMenuOpen(false)}
             className={cn(
-              "flex items-center gap-2 rounded-full px-5 py-2.5 text-[14px] transition-all duration-200 font-bold",
+              "flex items-center gap-2 rounded-full px-4 py-2 text-[13px] transition-all duration-200 font-bold",
               isActive("/analytics")
                 ? "bg-white text-black shadow-sm"
                 : "text-white/70 hover:bg-white/10 hover:text-white",
@@ -183,7 +183,7 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
             to="/captured"
             onClick={() => setIsMobileMenuOpen(false)}
             className={cn(
-              "flex items-center gap-2 rounded-full px-5 py-2.5 text-[14px] transition-all duration-200 font-bold",
+              "flex items-center gap-2 rounded-full px-4 py-2 text-[13px] transition-all duration-200 font-bold",
               isActive("/captured")
                 ? "bg-white text-black shadow-sm"
                 : "text-white/70 hover:bg-white/10 hover:text-white",
@@ -195,7 +195,7 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
             to="/extension"
             onClick={() => setIsMobileMenuOpen(false)}
             className={cn(
-              "flex items-center gap-2 rounded-full px-5 py-2.5 text-[14px] transition-all duration-200 font-bold",
+              "flex items-center gap-2 rounded-full px-4 py-2 text-[13px] transition-all duration-200 font-bold",
               isActive("/extension")
                 ? "bg-white text-black shadow-sm"
                 : "text-white/70 hover:bg-white/10 hover:text-white",

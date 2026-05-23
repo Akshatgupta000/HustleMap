@@ -22,10 +22,10 @@ const APPLICATION_TYPE_OPTIONS = [
   { value: "off_campus", label: "Off-Campus" },
 ];
 
-const labelClass = "block text-[13px] font-extrabold text-charcoal mb-[7px] tracking-tight";
+const labelClass = "block text-[12px] font-extrabold text-charcoal mb-1 tracking-tight";
 
 const selectClass =
-  "h-10 w-full rounded-full border border-charcoal bg-transparent px-4 text-[13.5px] text-charcoal font-semibold cursor-pointer outline-none transition-all shadow-none focus:border-charcoal focus:ring-2 focus:ring-charcoal/20 appearance-auto";
+  "h-9 w-full rounded-full border border-charcoal bg-transparent px-4 text-[13px] text-charcoal font-semibold cursor-pointer outline-none transition-all shadow-none focus:border-charcoal focus:ring-2 focus:ring-charcoal/20 appearance-auto";
 
 export default function JobForm() {
   const navigate = useNavigate();
@@ -61,17 +61,13 @@ export default function JobForm() {
 
   useEffect(() => {
     if (!isEdit && location.state?.prefill) {
-      setFormData((prev) => ({
-        ...prev,
-        ...location.state.prefill,
-      }));
+      setFormData((prev) => ({ ...prev, ...location.state.prefill }));
     }
   }, [isEdit, location.state]);
 
   useEffect(() => {
     if (job) {
       const fromCaptured = location.state?.fromCaptured && job.is_captured;
-      
       const isPlaceholderCompany = job.company === "Captured" || job.company === "Unknown Company";
       const isPlaceholderPosition = job.position === "Job Capture" || job.position === "Captured Job";
 
@@ -145,76 +141,69 @@ export default function JobForm() {
   }
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-3 max-w-[860px] mx-auto">
 
       {/* ── Page header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+      <div className="flex items-center justify-between gap-3">
         <div>
-          <h1 className="text-[28px] font-extrabold text-charcoal tracking-tight mb-1">
+          <h1 className="text-[20px] font-extrabold text-charcoal tracking-tight">
             {isEdit ? "Edit Job" : "Add New Job"}
           </h1>
-          <p className="text-[14px] text-charcoal/60 font-semibold">
-            Keep details clean and consistent so you can spot patterns later.
-          </p>
+          <p className="text-[12px] text-charcoal/50 font-semibold">Keep details clean and consistent.</p>
         </div>
         <button
           onClick={() => navigate("/dashboard")}
-          className="flex items-center justify-center gap-1.5 bg-transparent border border-charcoal rounded-full px-[16px] py-2.5 text-[13.5px] font-bold text-charcoal cursor-pointer shadow-none transition-colors hover:bg-charcoal/5 w-full sm:w-auto"
+          className="flex items-center gap-1.5 bg-transparent border border-charcoal rounded-full px-4 py-1.5 text-[12px] font-bold text-charcoal cursor-pointer hover:bg-charcoal/5 transition-colors shrink-0"
         >
-          <ArrowLeft size={14} /> Back to Dashboard
+          <ArrowLeft size={13} /> Back
         </button>
       </div>
 
       {/* ── Form card ── */}
-      <div className="bg-sage-light border border-charcoal rounded-[32px] overflow-hidden shadow-none">
-        <div className="px-6 py-5 border-b border-charcoal/20 flex items-center justify-between">
-          <p className="text-[12px] font-extrabold text-charcoal uppercase tracking-[0.6px] m-0">
-            Job Details
-          </p>
+      <div className="bg-sage-light border border-charcoal rounded-[24px] overflow-hidden">
+        <div className="px-5 py-3 border-b border-charcoal/20">
+          <p className="text-[11px] font-extrabold text-charcoal uppercase tracking-[0.6px] m-0">Job Details</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-5 flex flex-col gap-[18px]">
+        <form onSubmit={handleSubmit} className="p-4 flex flex-col gap-3">
 
-          {/* Company & Position */}
-          <div className="grid gap-3.5" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
+          {/* Row 1: Company & Position */}
+          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className={labelClass}>Company Name *</label>
+              <label className={labelClass}>Company *</label>
               <Input
-                type="text"
-                required
-                value={formData.company}
+                type="text" required value={formData.company}
                 onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                 placeholder="Google"
+                className="h-9 text-[13px]"
               />
             </div>
             <div>
-              <label className={labelClass}>Job Role / Title *</label>
+              <label className={labelClass}>Job Title *</label>
               <Input
-                type="text"
-                required
-                value={formData.position}
+                type="text" required value={formData.position}
                 onChange={(e) => setFormData({ ...formData, position: e.target.value })}
                 placeholder="Software Engineer"
+                className="h-9 text-[13px]"
               />
             </div>
           </div>
 
-          {/* Location & Type */}
-          <div className="grid gap-3.5" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
+          {/* Row 2: Location, Type, Status, Date Applied */}
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             <div>
               <label className={labelClass}>Location</label>
               <Input
-                type="text"
-                value={formData.location}
+                type="text" value={formData.location}
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                placeholder="San Francisco, CA or Remote"
+                placeholder="Remote"
+                className="h-9 text-[13px]"
               />
             </div>
             <div>
-              <label className={labelClass}>Application Type *</label>
+              <label className={labelClass}>Type *</label>
               <select
-                required
-                value={formData.application_type}
+                required value={formData.application_type}
                 onChange={(e) => setFormData({ ...formData, application_type: e.target.value })}
                 className={selectClass}
               >
@@ -223,15 +212,10 @@ export default function JobForm() {
                 ))}
               </select>
             </div>
-          </div>
-
-          {/* Status & Date */}
-          <div className="grid gap-3.5" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
             <div>
-              <label className={labelClass}>Application Status *</label>
+              <label className={labelClass}>Status *</label>
               <select
-                required
-                value={formData.status}
+                required value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                 className={selectClass}
               >
@@ -241,93 +225,79 @@ export default function JobForm() {
               </select>
             </div>
             <div>
-              <label className={labelClass}>Application Date *</label>
+              <label className={labelClass}>Date Applied *</label>
               <Input
-                type="date"
-                required
-                value={formData.date_applied}
+                type="date" required value={formData.date_applied}
                 onChange={(e) => setFormData({ ...formData, date_applied: e.target.value })}
+                className="h-9 text-[13px]"
               />
             </div>
           </div>
 
-          {/* Job URL */}
-          <div>
-            <label className={labelClass}>
-              Job URL{' '}
-              <span className="font-normal text-charcoal/50">(optional)</span>
-            </label>
-            <Input
-              type="url"
-              value={formData.job_url}
-              onChange={(e) => setFormData({ ...formData, job_url: e.target.value })}
-              placeholder="https://company.com/careers/role"
-            />
-          </div>
-
-          {/* Interview Date */}
-          <div>
-            <label className={labelClass}>
-              Interview Date{' '}
-              <span className="font-normal text-charcoal/50">(optional)</span>
-            </label>
-            <Input
-              type="date"
-              value={formData.interview_date}
-              onChange={(e) => setFormData({ ...formData, interview_date: e.target.value })}
-            />
-          </div>
-
-          {/* Interview Rounds */}
-          <div>
-            <InterviewRounds
-              rounds={formData.interview_rounds}
-              onChange={(rounds) => setFormData({ ...formData, interview_rounds: rounds })}
-            />
-          </div>
-
-          {/* Resume & Portfolio */}
-          <div className="grid gap-3.5" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
+          {/* Row 3: Job URL & Interview Date */}
+          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className={labelClass}>
-                Resume Link{' '}
-                <span className="font-normal text-charcoal/50">(optional)</span>
-              </label>
+              <label className={labelClass}>Job URL <span className="font-normal text-charcoal/40">(optional)</span></label>
               <Input
-                type="url"
-                value={formData.resume_link}
+                type="url" value={formData.job_url}
+                onChange={(e) => setFormData({ ...formData, job_url: e.target.value })}
+                placeholder="https://company.com/careers/role"
+                className="h-9 text-[13px]"
+              />
+            </div>
+            <div>
+              <label className={labelClass}>Interview Date <span className="font-normal text-charcoal/40">(optional)</span></label>
+              <Input
+                type="date" value={formData.interview_date}
+                onChange={(e) => setFormData({ ...formData, interview_date: e.target.value })}
+                className="h-9 text-[13px]"
+              />
+            </div>
+          </div>
+
+          {/* Row 4: Resume & Portfolio */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className={labelClass}>Resume Link <span className="font-normal text-charcoal/40">(optional)</span></label>
+              <Input
+                type="url" value={formData.resume_link}
                 onChange={(e) => setFormData({ ...formData, resume_link: e.target.value })}
                 placeholder="https://…"
+                className="h-9 text-[13px]"
               />
             </div>
             <div>
-              <label className={labelClass}>
-                Portfolio Link{' '}
-                <span className="font-normal text-charcoal/50">(optional)</span>
-              </label>
+              <label className={labelClass}>Portfolio Link <span className="font-normal text-charcoal/40">(optional)</span></label>
               <Input
-                type="url"
-                value={formData.portfolio_link}
+                type="url" value={formData.portfolio_link}
                 onChange={(e) => setFormData({ ...formData, portfolio_link: e.target.value })}
                 placeholder="https://…"
+                className="h-9 text-[13px]"
               />
             </div>
           </div>
 
-          {/* Notes */}
+          {/* Row 5: Notes */}
           <div>
-            <label className={labelClass}>
-              Notes / HR Details{' '}
-              <span className="font-normal text-charcoal/50">(optional)</span>
-            </label>
+            <label className={labelClass}>Notes <span className="font-normal text-charcoal/40">(optional)</span></label>
             <textarea
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-              rows={3}
-              className="w-full rounded-[24px] border border-charcoal bg-transparent px-4 py-[12px] text-[13.5px] text-charcoal resize-none outline-none shadow-none transition-all font-[inherit] box-border focus:border-charcoal focus:ring-2 focus:ring-charcoal/20"
+              rows={2}
+              className="w-full rounded-[16px] border border-charcoal bg-transparent px-4 py-2 text-[13px] text-charcoal resize-none outline-none shadow-none transition-all font-[inherit] box-border focus:border-charcoal focus:ring-2 focus:ring-charcoal/20"
               placeholder="Notes about this application, HR contact, salary range…"
             />
           </div>
+
+          {/* Interview Rounds — shown for all statuses except applied */}
+          {formData.status !== "applied" && (
+            <div>
+              <InterviewRounds
+                rounds={formData.interview_rounds}
+                onChange={(rounds) => setFormData({ ...formData, interview_rounds: rounds })}
+              />
+            </div>
+          )}
 
           {/* Interview Prep Hub (edit only) */}
           {isEdit && (
@@ -340,14 +310,14 @@ export default function JobForm() {
           )}
 
           {/* Submit */}
-          <div className="pt-1 flex gap-2.5 flex-wrap">
+          <div className="pt-1 flex gap-2">
             <button
               type="submit"
               disabled={isPending}
-              className={`border border-charcoal rounded-full px-7 py-[10px] text-[14.5px] font-bold tracking-tight transition-all flex-1 sm:flex-none sm:min-w-[160px] text-white ${
+              className={`border border-charcoal rounded-full px-6 py-2 text-[13px] font-bold tracking-tight transition-all text-white ${
                 isPending
                   ? 'bg-charcoal/50 cursor-not-allowed border-charcoal/50'
-                  : 'bg-charcoal cursor-pointer shadow-sm hover:bg-charcoal/90 hover:scale-[1.03]'
+                  : 'bg-charcoal cursor-pointer hover:bg-charcoal/90'
               }`}
             >
               {isPending ? "Saving…" : isEdit ? "Update Job" : "Add Job"}
@@ -355,7 +325,7 @@ export default function JobForm() {
             <button
               type="button"
               onClick={() => navigate("/dashboard")}
-              className="bg-transparent text-charcoal border border-charcoal rounded-full px-5 py-[10px] text-[14.5px] font-bold cursor-pointer transition-colors hover:bg-charcoal/5 flex-1 sm:flex-none shadow-none"
+              className="bg-transparent text-charcoal border border-charcoal rounded-full px-5 py-2 text-[13px] font-bold cursor-pointer transition-colors hover:bg-charcoal/5"
             >
               Cancel
             </button>

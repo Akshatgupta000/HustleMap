@@ -93,8 +93,8 @@ export default function Jobs() {
       {/* ── Page header ── */}
       <div className="flex justify-end mb-2">
         <Link to="/jobs/new" className="no-underline shrink-0">
-          <button className="flex items-center justify-center gap-2 bg-charcoal text-white border-2 border-charcoal rounded-[16px] px-6 py-3 text-[14px] font-black tracking-wide cursor-pointer shadow-[3px_3px_0px_0px_#1c1c1c] hover:shadow-[1px_1px_0px_0px_#1c1c1c] hover:translate-x-[2px] hover:translate-y-[2px] transition-all w-full sm:w-auto uppercase">
-            <Plus size={18} strokeWidth={3} /> Add Job
+          <button className="flex items-center justify-center gap-1.5 bg-charcoal text-white border-2 border-charcoal rounded-[12px] px-4 py-2 text-[12px] font-black tracking-wide cursor-pointer shadow-[3px_3px_0px_0px_#1c1c1c] hover:shadow-[1px_1px_0px_0px_#1c1c1c] hover:translate-x-[2px] hover:translate-y-[2px] transition-all w-full sm:w-auto uppercase">
+            <Plus size={14} strokeWidth={3} /> Add Job
           </button>
         </Link>
       </div>
@@ -214,8 +214,8 @@ export default function Jobs() {
             </div>
           ) : (
             <div
-              className="grid gap-4 sm:gap-5"
-              style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+              className="grid gap-3"
+              style={{ gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))" }}
             >
               {filteredAndSortedJobs.map((job) => (
                 <JobCard key={job.id} job={job} onViewDetails={setSelectedJob} />

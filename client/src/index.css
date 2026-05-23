@@ -76,3 +76,7 @@
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
   @apply bg-slate-300;
 }
+
+/* Transparent custom scrollbar for Dashboard columns */
+.custom-scrollbar::-webkit-scrollbar { width: 0px; background: transparent; }
+.custom-scrollbar { scrollbar-width: none; }
