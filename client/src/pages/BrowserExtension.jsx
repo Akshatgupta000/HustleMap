@@ -1,7 +1,31 @@
-import { Chrome, Download, Settings, Monitor, Save, ExternalLink, ChevronRight, Puzzle } from "lucide-react";
+import { Chrome, Download, Settings, Monitor, Save, ExternalLink, ChevronRight, Puzzle, Copy } from "lucide-react";
 import { Button } from "../components/ui/button";
+import { getUser, setAuth } from "../lib/auth";
+import { authAPI } from "../lib/api";
+import { useState } from "react";
+import toast from "react-hot-toast";
 
 export default function BrowserExtension() {
+  const [user, setUser] = useState(getUser());
+
+  const ensureExtensionId = async () => {
+    if (!user) return;
+    if (user.extensionId) return;
+
+    try {
+      const response = await authAPI.getExtensionId();
+      const extensionId = response.data?.extensionId;
+      if (extensionId) {
+        const updatedUser = { ...user, extensionId };
+        setUser(updatedUser);
+        setAuth(localStorage.getItem("token"), updatedUser);
+        toast.success("Extension ID generated");
+      }
+    } catch (error) {
+      toast.error("Failed to generate Extension ID");
+      console.error("GetExtensionId error:", error);
+    }
+  };
   const steps = [
     {
       title: "Step 1 – Visit the extension repository",
@@ -35,7 +59,7 @@ export default function BrowserExtension() {
     },
     {
       title: "Step 7 – Start capturing job listings",
-      description: "Pin the extension to your toolbar, enter your Extension ID from the sidebar, and start capturing jobs from LinkedIn, Indeed, or Glassdoor!",
+      description: "Pin the extension to your toolbar, click the button in the top right of this page to copy your Extension ID, and start capturing jobs from LinkedIn, Indeed, or Glassdoor!",
       icon: ChevronRight,
     },
   ];
@@ -43,19 +67,54 @@ export default function BrowserExtension() {
   return (
     <div className="flex flex-col gap-6 max-w-4xl mx-auto animate-in fade-in duration-500">
       {/* Header Section */}
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-3 mb-1">
-          <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center shadow-sm">
-            <Puzzle size={20} className="text-slate-900" />
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-3 mb-1">
+            <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center shadow-sm">
+              <Puzzle size={20} className="text-slate-900" />
+            </div>
+            <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+              Browser Extension
+            </h1>
           </div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
-            Browser Extension
-          </h1>
+          <p className="text-[14px] text-slate-500 leading-relaxed max-w-2xl">
+            Capture job listings directly from LinkedIn, Indeed, and Glassdoor without manual data entry. 
+            Our extension saves structured details and screenshots directly to your HustleMap dashboard.
+          </p>
         </div>
-        <p className="text-[14px] text-slate-500 leading-relaxed max-w-2xl">
-          Capture job listings directly from LinkedIn, Indeed, and Glassdoor without manual data entry. 
-          Our extension saves structured details and screenshots directly to your HustleMap dashboard.
-        </p>
+
+        {/* Extension ID Button Block */}
+        {user && (
+          <div className="shrink-0 self-start bg-white border border-slate-200 rounded-xl p-3 shadow-sm flex items-center gap-3">
+            <div className="flex flex-col">
+              <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Your EXT ID</span>
+              {user.extensionId ? (
+                <span className="font-mono text-[13px] font-bold text-slate-900">{user.extensionId}</span>
+              ) : (
+                <span className="text-[12px] font-medium text-slate-400">Not generated</span>
+              )}
+            </div>
+            {user.extensionId ? (
+              <button 
+                onClick={() => {
+                  navigator.clipboard.writeText(user.extensionId);
+                  toast.success("Extension ID copied");
+                }}
+                className="w-8 h-8 flex items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition-colors"
+                title="Copy ID"
+              >
+                <Copy size={14} />
+              </button>
+            ) : (
+              <button
+                onClick={ensureExtensionId}
+                className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-bold rounded-lg transition-colors"
+              >
+                Generate
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Main Content Card */}
@@ -93,7 +152,7 @@ export default function BrowserExtension() {
               <div className="flex-1">
                 <p className="text-[13px] font-bold text-accent-yellow tracking-tight">Setup your Extension ID</p>
                 <p className="text-[12.5px] text-accent-yellow/80 leading-relaxed">
-                  After installing, copy your unique <strong className="text-accent-yellow font-bold">Extension ID</strong> from the dashboard sidebar and paste it into the extension settings.
+                  After installing, copy your unique <strong className="text-accent-yellow font-bold">Extension ID</strong> using the button at the top right of this page and paste it into the extension settings.
                 </p>
               </div>
             </div>

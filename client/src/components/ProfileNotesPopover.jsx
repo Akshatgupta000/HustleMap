@@ -111,9 +111,9 @@ export default function ProfileNotesPopover({ theme = "light" }) {
                   href={`${API_BASE}${profile.resumeUrl}`} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 text-[11px] font-extrabold bg-white border border-charcoal px-3 py-1.5 rounded-full hover:bg-charcoal hover:text-white transition-colors"
+                  className="flex items-center gap-1.5 text-[11px] font-extrabold bg-charcoal text-white px-4 py-1.5 rounded-full hover:bg-charcoal/90 transition-colors shadow-sm"
                 >
-                  <ExternalLink className="h-3 w-3" />
+                  <ExternalLink className="h-3.5 w-3.5" />
                   View
                 </a>
               </div>

@@ -229,39 +229,6 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
             </div>
             
             <div className="h-8 w-[1px] bg-white/20"></div>
-
-            {/* Extension ID */}
-            <div className="flex items-center gap-2 bg-white/10 rounded-full px-3 py-1.5">
-              <span className="text-[10px] font-bold text-white/70 tracking-wider">EXT ID</span>
-              {user.extensionId ? (
-                <div className="flex items-center gap-2">
-                  <Badge className="font-mono text-[10px] bg-white text-black hover:bg-white rounded-full" variant="secondary">
-                    {user.extensionId}
-                  </Badge>
-                  <button 
-                    onClick={() => {
-                      navigator.clipboard.writeText(user.extensionId);
-                      toast.success("Extension ID copied");
-                    }}
-                    className="text-white/50 hover:text-white transition-colors"
-                    title="Copy ID"
-                  >
-                    <Copy className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              ) : (
-                <Button
-                  onClick={ensureExtensionId}
-                  variant="outline"
-                  size="sm"
-                  className="h-6 text-[10px] px-2 rounded-full border-white text-white bg-transparent hover:bg-white hover:text-black transition-colors"
-                >
-                  Generate
-                </Button>
-              )}
-            </div>
-
-            <div className="h-8 w-[1px] bg-white/20"></div>
             
             {/* User Dropdown */}
             <div className="relative" ref={dropdownRef}>
@@ -281,18 +248,21 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
               </div>
               
               {isDropdownOpen && (
-                <div className="absolute top-full right-0 mt-3 w-48 bg-white border-2 border-charcoal rounded-[20px] shadow-[4px_4px_0px_0px_#1c1c1c] py-1 z-50 overflow-hidden origin-top-right animate-in fade-in zoom-in-95 duration-200">
-                  <div className="px-4 py-2 border-b-2 border-charcoal/10">
-                    <p className="text-sm font-extrabold text-charcoal truncate tracking-tight">{user?.name}</p>
-                    <p className="text-xs font-bold text-charcoal/60 truncate">{user?.email}</p>
+                <div className="absolute top-full right-0 mt-3 w-56 bg-white border-2 border-charcoal rounded-[24px] shadow-[4px_4px_0px_0px_#1c1c1c] py-1 z-50 overflow-hidden origin-top-right animate-in fade-in zoom-in-95 duration-200">
+                  <div className="px-5 py-3 border-b-2 border-charcoal/10">
+                    <p className="text-[15px] font-extrabold text-charcoal truncate tracking-tight">{user?.name}</p>
+                    <p className="text-[12px] font-bold text-charcoal/60 truncate">{user?.email}</p>
                   </div>
-                  <button 
-                    onClick={handleLogout}
-                    className="w-full flex items-center gap-2 px-4 py-3 text-sm font-bold text-charcoal hover:bg-sage transition-colors"
-                  >
-                    <LogOut className="h-4 w-4 text-charcoal" />
-                    Logout
-                  </button>
+
+                  <div className="p-2">
+                    <button 
+                      onClick={handleLogout}
+                      className="w-full flex items-center justify-between px-3 py-2 text-[13px] font-bold text-charcoal rounded-[12px] hover:bg-red-50 hover:text-red-600 transition-colors group/logout"
+                    >
+                      Logout
+                      <LogOut className="h-4 w-4 text-charcoal/40 group-hover/logout:text-red-600 transition-colors" />
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

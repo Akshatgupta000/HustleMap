@@ -41,7 +41,7 @@ export default function Dashboard() {
     <div className="flex flex-col gap-6 w-full max-w-[1400px] mx-auto pb-8 bg-sage p-6 rounded-[40px]">
       {/* ── Welcome Banner ── */}
       <div className="bg-sage-light border border-charcoal rounded-[32px] p-8 sm:p-10 flex flex-col sm:flex-row sm:items-center justify-between relative overflow-hidden mb-2 gap-6">
-        <div className="relative z-10 max-w-xl">
+        <div className="relative z-10 max-w-xl flex-1">
           <h1 className="text-3xl sm:text-4xl font-extrabold text-charcoal tracking-tight mb-2">
             Hi, {user?.name ? user.name.split(' ')[0] : 'there'}
           </h1>
@@ -50,28 +50,31 @@ export default function Dashboard() {
           </p>
         </div>
 
-        {/* ── Action Area (Add Job) ── */}
-        <div className="relative z-10 shrink-0 self-start sm:self-center flex flex-col sm:flex-row items-center gap-4">
-          <Link
-            to="/jobs/new"
-            className="flex items-center gap-2 rounded-full bg-charcoal text-white px-6 py-4 hover:bg-charcoal/90 transition-colors shadow-[4px_4px_0px_0px_#1c1c1c] active:translate-y-[4px] active:shadow-none whitespace-nowrap h-full"
-          >
-            <span className="text-[15px] font-black tracking-wide uppercase">Add new Job</span>
-          </Link>
+        {/* ── Right Side Avatar Image ── */}
+        <div className="relative z-10 shrink-0 self-end sm:self-center">
+          <img 
+            src="/avatar.png" 
+            alt="User Avatar" 
+            className="w-24 h-24 sm:w-32 sm:h-32 object-contain drop-shadow-sm transition-transform hover:scale-105 mix-blend-multiply"
+            onError={(e) => {
+              // Fallback if image not found
+              e.target.style.display = 'none';
+            }}
+          />
         </div>
       </div>
-
-      {/* ── Top Row: Quick Add ── */}
-      <QuickAddBar />
-
-      {/* ── Second Row: Weekly Goal ── */}
-      <WeeklyGoalTracker />
 
       {/* ── Two-Column Layout ── */}
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
         
         {/* ── Left Column (Main content, ~65%) ── */}
         <div className="xl:col-span-8 flex flex-col gap-6">
+          {/* ── Top Row: Quick Add ── */}
+          <QuickAddBar />
+
+          {/* ── Second Row: Weekly Goal ── */}
+          <WeeklyGoalTracker />
+
           <ActionItemsWidget />
           
           {upcomingInterviews.length > 0 && (
