@@ -12,6 +12,8 @@ import {
   saveSimpleExtensionJob,
   saveFromExtension,
   getCapturedJobs,
+  getDashboardFeed,
+  getWeeklyProgress,
 } from '../controllers/jobController.js';
 
 const router = express.Router();
@@ -31,6 +33,8 @@ router.use(authenticateToken);
 router.get('/', getAllJobs);
 router.get('/stats', getStats);
 router.get('/captured', getCapturedJobs);
+router.get('/dashboard-feed', getDashboardFeed);
+router.get('/weekly-progress', getWeeklyProgress);
 router.post('/capture', captureJob);
 router.get('/:id', getJobById);
 router.post('/', createJob);

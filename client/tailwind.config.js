@@ -16,6 +16,15 @@ export default {
         "small-text": "clamp(0.75rem, 1.5vw, 0.875rem)",
       },
       colors: {
+        sage: {
+          DEFAULT: "#e9efe9",
+          light: "#f2f7f4",
+          dark: "#d1dcd1",
+        },
+        charcoal: {
+          DEFAULT: "#1c1c1c",
+          light: "#2a2a2a",
+        },
         brand: {
           400: "#A78BFA",
           500: "#8B5CF6",

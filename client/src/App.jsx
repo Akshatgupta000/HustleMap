@@ -11,6 +11,8 @@ import Dashboard from "./pages/Dashboard";
 import BrowserExtension from "./pages/BrowserExtension";
 import Jobs from "./pages/Jobs";
 import JobForm from "./pages/JobForm";
+import Analytics from "./pages/Analytics";
+import CapturedJobsPage from "./pages/CapturedJobsPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AppLayout from "./components/AppLayout";
 import ScrollToTop from "./components/ScrollToTop";
@@ -91,6 +93,26 @@ function App() {
                 <ProtectedRoute isAuth={isAuth}>
                   <AppLayout onLogout={() => setIsAuth(false)}>
                     <BrowserExtension />
+                  </AppLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/analytics"
+              element={
+                <ProtectedRoute isAuth={isAuth}>
+                  <AppLayout onLogout={() => setIsAuth(false)}>
+                    <Analytics />
+                  </AppLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/captured"
+              element={
+                <ProtectedRoute isAuth={isAuth}>
+                  <AppLayout onLogout={() => setIsAuth(false)}>
+                    <CapturedJobsPage />
                   </AppLayout>
                 </ProtectedRoute>
               }

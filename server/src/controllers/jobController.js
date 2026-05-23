@@ -181,11 +181,11 @@ export const getStats = async (req, res) => {
     const interviewConversionRate =
       totalApplicationsExcludingWithdrawn > 0
         ? Number(
-            (
-              (jobsReachedInterviewStage / totalApplicationsExcludingWithdrawn) *
-              100
-            ).toFixed(1),
-          )
+          (
+            (jobsReachedInterviewStage / totalApplicationsExcludingWithdrawn) *
+            100
+          ).toFixed(1),
+        )
         : 0;
     const offerRatio = total > 0 ? Number(((offerCount / total) * 100).toFixed(1)) : 0;
     const applicationsPerWeek = weeklyApplications.map((item) => ({
@@ -498,12 +498,12 @@ export const saveScreenshotFromExtension = async (req, res) => {
     const dateApplied = timestamp ? new Date(timestamp) : new Date();
     const applicationSource = jobUrl
       ? (() => {
-          try {
-            return new URL(jobUrl).hostname;
-          } catch {
-            return null;
-          }
-        })()
+        try {
+          return new URL(jobUrl).hostname;
+        } catch {
+          return null;
+        }
+      })()
       : null;
 
     const jobData = {
@@ -678,18 +678,18 @@ export const saveScreenshotJob = async (req, res) => {
       typeof source === 'string' && source.trim()
         ? source.trim().toLowerCase()
         : (() => {
-            if (jobUrl) {
-              try {
-                const host = new URL(jobUrl).hostname || '';
-                if (host.includes('linkedin.com')) return 'linkedin';
-                if (host.includes('indeed.com')) return 'indeed';
-                if (host.includes('glassdoor.com')) return 'glassdoor';
-              } catch {
-                // ignore URL parse errors
-              }
+          if (jobUrl) {
+            try {
+              const host = new URL(jobUrl).hostname || '';
+              if (host.includes('linkedin.com')) return 'linkedin';
+              if (host.includes('indeed.com')) return 'indeed';
+              if (host.includes('glassdoor.com')) return 'glassdoor';
+            } catch {
+              // ignore URL parse errors
             }
-            return 'other';
-          })();
+          }
+          return 'other';
+        })();
 
     const job = await Job.create({
       user: uid,
@@ -761,7 +761,7 @@ export const saveFromExtension = async (req, res) => {
     if (!user) {
       user = await User.findOne({ extensionId: cleanId });
     }
-    
+
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -935,7 +935,7 @@ export const updateJob = async (req, res) => {
     // Validate interview_questions structure safely
     const rawQuestions = interview_questions || [];
     const safeQuestions = Array.isArray(rawQuestions) ? rawQuestions : [];
-    
+
     const parsedQuestions = safeQuestions.map((q) => {
       const safeQ = q || {};
       return {
@@ -1018,6 +1018,144 @@ export const deleteJob = async (req, res) => {
     res.json({ message: 'Job deleted successfully' });
   } catch (error) {
     console.error('Delete job error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+// Get dashboard feed (recent activity & action items)
+export const getDashboardFeed = async (req, res) => {
+  try {
+    const userIdStr = safeUserId(req.user?.id);
+    if (!userIdStr) {
+      return res.status(401).json({ error: 'Invalid or missing user context' });
+    }
+    const userId = new mongoose.Types.ObjectId(userIdStr);
+
+    const recentJobs = await Job.find({ user: userId })
+      .select('_id company position status updatedAt isCaptured')
+      .sort({ updatedAt: -1 })
+      .limit(5)
+      .lean();
+
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    // Action items logic:
+    // 1. "Applied" > 7 days ago based on dateApplied
+    // 2. "Interview" without an interviewDate
+    const actionJobs = await Job.find({
+      user: userId,
+      $or: [
+        { status: 'applied', dateApplied: { $lt: sevenDaysAgo } },
+        { status: 'interview', interviewDate: null }
+      ]
+    })
+      .select('_id company position status updatedAt interviewDate')
+      .sort({ updatedAt: -1 })
+      .limit(10)
+      .lean();
+
+    const actionItems = actionJobs.map(job => {
+      let description = '';
+      if (job.status === 'applied') {
+        description = `Follow up with ${job.company}`;
+      } else if (job.status === 'interview') {
+        description = `Schedule interview for ${job.company}`;
+      }
+      return {
+        id: job._id.toString(),
+        company: job.company,
+        position: job.position,
+        description,
+        jobId: job._id.toString()
+      };
+    });
+
+    const activityDates = await Job.aggregate([
+      { $match: { user: userId } },
+      {
+        $group: {
+          _id: { $dateToString: { format: '%Y-%m-%d', date: '$updatedAt' } }
+        }
+      },
+      { $sort: { _id: -1 } }
+    ]);
+
+    let streak = 0;
+    const nowObj = new Date();
+    const todayStr = nowObj.toISOString().split('T')[0];
+    const yesterdayObj = new Date(nowObj.getTime() - 86400000);
+    const yesterdayStr = yesterdayObj.toISOString().split('T')[0];
+
+    const dateStrings = activityDates.map(d => d._id);
+    if (dateStrings.includes(todayStr) || dateStrings.includes(yesterdayStr)) {
+      let startIdx = dateStrings.indexOf(todayStr);
+      if (startIdx === -1) startIdx = dateStrings.indexOf(yesterdayStr);
+      
+      let currentCheck = new Date(dateStrings[startIdx]);
+      streak = 1;
+      for (let i = startIdx + 1; i < dateStrings.length; i++) {
+        currentCheck.setDate(currentCheck.getDate() - 1);
+        if (dateStrings[i] === currentCheck.toISOString().split('T')[0]) {
+          streak++;
+        } else {
+          break;
+        }
+      }
+    }
+
+    res.json({
+      recentActivity: recentJobs.map(job => ({
+        id: job._id.toString(),
+        company: job.company,
+        position: job.position,
+        status: job.status,
+        updatedAt: job.updatedAt,
+        isCaptured: job.isCaptured
+      })),
+      actionItems,
+      streak
+    });
+  } catch (error) {
+    console.error('Get dashboard feed error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+// Get weekly progress (applications created this week vs target)
+export const getWeeklyProgress = async (req, res) => {
+  try {
+    const userIdStr = safeUserId(req.user?.id);
+    if (!userIdStr) {
+      return res.status(401).json({ error: 'Invalid or missing user context' });
+    }
+    const userId = new mongoose.Types.ObjectId(userIdStr);
+
+    const now = new Date();
+    // Calculate start of current week (Monday)
+    const day = now.getDay() || 7; // Get current day number, converting Sunday to 7
+    if (day !== 1) {
+      now.setHours(-24 * (day - 1));
+    }
+    const weekStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekEnd.getDate() + 6);
+    weekEnd.setHours(23, 59, 59, 999);
+
+    const count = await Job.countDocuments({
+      user: userId,
+      createdAt: { $gte: weekStart, $lte: weekEnd }
+    });
+
+    res.json({
+      applied: count,
+      target: 10,
+      weekStart,
+      weekEnd
+    });
+  } catch (error) {
+    console.error('Get weekly progress error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

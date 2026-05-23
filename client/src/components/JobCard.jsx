@@ -18,13 +18,13 @@ const STATUS_LABELS = {
 };
 
 const STATUS_COLORS = {
-  saved: "bg-slate-50 text-slate-500 border-slate-200",
-  applied: "bg-slate-100 text-slate-900 border-slate-200",
-  online_test: "bg-slate-100 text-slate-900 border-slate-200",
-  interview: "bg-slate-100 text-slate-900 border-slate-200",
-  offer: "bg-accent-green/10 text-accent-green border-accent-green/20",
-  rejected: "bg-red-500/10 text-red-400 border-red-500/20",
-  withdrawn: "bg-slate-50 text-slate-500 border-slate-200",
+  saved: "bg-transparent text-charcoal/60 border-charcoal/40",
+  applied: "bg-charcoal text-white border-charcoal",
+  online_test: "bg-charcoal/5 text-charcoal border-charcoal",
+  interview: "bg-sage text-charcoal border-charcoal",
+  offer: "bg-accent-green text-white border-accent-green",
+  rejected: "bg-red-500 text-white border-red-500",
+  withdrawn: "bg-transparent text-charcoal/60 border-charcoal/40",
 };
 
 const APPLICATION_TYPE_LABELS = {
@@ -86,8 +86,8 @@ export default function JobCard({ job, onViewDetails }) {
     if (job.status === "offer")
       return { bg: "bg-accent-green", border: "border-accent-green" };
     if (isManuallyTicked)
-      return { bg: "bg-accent-blue", border: "border-accent-blue" };
-    return { bg: "bg-white", border: "border-slate-200" };
+      return { bg: "bg-charcoal", border: "border-charcoal" };
+    return { bg: "bg-white", border: "border-charcoal/40" };
   };
 
   const tickColor = getTickColor();
@@ -109,24 +109,24 @@ export default function JobCard({ job, onViewDetails }) {
     <div
       onClick={() => onViewDetails(job)}
       className={cn(
-        "rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:bg-white/[0.02] hover:-translate-y-[1px] cursor-pointer flex flex-col h-full",
-        isUpcomingInterview() && "ring-2 ring-accent-yellow/50",
+        "rounded-[24px] border border-charcoal bg-white p-5 transition-all duration-200 hover:-translate-y-[2px] cursor-pointer flex flex-col h-full relative overflow-hidden",
+        isUpcomingInterview() && "ring-2 ring-accent-yellow",
       )}
     >
-      <div className="flex justify-between items-start gap-3 mb-3">
+      <div className="flex justify-between items-start gap-3 mb-4">
         <div className="flex-1 min-w-0">
-          <h3 className="subtitle mb-0.5 truncate">{job.company}</h3>
-          <p className="text-sm text-slate-500 truncate">{job.position}</p>
+          <h3 className="text-[18px] font-extrabold text-charcoal leading-tight mb-1 truncate">{job.company}</h3>
+          <p className="text-[14px] text-charcoal/70 font-semibold truncate">{job.position}</p>
         </div>
         <div className="flex items-center gap-2">
           {/* Tick Checkbox */}
           <button
             onClick={handleTickToggle}
             disabled={isAutomatic}
-            className={`flex-shrink-0 w-5 h-5 border-2 rounded-md flex items-center justify-center transition-colors ${
+            className={`flex-shrink-0 w-5 h-5 border-[1.5px] rounded-md flex items-center justify-center transition-colors ${
               isTicked
                 ? `${tickColor.bg} ${tickColor.border}`
-                : `${tickColor.border} hover:border-slate-500`
+                : `${tickColor.border} hover:border-charcoal`
             } ${!isAutomatic && !isTicked ? "cursor-pointer" : ""} ${
               isAutomatic ? "cursor-not-allowed" : ""
             }`}
@@ -145,7 +145,7 @@ export default function JobCard({ job, onViewDetails }) {
             )}
           </button>
           {isCaptured && (
-            <Badge className="border bg-slate-100 text-slate-900 border-slate-200">
+            <Badge className="border border-charcoal bg-white text-charcoal">
               📸 Captured
             </Badge>
           )}
@@ -153,7 +153,7 @@ export default function JobCard({ job, onViewDetails }) {
             className={cn(
               "border",
               STATUS_COLORS[job.status] ||
-                "bg-slate-50 text-slate-500 border-slate-200",
+                "bg-white text-charcoal border-charcoal",
             )}
           >
             {STATUS_LABELS[job.status] || job.status}
@@ -166,21 +166,21 @@ export default function JobCard({ job, onViewDetails }) {
           <img
             src={job.screenshot}
             alt="Captured job"
-            className="rounded-xl mb-2 max-h-40 object-cover border border-slate-200"
+            className="rounded-[16px] mb-2 max-h-40 object-cover border border-charcoal"
           />
         )}
-        <div className="text-sm text-slate-900">
-          <span className="font-medium">Applied:</span>{" "}
+        <div className="text-sm text-charcoal">
+          <span className="font-bold">Applied:</span>{" "}
           {formatDate(job.date_applied)}
         </div>
         {job.location && (
-          <div className="text-sm text-slate-900">
-            <span className="font-medium">Location:</span> {job.location}
+          <div className="text-sm text-charcoal">
+            <span className="font-bold">Location:</span> {job.location}
           </div>
         )}
         {job.application_type && (
-          <div className="text-sm text-slate-900">
-            <span className="font-medium">Type:</span>{" "}
+          <div className="text-sm text-charcoal">
+            <span className="font-bold">Type:</span>{" "}
             {APPLICATION_TYPE_LABELS[job.application_type] ||
               job.application_type}
           </div>
@@ -190,33 +190,33 @@ export default function JobCard({ job, onViewDetails }) {
             className={cn(
               "text-sm",
               isUpcomingInterview()
-                ? "text-accent-yellow font-medium"
-                : "text-slate-900",
+                ? "text-accent-yellow font-bold"
+                : "text-charcoal",
             )}
           >
-            <span className="font-medium">Interview:</span>{" "}
+            <span className="font-bold">Interview:</span>{" "}
             {formatDate(job.interview_date)}
             {isUpcomingInterview() && " ⏰"}
           </div>
         )}
         {job.interview_rounds && job.interview_rounds.length > 0 && (
-          <div className="text-sm text-slate-900">
-            <span className="font-medium">Rounds:</span>{" "}
+          <div className="text-sm text-charcoal">
+            <span className="font-bold">Rounds:</span>{" "}
             {job.interview_rounds.length}
           </div>
         )}
       </div>
 
       {job.notes && (
-        <p className="text-sm text-slate-900 mb-3 line-clamp-2">
+        <p className="text-sm text-charcoal mb-3 line-clamp-2">
           {job.notes}
         </p>
       )}
 
       {/* Interview Prep Indicator */}
       {job.interview_questions && job.interview_questions.length > 0 && (
-        <div className="mb-3 p-2 bg-slate-100 border border-slate-200 rounded-xl">
-          <p className="text-xs text-slate-900 font-medium">
+        <div className="mb-3 p-2 bg-sage border border-charcoal rounded-xl">
+          <p className="text-xs text-charcoal font-bold">
             📝 Interview Summary: {job.interview_questions.length} question
             {job.interview_questions.length !== 1 ? "s" : ""}
           </p>
@@ -226,7 +226,7 @@ export default function JobCard({ job, onViewDetails }) {
       {/* Interview Difficulty Summary */}
       {job.interview_difficulty && (
         <div className="mb-3">
-          <p className="text-xs text-slate-500 font-medium">
+          <p className="text-xs text-charcoal/60 font-bold">
             Difficulty: {job.interview_difficulty}/5
           </p>
         </div>
@@ -234,8 +234,8 @@ export default function JobCard({ job, onViewDetails }) {
 
       {/* Interview Status Recommendation */}
       {job.status === "interview" && (
-        <div className="mb-3 p-2 bg-slate-100 border border-slate-200 rounded-xl">
-          <p className="text-xs text-slate-900 font-medium">
+        <div className="mb-3 p-2 bg-sage border border-charcoal rounded-xl">
+          <p className="text-xs text-charcoal font-bold">
             Interview scheduled — preparation recommended
           </p>
         </div>
@@ -249,7 +249,7 @@ export default function JobCard({ job, onViewDetails }) {
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="text-xs text-notion-accent hover:underline truncate inline-block max-w-[120px]"
+              className="text-xs text-notion-accent font-bold hover:underline truncate inline-block max-w-[120px]"
             >
               🔗 Job Link
             </a>
@@ -260,7 +260,7 @@ export default function JobCard({ job, onViewDetails }) {
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="text-xs text-slate-900 hover:underline"
+              className="text-xs text-charcoal font-bold hover:underline"
             >
               📄 Resume
             </a>
@@ -271,7 +271,7 @@ export default function JobCard({ job, onViewDetails }) {
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="text-xs text-slate-900 hover:underline"
+              className="text-xs text-charcoal font-bold hover:underline"
             >
               🎨 Portfolio
             </a>
