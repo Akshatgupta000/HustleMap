@@ -102,12 +102,14 @@ export const authAPI = {
 export const jobsAPI = {
   getAll: () => api.get('/jobs'),
   getCaptured: () => api.get('/jobs/captured'),
+  deleteAllCaptured: () => api.delete('/jobs/captured'),
   getDashboardFeed: () => api.get('/jobs/dashboard-feed'),
   getWeeklyProgress: () => api.get('/jobs/weekly-progress'),
   getById: (id) => api.get(`/jobs/${id}`),
   create: (data) => api.post('/jobs', data),
   update: (id, data) => api.put(`/jobs/${id}`, data),
   delete: (id) => api.delete(`/jobs/${id}`),
+  deleteAll: () => api.delete('/jobs'),
   getStats: () => api.get('/jobs/stats'),
 };
 

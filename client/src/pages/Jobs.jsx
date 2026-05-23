@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { jobsAPI } from "../lib/api";
 import JobCard from "../components/JobCard";
 import JobDetailsModal from "../components/JobDetailsModal";
@@ -37,11 +37,30 @@ export default function Jobs() {
   const [typeFilter, setTypeFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("date");
+  const queryClient = useQueryClient();
   const [selectedJob, setSelectedJob] = useState(null);
+  const [isConfirmingClear, setIsConfirmingClear] = useState(false);
 
   const { data: jobs, isLoading } = useQuery({
     queryKey: ["jobs"],
     queryFn: () => jobsAPI.getAll().then((res) => res.data),
+  });
+
+  const clearAllMutation = useMutation({
+    mutationFn: () => jobsAPI.deleteAll(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["jobs"] });
+      queryClient.invalidateQueries({ queryKey: ["jobStats"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboardFeed"] });
+      import("react-hot-toast").then((toast) => {
+        toast.default.success("All jobs cleared successfully");
+      });
+    },
+    onError: () => {
+      import("react-hot-toast").then((toast) => {
+        toast.default.error("Failed to clear jobs");
+      });
+    },
   });
 
   const filteredAndSortedJobs = useMemo(() => {
@@ -173,6 +192,46 @@ export default function Jobs() {
                 />
               ))}
             </div>
+          </div>
+
+          <div className="mt-auto pt-4 border-t border-charcoal/10 flex justify-center">
+            {isConfirmingClear ? (
+              <div className="flex flex-col items-center gap-2 w-full">
+                <span className="text-[10px] font-black text-red-500 uppercase text-center leading-tight">
+                  Are you sure?<br/>This cannot be undone.
+                </span>
+                <div className="flex gap-2 w-full">
+                  <button 
+                    onClick={() => setIsConfirmingClear(false)}
+                    className="flex-1 bg-white border border-charcoal/20 text-charcoal text-[10px] font-black uppercase py-1.5 rounded-lg hover:bg-charcoal/5"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    onClick={() => {
+                      clearAllMutation.mutate();
+                      setIsConfirmingClear(false);
+                    }}
+                    className="flex-1 bg-red-500 text-white text-[10px] font-black uppercase py-1.5 rounded-lg hover:bg-red-600 shadow-[1px_1px_0px_0px_#1c1c1c]"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={() => {
+                  if (jobs?.length > 0) setIsConfirmingClear(true);
+                }}
+                className={cn(
+                  "text-red-500 font-bold text-[11px] uppercase tracking-widest hover:underline cursor-pointer opacity-80 hover:opacity-100",
+                  (!jobs || jobs.length === 0) && "opacity-30 cursor-not-allowed hover:underline-none hover:opacity-30"
+                )}
+                disabled={!jobs || jobs.length === 0}
+              >
+                Clear All Jobs
+              </button>
+            )}
           </div>
 
         </aside>

@@ -56,14 +56,8 @@ export default function Dashboard() {
           <h1 className="text-xl sm:text-2xl font-extrabold text-charcoal tracking-tight leading-none">
             Hi, {user?.name ? user.name.split(' ')[0] : 'there'}
           </h1>
-          {streak > 0 && (
-            <span className="flex items-center gap-1 text-[11px] font-extrabold text-[#FF9500] bg-[#FF9500]/10 px-2 py-0.5 rounded-full">
-              <Flame size={11} className="fill-[#FF9500]/30" />
-              {streak}d
-            </span>
-          )}
         </div>
-        <p className="text-[12.5px] sm:text-[13px] text-charcoal/50 font-medium leading-snug">
+        <p className="text-[12.5px] sm:text-[13px] text-charcoal/50 font-medium leading-snug mt-1">
           {hasJobs
             ? 'Ready to track your job search and conquer your day?'
             : 'Welcome to HustleMap — let\'s get your search started.'}

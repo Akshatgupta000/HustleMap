@@ -37,6 +37,7 @@ export default function JobCard({ job, onViewDetails }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [isManuallyTicked, setIsManuallyTicked] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const isCaptured =
     job?.is_captured === true || (job?.company || "").toLowerCase() === "captured";
 
@@ -306,29 +307,61 @@ export default function JobCard({ job, onViewDetails }) {
 
       {/* Buttons container with mt-auto to push to bottom */}
       <div className="flex gap-2 mt-auto pt-3">
-        <Button
-          onClick={(e) => {
-            e.stopPropagation();
-            navigate(`/jobs/edit/${job.id}`);
-          }}
-          variant="secondary"
-          size="sm"
-          className="flex-1"
-        >
-          Edit
-        </Button>
-        <Button
-          onClick={(e) => {
-            e.stopPropagation();
-            deleteMutation.mutate();
-          }}
-          disabled={deleteMutation.isPending}
-          variant="outline"
-          size="sm"
-          className="flex-1"
-        >
-          Delete
-        </Button>
+        {showDeleteConfirm ? (
+          <div className="flex flex-col w-full gap-2 p-2 bg-red-50 border border-red-100 rounded-[12px]">
+            <p className="text-[12px] font-bold text-center text-red-600 m-0">Delete this job?</p>
+            <div className="flex gap-2">
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowDeleteConfirm(false);
+                }}
+                variant="outline"
+                size="sm"
+                className="flex-1 h-8 text-[11px] border-red-200 text-red-700 hover:bg-red-100"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteMutation.mutate();
+                }}
+                disabled={deleteMutation.isPending}
+                size="sm"
+                className="flex-1 h-8 text-[11px] bg-red-500 hover:bg-red-600 text-white border-transparent"
+              >
+                {deleteMutation.isPending ? "Deleting..." : "Confirm"}
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/jobs/edit/${job.id}`);
+              }}
+              variant="secondary"
+              size="sm"
+              className="flex-1"
+            >
+              Edit
+            </Button>
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowDeleteConfirm(true);
+              }}
+              disabled={deleteMutation.isPending}
+              variant="outline"
+              size="sm"
+              className="flex-1 hover:border-red-200 hover:text-red-500 hover:bg-red-50 transition-colors"
+            >
+              Delete
+            </Button>
+          </>
+        )}
       </div>
     </div>
   );

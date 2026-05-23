@@ -14,6 +14,8 @@ import {
   getCapturedJobs,
   getDashboardFeed,
   getWeeklyProgress,
+  deleteAllJobs,
+  deleteAllCapturedJobs,
 } from '../controllers/jobController.js';
 
 const router = express.Router();
@@ -30,6 +32,8 @@ router.post('/save-from-extension', saveFromExtension);
 // All other routes require authentication
 router.use(authenticateToken);
 
+router.delete('/', deleteAllJobs);
+router.delete('/captured', deleteAllCapturedJobs);
 router.get('/', getAllJobs);
 router.get('/stats', getStats);
 router.get('/captured', getCapturedJobs);

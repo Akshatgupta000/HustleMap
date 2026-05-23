@@ -1022,6 +1022,42 @@ export const deleteJob = async (req, res) => {
   }
 };
 
+// Delete all jobs for user
+export const deleteAllJobs = async (req, res) => {
+  try {
+    const userId = safeUserId(req.user?.id);
+    if (!userId) {
+      return res.status(401).json({ error: 'Invalid or missing user context' });
+    }
+
+    await Job.deleteMany({ user: userId });
+
+    invalidateUserStatsCache(req.user?.id);
+    res.json({ message: 'All jobs deleted successfully' });
+  } catch (error) {
+    console.error('Delete all jobs error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+// Delete all captured jobs for user
+export const deleteAllCapturedJobs = async (req, res) => {
+  try {
+    const userId = safeUserId(req.user?.id);
+    if (!userId) {
+      return res.status(401).json({ error: 'Invalid or missing user context' });
+    }
+
+    await Job.deleteMany({ user: userId, isCaptured: true });
+
+    invalidateUserStatsCache(req.user?.id);
+    res.json({ message: 'All captured jobs deleted successfully' });
+  } catch (error) {
+    console.error('Delete all captured jobs error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 // Get dashboard feed (recent activity & action items)
 export const getDashboardFeed = async (req, res) => {
   try {

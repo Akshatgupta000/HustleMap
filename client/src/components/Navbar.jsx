@@ -3,7 +3,7 @@ import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { clearAuth, getUser } from "../lib/auth";
 import { useState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
-import { LayoutDashboard, Briefcase, LogOut, Puzzle, BarChart3, Inbox, Menu, X, Bell, Mail, ChevronDown } from "lucide-react";
+import { LayoutDashboard, Briefcase, LogOut, Puzzle, BarChart3, Inbox, Menu, X, Bell, Mail, ChevronDown, Flame } from "lucide-react";
 
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
@@ -189,7 +189,7 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
                 : "text-white/65 hover:bg-white/10 hover:text-white",
             )}
           >
-            Captured Jobs
+            Captured
           </Link>
           <Link
             to="/extension"
@@ -231,6 +231,15 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className="flex items-center gap-2.5 cursor-pointer group"
               >
+                {streak > 0 && (
+                  <div 
+                    className="flex items-center gap-0.5 text-[11px] font-black text-[#FF9500] bg-[#FF9500]/10 border border-[#FF9500]/20 px-1.5 py-0.5 rounded-full mr-1"
+                    title={`${streak} day application streak!`}
+                  >
+                    <Flame size={12} className="fill-[#FF9500]/30" />
+                    {streak}
+                  </div>
+                )}
                 <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-black font-extrabold text-[13px] shrink-0 transition-transform group-hover:scale-105">
                   {user?.name?.charAt(0).toUpperCase()}
                 </div>
