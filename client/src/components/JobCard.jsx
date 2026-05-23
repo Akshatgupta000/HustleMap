@@ -106,11 +106,31 @@ export default function JobCard({ job, onViewDetails }) {
     }
   };
 
+  const getCardBorderClass = (status) => {
+    switch (status) {
+      case "online_test":
+        return "border-2 border-orange-400 shadow-[3px_3px_0px_0px_#fb923c]";
+      case "interview":
+        return "border-2 border-blue-900 shadow-[3px_3px_0px_0px_#1e3a8a]";
+      case "offer":
+        return "border-2 border-green-500 shadow-[3px_3px_0px_0px_#22c55e]";
+      case "rejected":
+        return "border-2 border-red-500 shadow-[3px_3px_0px_0px_#ef4444]";
+      case "withdrawn":
+        return "border-2 border-gray-400 shadow-[3px_3px_0px_0px_#9ca3af]";
+      case "saved":
+      case "applied":
+      default:
+        return "border border-charcoal";
+    }
+  };
+
   return (
     <div
       onClick={() => onViewDetails(job)}
       className={cn(
-        "rounded-[20px] border border-charcoal bg-white p-4 transition-all duration-200 hover:-translate-y-[2px] cursor-pointer flex flex-col h-full relative overflow-hidden",
+        "rounded-[20px] bg-white p-4 transition-all duration-200 hover:-translate-y-[2px] cursor-pointer flex flex-col h-full relative overflow-hidden",
+        getCardBorderClass(job.status),
         isUpcomingInterview() && "ring-2 ring-accent-yellow",
       )}
     >
@@ -195,7 +215,9 @@ export default function JobCard({ job, onViewDetails }) {
                 : "text-charcoal",
             )}
           >
-            <span className="font-bold">Interview:</span>{" "}
+            <span className="font-bold">
+              {job.status === 'online_test' ? 'Online Test:' : 'Interview:'}
+            </span>{" "}
             {formatDate(job.interview_date)}
             {isUpcomingInterview() && (
               <Clock size={13} className="inline ml-1 text-accent-yellow" strokeWidth={2.5} />

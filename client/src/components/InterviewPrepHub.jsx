@@ -55,7 +55,11 @@ export default function InterviewHub({ job, onUpdate }) {
     }));
   };
 
+  const canAddQuestion = interviewQuestions.length === 0 || interviewQuestions[interviewQuestions.length - 1].question.trim() !== "";
+
   const addQuestion = () => {
+    if (!canAddQuestion) return;
+    
     const newQuestion = { question: "", notes_or_answer: "", round: "" };
     const updated = [...interviewQuestions, newQuestion];
     const newIndex = updated.length - 1;
@@ -196,7 +200,12 @@ export default function InterviewHub({ job, onUpdate }) {
             <button
               type="button"
               onClick={addQuestion}
-              className="w-full sm:w-auto form-label px-3 py-1.5 bg-slate-900 text-white border-2 border-slate-900 hover:brightness-110 transition-all font-bold"
+              disabled={!canAddQuestion}
+              className={`w-full sm:w-auto form-label px-3 py-1.5 border-2 transition-all font-bold ${
+                canAddQuestion 
+                  ? "bg-slate-900 text-white border-slate-900 hover:brightness-110" 
+                  : "bg-slate-200 text-slate-400 border-slate-300 cursor-not-allowed"
+              }`}
             >
               + Add Question
             </button>

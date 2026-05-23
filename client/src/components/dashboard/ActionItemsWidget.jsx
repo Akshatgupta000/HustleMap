@@ -94,7 +94,14 @@ export default function ActionItemsWidget() {
                   className={`group flex items-start gap-3 p-3.5 hover:bg-white/60 transition-colors cursor-pointer ${
                     index !== displayItems.length - 1 || hiddenCount > 0 ? 'border-b border-charcoal/[0.06]' : ''
                   }`}
-                  onClick={() => navigate(item.link || `/jobs/edit/${item.jobId}`)}
+                  onClick={() => {
+                    if (item.type === 'interview' && item.position) {
+                      const query = encodeURIComponent(`gfg ${item.position}`);
+                      window.open(`https://www.google.com/search?q=${query}`, '_blank');
+                    } else {
+                      navigate(item.link || `/jobs/edit/${item.jobId}`);
+                    }
+                  }}
                 >
                   <div className={`mt-0.5 shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${
                     item.priority === 'high' ? 'bg-charcoal text-white' : 

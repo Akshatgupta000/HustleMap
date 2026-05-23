@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { jobsAPI } from "../lib/api";
@@ -34,6 +34,8 @@ export default function JobForm() {
   const queryClient = useQueryClient();
   const isEdit = !!id;
 
+  const positionInputRef = useRef(null);
+
   const [formData, setFormData] = useState({
     company: "",
     position: "",
@@ -62,6 +64,11 @@ export default function JobForm() {
   useEffect(() => {
     if (!isEdit && location.state?.prefill) {
       setFormData((prev) => ({ ...prev, ...location.state.prefill }));
+      
+      // Auto-focus the "Job Title" input if coming from Quick Add
+      setTimeout(() => {
+        positionInputRef.current?.focus();
+      }, 50);
     }
   }, [isEdit, location.state]);
 
@@ -181,6 +188,7 @@ export default function JobForm() {
             <div>
               <label className={labelClass}>Job Title *</label>
               <Input
+                ref={positionInputRef}
                 type="text" required value={formData.position}
                 onChange={(e) => setFormData({ ...formData, position: e.target.value })}
                 placeholder="Software Engineer"
@@ -246,7 +254,10 @@ export default function JobForm() {
               />
             </div>
             <div>
-              <label className={labelClass}>Interview Date <span className="font-normal text-charcoal/40">(optional)</span></label>
+              <label className={labelClass}>
+                {formData.status === 'online_test' ? 'Online Test Date' : 'Interview Date'}{' '}
+                <span className="font-normal text-charcoal/40">(optional)</span>
+              </label>
               <Input
                 type="date" value={formData.interview_date}
                 onChange={(e) => setFormData({ ...formData, interview_date: e.target.value })}

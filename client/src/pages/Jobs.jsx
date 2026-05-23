@@ -90,36 +90,42 @@ export default function Jobs() {
   return (
     <div className="flex flex-col gap-4 lg:gap-6 h-full min-h-0 overflow-hidden pb-2">
 
-      {/* ── Page header ── */}
-      <div className="flex justify-end mb-2">
-        <Link to="/jobs/new" className="no-underline shrink-0">
-          <button className="flex items-center justify-center gap-1.5 bg-charcoal text-white border-2 border-charcoal rounded-[12px] px-4 py-2 text-[12px] font-black tracking-wide cursor-pointer shadow-[3px_3px_0px_0px_#1c1c1c] hover:shadow-[1px_1px_0px_0px_#1c1c1c] hover:translate-x-[2px] hover:translate-y-[2px] transition-all w-full sm:w-auto uppercase">
-            <Plus size={14} strokeWidth={3} /> Add Job
-          </button>
-        </Link>
+      {/* ── Page header: Title, Search, Add Job on same level ── */}
+      <div className="flex flex-col lg:flex-row items-center justify-between gap-4 shrink-0 pb-2 border-b-2 border-charcoal/10">
+        <h2 className="text-[22px] font-black text-charcoal tracking-tight flex items-center gap-3">
+          Jobs List
+          {!isLoading && (
+            <span className="bg-white border-2 border-charcoal text-charcoal text-[13px] font-black px-2.5 py-0.5 rounded-full shadow-[2px_2px_0px_0px_#1c1c1c]">
+              {filteredAndSortedJobs.length}
+            </span>
+          )}
+        </h2>
+        
+        <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
+          {/* Search */}
+          <div className="relative w-full sm:w-[250px]">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-charcoal/50" />
+            <Input
+              type="text"
+              placeholder="Search company or role..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 h-10 bg-white border-2 border-charcoal rounded-[12px] font-bold text-[13px] text-charcoal placeholder:text-charcoal/40 focus:ring-0 focus:border-charcoal shadow-[2px_2px_0px_0px_#1c1c1c] w-full"
+            />
+          </div>
+
+          <Link to="/jobs/new" className="no-underline w-full sm:w-auto shrink-0">
+            <button className="flex items-center justify-center gap-1.5 bg-charcoal text-white border-2 border-charcoal rounded-[12px] px-5 h-10 text-[13px] font-black tracking-wide cursor-pointer shadow-[3px_3px_0px_0px_#1c1c1c] hover:shadow-[1px_1px_0px_0px_#1c1c1c] hover:translate-x-[2px] hover:translate-y-[2px] transition-all w-full uppercase">
+              <Plus size={16} strokeWidth={3} /> Add Job
+            </button>
+          </Link>
+        </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-6 flex-1 min-h-0">
+      <div className="flex flex-col lg:flex-row gap-6 flex-1 min-h-0 pt-2">
         {/* ── Left Sidebar Filters ── */}
         <aside className="w-full lg:w-[180px] shrink-0 flex flex-col gap-4 overflow-y-auto custom-scrollbar lg:overflow-visible">
           
-          {/* Search */}
-          <div className="flex flex-col gap-1.5">
-            <h3 className="text-[11px] font-black text-charcoal tracking-widest uppercase">Search</h3>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-charcoal/50" />
-              <Input
-                type="text"
-                placeholder="Company or role..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 h-8 bg-white border border-charcoal rounded-[12px] font-bold text-[12px] text-charcoal placeholder:text-charcoal/40 focus:ring-0 focus:border-charcoal"
-              />
-            </div>
-          </div>
-
-          <div className="h-[1px] w-full bg-charcoal/10 rounded-full"></div>
-
           {/* Status Filter */}
           <div className="flex flex-col gap-1">
             <h3 className="text-[11px] font-black text-charcoal tracking-widest uppercase mb-1">Status</h3>
@@ -173,18 +179,6 @@ export default function Jobs() {
 
         {/* ── Main Content / Results ── */}
         <div className="flex-1 w-full flex flex-col gap-4 min-w-0 h-full min-h-0">
-          {/* Header row for results */}
-          <div className="flex items-center justify-between pb-2 shrink-0">
-            <h2 className="text-[20px] font-black text-charcoal tracking-tight flex items-center gap-3">
-              Jobs List
-              {!isLoading && (
-                <span className="bg-white border-2 border-charcoal text-charcoal text-[13px] font-black px-2.5 py-0.5 rounded-full shadow-[2px_2px_0px_0px_#1c1c1c]">
-                  {filteredAndSortedJobs.length}
-                </span>
-              )}
-            </h2>
-          </div>
-
           <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pb-6 pr-1">
             {isLoading ? (
               <div className="bg-white border-2 border-charcoal rounded-[24px] py-20 text-center text-[15px] font-bold text-charcoal/60 shadow-[4px_4px_0px_0px_#1c1c1c]">

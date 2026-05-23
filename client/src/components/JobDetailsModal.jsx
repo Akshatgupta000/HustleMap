@@ -161,7 +161,7 @@ export default function JobDetailsModal({ job, onClose }) {
               {/* Interview Date */}
               <div>
                 <p className="text-xs font-medium text-slate-500 mb-1">
-                  Interview Date
+                  {job.status === 'online_test' ? 'Online Test Date' : 'Interview Date'}
                 </p>
                 <p className="text-sm text-slate-900">
                   {job.interview_date

@@ -32,15 +32,19 @@ export default function Dashboard() {
 
   const upcomingInterviews = Array.isArray(jobs) ? jobs
     .filter((job) => {
-      if (!job.interview_date) return false;
+      if (job.status !== 'interview' && job.status !== 'online_test') return false;
+      if (!job.interview_date) return true; // include if no date is set yet
       const now = new Date();
       now.setHours(0, 0, 0, 0);
       const interviewDate = new Date(job.interview_date);
-      const sevenDaysFromNow = new Date(now);
-      sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
-      return interviewDate >= now && interviewDate <= sevenDaysFromNow;
+      return interviewDate >= now; // include any upcoming dates
     })
-    .sort((a, b) => new Date(a.interview_date) - new Date(b.interview_date)) : [];
+    .sort((a, b) => {
+      if (!a.interview_date && !b.interview_date) return 0;
+      if (!a.interview_date) return 1;
+      if (!b.interview_date) return -1;
+      return new Date(a.interview_date) - new Date(b.interview_date);
+    }) : [];
 
   const hasInterviews = upcomingInterviews.length > 0;
 
@@ -127,9 +131,9 @@ export default function Dashboard() {
             </div>
 
             {hasInterviews && (
-              <div className="bg-sage-light border border-charcoal/20 rounded-[24px] overflow-hidden shrink-0 fade-slide-in-delay-3">
+              <div className="bg-sage-light border border-charcoal/20 rounded-[24px] overflow-hidden flex flex-col flex-1 min-h-0 fade-slide-in-delay-3">
                 {/* Section header */}
-                <div className="px-4 py-3 border-b border-charcoal/10 flex items-center gap-2">
+                <div className="px-4 py-3 border-b border-charcoal/10 flex items-center gap-2 shrink-0">
                   <Calendar size={14} className="text-charcoal/70" />
                   <span className="text-[13.5px] font-extrabold text-charcoal tracking-tight">
                     Upcoming Interviews
@@ -139,17 +143,21 @@ export default function Dashboard() {
                   </span>
                 </div>
                 {/* Items */}
-                <div className="p-3 flex flex-col gap-2 max-h-[216px] overflow-y-auto custom-scrollbar">
+                <div className="p-3 flex flex-col gap-2 flex-1 overflow-y-auto custom-scrollbar">
                   {upcomingInterviews.map((job) => {
-                    const interviewDate = new Date(job.interview_date);
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0);
-                    const daysUntil = Math.ceil((interviewDate - today) / (1000 * 60 * 60 * 24));
+                    let dateLabel = "TBD";
+                    if (job.interview_date) {
+                      const interviewDate = new Date(job.interview_date);
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+                      const daysUntil = Math.ceil((interviewDate - today) / (1000 * 60 * 60 * 24));
+                      dateLabel = daysUntil === 0 ? 'Today' : daysUntil === 1 ? 'Tomorrow' : `In ${daysUntil}d`;
+                    }
                     return (
                       <Link
                         key={job.id}
                         to={`/jobs/edit/${job.id}`}
-                        className="group flex flex-col sm:flex-row sm:items-center justify-between bg-charcoal rounded-[18px] px-4 py-3 hover:bg-charcoal/90 transition-all duration-200 cursor-pointer"
+                        className="group flex flex-col sm:flex-row sm:items-center justify-between bg-charcoal rounded-[18px] px-4 py-3 hover:bg-charcoal/90 transition-all duration-200 cursor-pointer shrink-0"
                       >
                         <div className="min-w-0 flex flex-col">
                           <span className="text-[13.5px] font-bold text-white leading-tight">
@@ -160,7 +168,7 @@ export default function Dashboard() {
                           </span>
                         </div>
                         <span className="mt-2.5 sm:mt-0 shrink-0 self-start sm:self-center font-extrabold px-3 py-1.5 rounded-full text-[10px] uppercase tracking-wide bg-white text-charcoal">
-                          {daysUntil === 0 ? 'Today' : daysUntil === 1 ? 'Tomorrow' : `In ${daysUntil}d`}
+                          {dateLabel}
                         </span>
                       </Link>
                     );
