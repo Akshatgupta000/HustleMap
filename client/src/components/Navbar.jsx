@@ -165,7 +165,7 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
                 : "text-white/65 hover:bg-white/10 hover:text-white",
             )}
           >
-            My Applications
+            Applications
           </Link>
           <Link
             to="/analytics"

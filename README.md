@@ -19,12 +19,13 @@ A full‑stack job application tracker with analytics, interview prep, and a Chr
 - **Search, filter, sort**: Find jobs quickly by company/role; filter by status & type; sort by date and status.
 - **Interview preparation hub**: Log interview questions, track rounds, rate difficulty, and store preparation notes per job.
 - **Upcoming interviews visibility**: Upcoming interview items and “days until interview” style countdowns for planning.
-- **Analytics dashboard (charts/graphs)**: High-signal metrics (totals, pipeline counts) plus trend visuals (charts/graphs via Recharts).
-- **Chrome extension integration (HustleMap Extension)**: Capture a posting from supported job boards and send it into your HustleMap account.
-- **Screenshot-based job capture**:
-  - **Extension flow**: crop a screenshot of the posting and save it to HustleMap.
-  - **Backend support**: captured jobs are stored separately and can be converted into normal tracked jobs.
+- **Analytics dashboard**: High-signal metrics (totals, pipeline counts) plus trend visuals (charts/graphs via Recharts).
+- **Prioritized Action Items Widget**: Dynamic, client-side task generator that prioritizes actions (upcoming interviews within 72 hours, pending Online Assessments, follow-up alerts, inactivity reminders, weekly goals).
+- **Browser Extension Setup Guide**: A step-by-step interactive setup instructions page (available at `/extension`) where users can generate and copy their unique **Extension ID** to link their extension to their account.
+- **Redesigned Chrome Extension Popup**: Aesthetic styling matching the web app (Sage Green / Charcoal) with simplified configuration (no manual API URL storage required).
+- **Enhanced Data Management**: Clear and safe data cleaning options like **Delete All Jobs** and **Clear All Captured Jobs** with confirmation prompts.
 - **OCR fallback (backend)**: The backend includes an OCR fallback using `tesseract.js` for screenshot capture flows when structured data isn’t available.
+- **Authentication & Landing Page**: JWT-based sign up, login, session preservation, and a sleek modern landing page.
 - **Dark mode**: **Not currently implemented** in the frontend codebase (planned / optional enhancement).
 
 ---
@@ -55,8 +56,8 @@ The `hustlemap-extension/` Chrome extension lets you save job posts to HustleMap
 
 ### How it connects to the main app
 
-- The extension calls the backend endpoint `POST /api/jobs/screenshot` (**no JWT required**).
-- The request includes your **HustleMap user id** (stored in the extension settings).
+- The extension calls the backend endpoint `POST /api/jobs/save-from-extension` (**no JWT required**).
+- The request includes your **HustleMap Extension ID** (generated on the `/extension` page and stored in the extension settings).
 - In the web app, captured jobs can be viewed and then **converted** by editing them into a normal tracked job.
 
 For full extension details, see `hustlemap-extension/README.md`.
@@ -88,6 +89,8 @@ For full extension details, see `hustlemap-extension/README.md`.
 - REST API under `/api`:
   - Auth: `/api/auth/*`
   - Jobs: `/api/jobs/*` (CRUD, stats, captured jobs, extension endpoints)
+    - `DELETE /api/jobs` – Clear all job applications for the user.
+    - `DELETE /api/jobs/captured` – Clear all captured/saved screenshot jobs for the user.
 
 ---
 
@@ -184,7 +187,7 @@ npm run dev
 
 1. Open `chrome://extensions` and enable **Developer mode**
 2. Click **Load unpacked** and select the `hustlemap-extension/` folder
-3. Open the extension popup → **Settings** → enter your **HustleMap User ID** → Save
+3. Open the extension popup → **Settings** → enter your **HustleMap Extension ID** (generated/copied from your web app's `/extension` setup page) → Save
 4. Open a supported job posting (LinkedIn/Indeed/Glassdoor)
 5. Click the extension → **Save Job to HustleMap** → **draw** a rectangle on the page
 6. Reopen the popup → review the **Preview** → click **Save to HustleMap**
