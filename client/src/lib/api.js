@@ -91,6 +91,12 @@ export const authAPI = {
   register: (data) => api.post('/auth/register', data),
   login: (data) => api.post('/auth/login', data),
   getExtensionId: () => api.get('/auth/extension-id'),
+  getUserProfile: () => api.get('/auth/profile'),
+  updateUserProfile: (data) => api.put('/auth/profile', data, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  }),
 };
 
 export const jobsAPI = {

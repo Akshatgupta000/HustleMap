@@ -146,3 +146,64 @@ export const getExtensionId = async (req, res, next) => {
     next(error);
   }
 };
+
+// Get User Profile (Resume and Notes)
+export const getUserProfile = async (req, res, next) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Invalid or missing user context' });
+    }
+
+    const user = await User.findById(userId).select('resumeUrl generalNotes name email');
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    return res.json({
+      name: user.name,
+      email: user.email,
+      resumeUrl: user.resumeUrl,
+      generalNotes: user.generalNotes
+    });
+  } catch (error) {
+    console.error('GetUserProfile error:', error);
+    next(error);
+  }
+};
+
+// Update User Profile (Resume and Notes)
+export const updateUserProfile = async (req, res, next) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Invalid or missing user context' });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (req.body.generalNotes !== undefined) {
+      user.generalNotes = req.body.generalNotes;
+    }
+
+    if (req.file) {
+      // req.file contains the uploaded file info from multer
+      // Store relative path so frontend can construct full URL
+      user.resumeUrl = '/uploads/' + req.file.filename;
+    }
+
+    await user.save();
+
+    return res.json({
+      message: 'Profile updated successfully',
+      resumeUrl: user.resumeUrl,
+      generalNotes: user.generalNotes
+    });
+  } catch (error) {
+    console.error('UpdateUserProfile error:', error);
+    next(error);
+  }
+};

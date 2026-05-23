@@ -27,6 +27,14 @@ const userSchema = new mongoose.Schema(
       unique: true,
       required: false,
     },
+    resumeUrl: {
+      type: String,
+      default: '',
+    },
+    generalNotes: {
+      type: String,
+      default: '',
+    },
   },
   {
     timestamps: true,

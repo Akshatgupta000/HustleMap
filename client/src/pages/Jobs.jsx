@@ -5,12 +5,12 @@ import JobDetailsModal from "../components/JobDetailsModal";
 import { Link } from "react-router-dom";
 import { useState, useMemo, useEffect } from "react";
 import { Input } from "../components/ui/input";
-import { Plus } from "lucide-react";
+import { Plus, Search, CheckCircle2, Circle } from "lucide-react";
 import { cn } from "../lib/cn";
 
 const STATUS_FILTERS = ["all", "applied", "online_test", "interview", "offer", "rejected", "withdrawn"];
 const STATUS_LABELS = {
-  all: "All",
+  all: "All Statuses",
   applied: "Applied",
   online_test: "Online Test",
   interview: "Interview",
@@ -19,18 +19,18 @@ const STATUS_LABELS = {
   withdrawn: "Withdrawn",
 };
 
-const STATUS_COLORS = {
-  all:         { base: "bg-transparent text-charcoal border border-charcoal hover:bg-charcoal/5", active: "bg-charcoal text-white border border-charcoal" },
-  applied:     { base: "bg-transparent text-charcoal border border-charcoal hover:bg-charcoal/5", active: "bg-charcoal text-white border border-charcoal" },
-  online_test: { base: "bg-transparent text-charcoal border border-charcoal hover:bg-charcoal/5", active: "bg-charcoal text-white border border-charcoal" },
-  interview:   { base: "bg-transparent text-charcoal border border-charcoal hover:bg-charcoal/5", active: "bg-charcoal text-white border border-charcoal" },
-  offer:       { base: "bg-transparent text-accent-green border border-accent-green hover:bg-accent-green/5", active: "bg-accent-green text-white border border-accent-green" },
-  rejected:    { base: "bg-transparent text-red-500 border border-red-500 hover:bg-red-500/5", active: "bg-red-500 text-white border border-red-500" },
-  withdrawn:   { base: "bg-transparent text-charcoal/50 border border-charcoal/50 hover:bg-charcoal/5", active: "bg-charcoal/50 text-white border border-charcoal/50" },
+const TYPE_FILTERS = ["all", "on_campus", "off_campus"];
+const TYPE_LABELS = {
+  all: "All Types",
+  on_campus: "On-Campus",
+  off_campus: "Off-Campus"
 };
 
-const selectClass =
-  "h-10 rounded-full border border-charcoal bg-transparent px-4 text-[13px] font-semibold text-charcoal cursor-pointer outline-none shadow-none appearance-auto focus:border-charcoal focus:ring-2 focus:ring-charcoal/20";
+const SORT_OPTIONS = ["date", "status"];
+const SORT_LABELS = {
+  date: "Date Applied",
+  status: "Status"
+};
 
 export default function Jobs() {
   const [statusFilter, setStatusFilter] = useState("all");
@@ -43,12 +43,6 @@ export default function Jobs() {
     queryKey: ["jobs"],
     queryFn: () => jobsAPI.getAll().then((res) => res.data),
   });
-
-  useEffect(() => {
-    if (import.meta.env.DEV) {
-      console.log("[Jobs] jobs:", jobs);
-    }
-  }, [jobs]);
 
   const filteredAndSortedJobs = useMemo(() => {
     if (!jobs) return [];
@@ -74,112 +68,170 @@ export default function Jobs() {
     return filtered;
   }, [jobs, searchQuery, statusFilter, typeFilter, sortBy]);
 
+  const FilterItem = ({ label, isActive, onClick }) => (
+    <div 
+      onClick={onClick}
+      className="flex items-center gap-3 cursor-pointer group py-1.5"
+    >
+      {isActive ? (
+        <CheckCircle2 className="h-5 w-5 text-charcoal transition-transform group-active:scale-90" />
+      ) : (
+        <Circle className="h-5 w-5 text-charcoal/30 group-hover:text-charcoal/60 transition-all group-active:scale-90" />
+      )}
+      <span className={cn(
+        "text-[14px] transition-colors",
+        isActive ? "font-black text-charcoal" : "font-bold text-charcoal/60 group-hover:text-charcoal"
+      )}>
+        {label}
+      </span>
+    </div>
+  );
+
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-6 lg:gap-8 pb-10">
 
       {/* ── Page header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <h1 className="text-[28px] font-extrabold text-charcoal tracking-tight mb-1">
+          <h1 className="text-[28px] lg:text-[36px] font-black text-charcoal tracking-tight mb-2 leading-none">
             My Applications
           </h1>
-          <p className="text-[14px] text-charcoal/60 font-semibold">
+          <p className="text-[15px] text-charcoal/60 font-bold">
             Search, filter, and manage your applications.
           </p>
         </div>
-        <Link to="/jobs/new" className="no-underline">
-          <button className="flex items-center justify-center gap-1.5 bg-charcoal text-white border-none rounded-full px-5 py-[11px] text-[14.5px] font-bold cursor-pointer transition-all hover:brightness-110 hover:scale-[1.03] w-full sm:w-auto">
-            <Plus size={15} /> Add Job
+        <Link to="/jobs/new" className="no-underline shrink-0">
+          <button className="flex items-center justify-center gap-2 bg-charcoal text-white border-2 border-charcoal rounded-[16px] px-6 py-3 text-[14px] font-black tracking-wide cursor-pointer shadow-[3px_3px_0px_0px_#1c1c1c] hover:shadow-[1px_1px_0px_0px_#1c1c1c] hover:translate-x-[2px] hover:translate-y-[2px] transition-all w-full sm:w-auto uppercase">
+            <Plus size={18} strokeWidth={3} /> Add Job
           </button>
         </Link>
       </div>
 
-      {/* ── Filters card ── */}
-      <div className="bg-transparent border border-charcoal rounded-[32px] px-4 sm:px-6 py-5 flex flex-col gap-4">
-        {/* Search */}
-        <Input
-          type="text"
-          placeholder="Search by company or role…"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="rounded-full border-charcoal bg-white/50 focus:ring-charcoal/20"
-        />
+      <div className="flex flex-col lg:flex-row gap-8 items-start">
+        {/* ── Left Sidebar Filters ── */}
+        <aside className="w-full lg:w-[260px] shrink-0 flex flex-col gap-8">
+          
+          {/* Search */}
+          <div className="flex flex-col gap-3">
+            <h3 className="text-[18px] font-black text-charcoal tracking-tight">Search</h3>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-charcoal/50" />
+              <Input
+                type="text"
+                placeholder="Company or role..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 h-11 bg-white border-2 border-charcoal rounded-[16px] font-bold text-[14px] text-charcoal placeholder:text-charcoal/40 focus:ring-0 focus:border-charcoal shadow-[2px_2px_0px_0px_#1c1c1c]"
+              />
+            </div>
+          </div>
 
-        {/* Status pills */}
-        <div className="flex gap-1.5 flex-wrap">
-          {STATUS_FILTERS.map((status) => {
-            const isActive = statusFilter === status;
-            const colors = STATUS_COLORS[status];
-            return (
-              <button
-                key={status}
-                onClick={() => setStatusFilter(status)}
-                className={`rounded-full px-[13px] py-[5px] text-[12.5px] cursor-pointer transition-all tracking-tight ${
-                  isActive ? colors.active + ' font-bold' : colors.base + ' font-bold hover:scale-[1.04]'
-                }`}
+          <div className="h-[2px] w-full bg-charcoal/10 rounded-full"></div>
+
+          {/* Status Filter */}
+          <div className="flex flex-col gap-3">
+            <h3 className="text-[18px] font-black text-charcoal tracking-tight">Application Status</h3>
+            <div className="flex flex-col gap-1">
+              {STATUS_FILTERS.map((status) => (
+                <FilterItem
+                  key={status}
+                  label={STATUS_LABELS[status]}
+                  isActive={statusFilter === status}
+                  onClick={() => setStatusFilter(status)}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="h-[2px] w-full bg-charcoal/10 rounded-full"></div>
+
+          {/* Type Filter */}
+          <div className="flex flex-col gap-3">
+            <h3 className="text-[18px] font-black text-charcoal tracking-tight">Employment Type</h3>
+            <div className="flex flex-col gap-1">
+              {TYPE_FILTERS.map((type) => (
+                <FilterItem
+                  key={type}
+                  label={TYPE_LABELS[type]}
+                  isActive={typeFilter === type}
+                  onClick={() => setTypeFilter(type)}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="h-[2px] w-full bg-charcoal/10 rounded-full"></div>
+
+          {/* Sort Order */}
+          <div className="flex flex-col gap-3">
+            <h3 className="text-[18px] font-black text-charcoal tracking-tight">Sort By</h3>
+            <div className="flex flex-col gap-1">
+              {SORT_OPTIONS.map((sort) => (
+                <FilterItem
+                  key={sort}
+                  label={SORT_LABELS[sort]}
+                  isActive={sortBy === sort}
+                  onClick={() => setSortBy(sort)}
+                />
+              ))}
+            </div>
+          </div>
+
+        </aside>
+
+        {/* ── Main Content / Results ── */}
+        <div className="flex-1 w-full flex flex-col gap-4 min-w-0">
+          {/* Header row for results */}
+          <div className="flex items-center justify-between pb-2">
+            <h2 className="text-[20px] font-black text-charcoal tracking-tight flex items-center gap-3">
+              Jobs List
+              {!isLoading && (
+                <span className="bg-white border-2 border-charcoal text-charcoal text-[13px] font-black px-2.5 py-0.5 rounded-full shadow-[2px_2px_0px_0px_#1c1c1c]">
+                  {filteredAndSortedJobs.length}
+                </span>
+              )}
+            </h2>
+          </div>
+
+          {isLoading ? (
+            <div className="bg-white border-2 border-charcoal rounded-[24px] py-20 text-center text-[15px] font-bold text-charcoal/60 shadow-[4px_4px_0px_0px_#1c1c1c]">
+              Loading your jobs…
+            </div>
+          ) : filteredAndSortedJobs.length === 0 ? (
+            <div className="bg-white border-2 border-charcoal rounded-[32px] py-20 px-6 text-center shadow-[6px_6px_0px_0px_#1c1c1c] flex flex-col items-center">
+              <h3 className="text-[20px] font-black text-charcoal mb-3">
+                {searchQuery || statusFilter !== "all" || typeFilter !== "all"
+                  ? "No jobs match your filters"
+                  : "No jobs yet"}
+              </h3>
+              <p className="text-[15px] font-bold text-charcoal/60 mb-8 max-w-sm">
+                {searchQuery || statusFilter !== "all" || typeFilter !== "all"
+                  ? "Try adjusting your search or unchecking some filters."
+                  : "Start tracking your job applications and stay organized."}
+              </p>
+              <button 
+                onClick={() => {
+                  setSearchQuery("");
+                  setStatusFilter("all");
+                  setTypeFilter("all");
+                }}
+                className="bg-sage-light text-charcoal border-2 border-charcoal rounded-full px-6 py-3 text-[14px] font-black cursor-pointer shadow-[3px_3px_0px_0px_#1c1c1c] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[1px_1px_0px_0px_#1c1c1c] transition-all uppercase tracking-wide"
               >
-                {STATUS_LABELS[status]}
+                Clear Filters
               </button>
-            );
-          })}
-        </div>
-
-        {/* Type & Sort selects */}
-        <div className="flex gap-2 flex-wrap">
-          <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className={cn(selectClass, "w-full sm:w-auto")}>
-            <option value="all">All Types</option>
-            <option value="on_campus">On-Campus</option>
-            <option value="off_campus">Off-Campus</option>
-          </select>
-          <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className={cn(selectClass, "w-full sm:w-auto")}>
-            <option value="date">Sort by Date</option>
-            <option value="status">Sort by Status</option>
-          </select>
-        </div>
-      </div>
-
-      {/* ── Results ── */}
-      {isLoading ? (
-        <div className="text-center py-16 text-[13.5px] text-charcoal/60">
-          Loading jobs…
-        </div>
-      ) : filteredAndSortedJobs.length === 0 ? (
-        <div className="bg-transparent border border-charcoal rounded-[32px] py-16 px-5 text-center shadow-sm">
-          <h3 className="text-base font-extrabold text-charcoal mb-2">
-            {searchQuery || statusFilter !== "all" || typeFilter !== "all"
-              ? "No jobs match your filters"
-              : "No jobs yet"}
-          </h3>
-          <p className="text-[13.5px] text-charcoal/60 mb-5">
-            {searchQuery || statusFilter !== "all" || typeFilter !== "all"
-              ? "Try adjusting your search or filters"
-              : "Start tracking your job applications"}
-          </p>
-          {!searchQuery && statusFilter === "all" && typeFilter === "all" && (
-            <Link to="/jobs/new" className="no-underline">
-              <button className="bg-charcoal text-white border-none rounded-full px-5 py-[9px] text-[14.5px] font-bold cursor-pointer shadow-sm hover:brightness-110 transition-all">
-                Add Your First Job
-              </button>
-            </Link>
+            </div>
+          ) : (
+            <div
+              className="grid gap-4 sm:gap-5"
+              style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+            >
+              {filteredAndSortedJobs.map((job) => (
+                <JobCard key={job.id} job={job} onViewDetails={setSelectedJob} />
+              ))}
+            </div>
           )}
         </div>
-      ) : (
-        <>
-          <p className="text-[13px] text-charcoal/60">
-            Showing{" "}
-            <strong className="text-charcoal">{filteredAndSortedJobs.length}</strong> of{" "}
-            <strong className="text-charcoal">{jobs?.length || 0}</strong> applications
-          </p>
-          <div
-            className="grid gap-3"
-            style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
-          >
-            {filteredAndSortedJobs.map((job) => (
-              <JobCard key={job.id} job={job} onViewDetails={setSelectedJob} />
-            ))}
-          </div>
-        </>
-      )}
+      </div>
 
       <JobDetailsModal job={selectedJob} onClose={() => setSelectedJob(null)} />
     </div>

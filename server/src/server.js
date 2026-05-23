@@ -8,6 +8,17 @@ import jobRoutes from './routes/jobs.js';
 import { healthCheck } from './utils/healthCheck.js';
 import mongoose from 'mongoose';
 import http from 'http';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const uploadsDir = path.join(__dirname, '..', 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
 // Load environment variables. Prefer root `.env`, but also support `src/.env`
 // so local dev works even if the file was placed there.
@@ -145,6 +156,7 @@ app.get('/api/health', healthCheck);
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/jobs', jobRoutes);
+app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
 // Error handling middleware (must have 4 args for Express to recognize)
 app.use((err, req, res, next) => {
