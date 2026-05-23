@@ -1,9 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
-import TopHeader from "./TopHeader";
 
 export default function AppLayout({ onLogout, children }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
+  const mainRef = useRef(null);
+
+  useEffect(() => {
+    // Scroll to top of the main container when changing routes
+    if (mainRef.current) {
+      mainRef.current.scrollTo(0, 0);
+    }
+  }, [location.pathname]);
 
   return (
     <div className="h-screen bg-sage text-charcoal flex flex-col overflow-hidden">
@@ -12,8 +21,7 @@ export default function AppLayout({ onLogout, children }) {
         isMobileMenuOpen={isMobileMenuOpen} 
         setIsMobileMenuOpen={setIsMobileMenuOpen} 
       />
-      <main className="min-w-0 flex-1 bg-sage flex flex-col overflow-y-auto relative">
-        <TopHeader onLogout={onLogout} />
+      <main ref={mainRef} className="min-w-0 flex-1 bg-sage flex flex-col overflow-y-auto relative scroll-smooth">
         <div className="w-full max-w-[1600px] mx-auto px-4 py-8 sm:px-8 lg:px-12 flex-1">
           {children}
         </div>

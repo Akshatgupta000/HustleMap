@@ -1,13 +1,17 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { clearAuth, getUser } from "../lib/auth";
 import { useState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
-import { LayoutDashboard, Briefcase, LogOut, Puzzle, BarChart3, Inbox, Menu, X, Bell, Mail, ChevronDown } from "lucide-react";
+import { LayoutDashboard, Briefcase, LogOut, Puzzle, BarChart3, Inbox, Menu, X, Bell, Mail, ChevronDown, Flame } from "lucide-react";
 
 import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
 import { cn } from "../lib/cn";
 import ProfileNotesPopover from "./ProfileNotesPopover";
+import { authAPI, jobsAPI } from "../lib/api";
+import { setAuth } from "../lib/auth";
+import { Copy } from "lucide-react";
 
 export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen }) {
   const navigate = useNavigate();
@@ -25,6 +29,33 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
+
+  const { data: feedData } = useQuery({
+    queryKey: ["dashboardFeed"],
+    queryFn: () => jobsAPI.getDashboardFeed().then((res) => res.data),
+    enabled: !!user,
+  });
+  
+  const streak = feedData?.streak || 0;
+
+  const ensureExtensionId = async () => {
+    if (!user) return;
+    if (user.extensionId) return;
+
+    try {
+      const response = await authAPI.getExtensionId();
+      const extensionId = response.data?.extensionId;
+      if (extensionId) {
+        const updatedUser = { ...user, extensionId };
+        setUser(updatedUser);
+        setAuth(localStorage.getItem("token"), updatedUser);
+        toast.success("Extension ID generated");
+      }
+    } catch (error) {
+      toast.error("Failed to generate Extension ID");
+      console.error("GetExtensionId error:", error);
+    }
+  };
 
   // Close dropdown on click outside
   useEffect(() => {
@@ -189,12 +220,47 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
               >
                 <Mail className="h-5 w-5" />
               </a>
-              <button className="flex items-center justify-center hover:text-white transition-colors relative">
-                <Bell className="h-5 w-5" />
-                <span className="absolute top-0 right-0 w-2 h-2 bg-white rounded-full border-2 border-black"></span>
-              </button>
+              <div className="flex items-center gap-1.5 justify-center hover:text-white transition-colors cursor-default relative group" title={`${streak} Day Streak`}>
+                <Flame className={cn("h-5 w-5", streak > 0 ? "text-[#FF9500] fill-[#FF9500]/20" : "text-white/50")} />
+                <span className={cn("text-[14px] font-black tracking-tight", streak > 0 ? "text-[#FF9500]" : "text-white/50")}>
+                  {streak}
+                </span>
+              </div>
             </div>
             
+            <div className="h-8 w-[1px] bg-white/20"></div>
+
+            {/* Extension ID */}
+            <div className="flex items-center gap-2 bg-white/10 rounded-full px-3 py-1.5">
+              <span className="text-[10px] font-bold text-white/70 tracking-wider">EXT ID</span>
+              {user.extensionId ? (
+                <div className="flex items-center gap-2">
+                  <Badge className="font-mono text-[10px] bg-white text-black hover:bg-white rounded-full" variant="secondary">
+                    {user.extensionId}
+                  </Badge>
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText(user.extensionId);
+                      toast.success("Extension ID copied");
+                    }}
+                    className="text-white/50 hover:text-white transition-colors"
+                    title="Copy ID"
+                  >
+                    <Copy className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              ) : (
+                <Button
+                  onClick={ensureExtensionId}
+                  variant="outline"
+                  size="sm"
+                  className="h-6 text-[10px] px-2 rounded-full border-white text-white bg-transparent hover:bg-white hover:text-black transition-colors"
+                >
+                  Generate
+                </Button>
+              )}
+            </div>
+
             <div className="h-8 w-[1px] bg-white/20"></div>
             
             {/* User Dropdown */}
@@ -245,10 +311,12 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
           >
             <Mail className="h-5 w-5" />
           </a>
-          <button className="flex items-center justify-center hover:text-white/80 transition-colors text-white relative">
-            <Bell className="h-5 w-5" />
-            <span className="absolute top-0 right-0 w-2 h-2 bg-white rounded-full border-2 border-black"></span>
-          </button>
+          <div className="flex items-center gap-1.5 justify-center hover:text-white transition-colors cursor-default relative group" title={`${streak} Day Streak`}>
+            <Flame className={cn("h-5 w-5", streak > 0 ? "text-[#FF9500] fill-[#FF9500]/20" : "text-white/50")} />
+            <span className={cn("text-[14px] font-black tracking-tight", streak > 0 ? "text-[#FF9500]" : "text-white/50")}>
+              {streak}
+            </span>
+          </div>
         </div>
 
         {/* Mobile Logout (shows at bottom of sidebar) */}

@@ -50,21 +50,14 @@ export default function Dashboard() {
           </p>
         </div>
 
-        {/* ── Gamified Streak Badge ── */}
-        <div className="relative z-10 shrink-0 self-start sm:self-center">
-          <div className="flex items-center gap-4 bg-white border-2 border-charcoal rounded-full py-3 px-6 shadow-[4px_4px_0px_0px_#1c1c1c] transition-transform hover:-translate-y-[2px] cursor-default">
-            <div className={`flex items-center justify-center w-12 h-12 rounded-full border-2 border-charcoal ${streak > 0 ? 'bg-[#FF9500] text-white' : 'bg-sage-dark text-charcoal/50'}`}>
-              <Flame size={24} strokeWidth={2.5} className={streak > 0 ? "fill-white/20" : ""} />
-            </div>
-            <div className="flex flex-col pr-2">
-              <span className="text-[22px] font-black text-charcoal leading-none tracking-tight">
-                {streak} {streak === 1 ? 'Day' : 'Days'}
-              </span>
-              <span className="text-[11px] font-extrabold text-charcoal/60 tracking-wider uppercase mt-1">
-                Activity Streak
-              </span>
-            </div>
-          </div>
+        {/* ── Action Area (Add Job) ── */}
+        <div className="relative z-10 shrink-0 self-start sm:self-center flex flex-col sm:flex-row items-center gap-4">
+          <Link
+            to="/jobs/new"
+            className="flex items-center gap-2 rounded-full bg-charcoal text-white px-6 py-4 hover:bg-charcoal/90 transition-colors shadow-[4px_4px_0px_0px_#1c1c1c] active:translate-y-[4px] active:shadow-none whitespace-nowrap h-full"
+          >
+            <span className="text-[15px] font-black tracking-wide uppercase">Add new Job</span>
+          </Link>
         </div>
       </div>
 
