@@ -71,16 +71,16 @@ export default function Jobs() {
   const FilterItem = ({ label, isActive, onClick }) => (
     <div 
       onClick={onClick}
-      className="flex items-center gap-3 cursor-pointer group py-1.5"
+      className="flex items-center gap-2 cursor-pointer group py-0.5"
     >
       {isActive ? (
-        <CheckCircle2 className="h-5 w-5 text-charcoal transition-transform group-active:scale-90" />
+        <CheckCircle2 className="h-3.5 w-3.5 text-charcoal transition-transform group-active:scale-90 shrink-0" />
       ) : (
-        <Circle className="h-5 w-5 text-charcoal/30 group-hover:text-charcoal/60 transition-all group-active:scale-90" />
+        <Circle className="h-3.5 w-3.5 text-charcoal/30 group-hover:text-charcoal/60 transition-all group-active:scale-90 shrink-0" />
       )}
       <span className={cn(
-        "text-[14px] transition-colors",
-        isActive ? "font-black text-charcoal" : "font-bold text-charcoal/60 group-hover:text-charcoal"
+        "text-[12px] transition-colors",
+        isActive ? "font-black text-charcoal" : "font-bold text-charcoal/50 group-hover:text-charcoal"
       )}>
         {label}
       </span>
@@ -99,31 +99,31 @@ export default function Jobs() {
         </Link>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8 items-start">
+      <div className="flex flex-col lg:flex-row gap-6 items-start">
         {/* ── Left Sidebar Filters ── */}
-        <aside className="w-full lg:w-[260px] shrink-0 flex flex-col gap-8">
+        <aside className="w-full lg:w-[180px] shrink-0 flex flex-col gap-4">
           
           {/* Search */}
-          <div className="flex flex-col gap-3">
-            <h3 className="text-[18px] font-black text-charcoal tracking-tight">Search</h3>
+          <div className="flex flex-col gap-1.5">
+            <h3 className="text-[11px] font-black text-charcoal tracking-widest uppercase">Search</h3>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-charcoal/50" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-charcoal/50" />
               <Input
                 type="text"
                 placeholder="Company or role..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 h-11 bg-white border-2 border-charcoal rounded-[16px] font-bold text-[14px] text-charcoal placeholder:text-charcoal/40 focus:ring-0 focus:border-charcoal shadow-[2px_2px_0px_0px_#1c1c1c]"
+                className="pl-8 h-8 bg-white border border-charcoal rounded-[12px] font-bold text-[12px] text-charcoal placeholder:text-charcoal/40 focus:ring-0 focus:border-charcoal"
               />
             </div>
           </div>
 
-          <div className="h-[2px] w-full bg-charcoal/10 rounded-full"></div>
+          <div className="h-[1px] w-full bg-charcoal/10 rounded-full"></div>
 
           {/* Status Filter */}
-          <div className="flex flex-col gap-3">
-            <h3 className="text-[18px] font-black text-charcoal tracking-tight">Application Status</h3>
-            <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1">
+            <h3 className="text-[11px] font-black text-charcoal tracking-widest uppercase mb-1">Status</h3>
+            <div className="flex flex-col gap-0">
               {STATUS_FILTERS.map((status) => (
                 <FilterItem
                   key={status}
@@ -135,12 +135,12 @@ export default function Jobs() {
             </div>
           </div>
 
-          <div className="h-[2px] w-full bg-charcoal/10 rounded-full"></div>
+          <div className="h-[1px] w-full bg-charcoal/10 rounded-full"></div>
 
           {/* Type Filter */}
-          <div className="flex flex-col gap-3">
-            <h3 className="text-[18px] font-black text-charcoal tracking-tight">Employment Type</h3>
-            <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1">
+            <h3 className="text-[11px] font-black text-charcoal tracking-widest uppercase mb-1">Type</h3>
+            <div className="flex flex-col gap-0">
               {TYPE_FILTERS.map((type) => (
                 <FilterItem
                   key={type}
@@ -152,12 +152,12 @@ export default function Jobs() {
             </div>
           </div>
 
-          <div className="h-[2px] w-full bg-charcoal/10 rounded-full"></div>
+          <div className="h-[1px] w-full bg-charcoal/10 rounded-full"></div>
 
           {/* Sort Order */}
-          <div className="flex flex-col gap-3">
-            <h3 className="text-[18px] font-black text-charcoal tracking-tight">Sort By</h3>
-            <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1">
+            <h3 className="text-[11px] font-black text-charcoal tracking-widest uppercase mb-1">Sort By</h3>
+            <div className="flex flex-col gap-0">
               {SORT_OPTIONS.map((sort) => (
                 <FilterItem
                   key={sort}

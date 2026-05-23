@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { cn } from "../lib/cn";
+import { Camera, Clock } from "lucide-react";
 
 const STATUS_LABELS = {
   saved: "Saved",
@@ -145,9 +146,9 @@ export default function JobCard({ job, onViewDetails }) {
             )}
           </button>
           {isCaptured && (
-            <Badge className="border border-charcoal bg-white text-charcoal">
-              📸 Captured
-            </Badge>
+            <span title="Captured job" className="flex items-center justify-center text-charcoal/50 hover:text-charcoal transition-colors">
+              <Camera size={14} strokeWidth={2} />
+            </span>
           )}
           <Badge
             className={cn(
@@ -196,7 +197,9 @@ export default function JobCard({ job, onViewDetails }) {
           >
             <span className="font-bold">Interview:</span>{" "}
             {formatDate(job.interview_date)}
-            {isUpcomingInterview() && " ⏰"}
+            {isUpcomingInterview() && (
+              <Clock size={13} className="inline ml-1 text-accent-yellow" strokeWidth={2.5} />
+            )}
           </div>
         )}
         {job.interview_rounds && job.interview_rounds.length > 0 && (

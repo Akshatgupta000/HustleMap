@@ -712,7 +712,7 @@ export const saveScreenshotJob = async (req, res) => {
       jobUrl: jobUrl && typeof jobUrl === 'string' ? jobUrl.trim() : '',
       salary: null,
       companyLogo: null,
-      screenshot: screenshotBase64,
+      screenshot: null,  // screenshot not saved — text details only
       isCaptured: true,
     });
     invalidateUserStatsCache(uid);
@@ -770,15 +770,15 @@ export const saveFromExtension = async (req, res) => {
 
     if (jobTitle || company) {
       // Use provided extracted data
-      jobData = {
-        position: jobTitle || 'Captured Job',
-        company: company || 'Unknown Company',
-        location: location || '',
-        description: description || '',
-        applicationSource: source || 'other',
-        jobUrl: url,
-        screenshot: screenshot || null,
-      };
+        jobData = {
+          position: jobTitle || 'Captured Job',
+          company: company || 'Unknown Company',
+          location: location || '',
+          description: description || '',
+          applicationSource: source || 'other',
+          jobUrl: url,
+          screenshot: null,  // screenshot not saved — text details only
+        };
     } else if (screenshot) {
       // Fallback to OCR
       if (!screenshot) {
@@ -818,7 +818,7 @@ export const saveFromExtension = async (req, res) => {
           location: extracted.location || '',
           salary: extracted.salary || '',
           description: extracted.jobDescription || text,
-          screenshot: screenshot,
+          screenshot: null,  // screenshot not saved — text details only
           applicationSource: detectedSource || 'other',
           jobUrl: url,
         };
@@ -830,7 +830,7 @@ export const saveFromExtension = async (req, res) => {
           location: '',
           salary: '',
           description: '',
-          screenshot: screenshot,
+          screenshot: null,  // screenshot not saved — text details only
           applicationSource: detectedSource || 'other',
           jobUrl: url,
         };
