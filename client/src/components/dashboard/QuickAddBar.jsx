@@ -33,8 +33,8 @@ export default function QuickAddBar() {
 
   return (
     <div className="relative flex items-center w-full group">
-      <div className="absolute left-4 sm:left-6 text-charcoal/60 group-focus-within:text-charcoal transition-colors duration-200">
-        <Plus size={22} strokeWidth={2.5} />
+      <div className="absolute left-4 sm:left-5 text-charcoal/50 group-focus-within:text-charcoal transition-colors duration-200">
+        <Plus size={20} strokeWidth={2.5} />
       </div>
       
       <input
@@ -43,22 +43,22 @@ export default function QuickAddBar() {
         onChange={(e) => setInputValue(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="Quick add a company name or job URL..."
-        className="w-full h-14 sm:h-16 pl-12 sm:pl-14 pr-16 sm:pr-28 rounded-full border border-charcoal bg-white text-[15.5px] font-semibold text-charcoal outline-none transition-all duration-200 placeholder:text-charcoal/40 focus:ring-2 focus:ring-charcoal/20"
+        className="w-full h-12 sm:h-13 pl-11 sm:pl-12 pr-14 sm:pr-26 rounded-full border border-charcoal/25 bg-white text-[14.5px] font-semibold text-charcoal outline-none transition-all duration-200 placeholder:text-charcoal/35 focus:ring-2 focus:ring-charcoal/15 focus:border-charcoal"
       />
       
-      <div className="absolute right-2 sm:right-3 flex items-center gap-2">
+      <div className="absolute right-2 flex items-center gap-1.5">
         <button 
           onClick={handleSubmit}
-          className="hidden sm:flex items-center gap-1.5 px-4 py-2 bg-charcoal text-white hover:bg-charcoal/90 rounded-full text-[12px] font-bold transition-colors duration-200"
+          className="hidden sm:flex items-center gap-1 px-3.5 py-1.5 bg-charcoal text-white hover:bg-charcoal/90 rounded-full text-[11.5px] font-bold transition-colors duration-200"
         >
           <span>Enter</span>
-          <span className="text-[14px] leading-none mb-0.5">↵</span>
+          <span className="text-[13px] leading-none mb-0.5">↵</span>
         </button>
         <button
           onClick={handleSubmit}
-          className="sm:hidden flex items-center justify-center w-10 h-10 bg-charcoal text-white hover:bg-charcoal/90 rounded-full transition-colors"
+          className="sm:hidden flex items-center justify-center w-9 h-9 bg-charcoal text-white hover:bg-charcoal/90 rounded-full transition-colors"
         >
-          <ArrowRight size={18} strokeWidth={2.5} />
+          <ArrowRight size={16} strokeWidth={2.5} />
         </button>
       </div>
     </div>

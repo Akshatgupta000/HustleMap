@@ -88,7 +88,7 @@ export default function Jobs() {
   );
 
   return (
-    <div className="flex flex-col gap-6 lg:gap-8 pb-10">
+    <div className="flex flex-col gap-4 lg:gap-6 h-full min-h-0 overflow-hidden pb-2">
 
       {/* ── Page header ── */}
       <div className="flex justify-end mb-2">
@@ -99,9 +99,9 @@ export default function Jobs() {
         </Link>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-6 items-start">
+      <div className="flex flex-col lg:flex-row gap-6 flex-1 min-h-0">
         {/* ── Left Sidebar Filters ── */}
-        <aside className="w-full lg:w-[180px] shrink-0 flex flex-col gap-4">
+        <aside className="w-full lg:w-[180px] shrink-0 flex flex-col gap-4 overflow-y-auto custom-scrollbar lg:overflow-visible">
           
           {/* Search */}
           <div className="flex flex-col gap-1.5">
@@ -172,9 +172,9 @@ export default function Jobs() {
         </aside>
 
         {/* ── Main Content / Results ── */}
-        <div className="flex-1 w-full flex flex-col gap-4 min-w-0">
+        <div className="flex-1 w-full flex flex-col gap-4 min-w-0 h-full min-h-0">
           {/* Header row for results */}
-          <div className="flex items-center justify-between pb-2">
+          <div className="flex items-center justify-between pb-2 shrink-0">
             <h2 className="text-[20px] font-black text-charcoal tracking-tight flex items-center gap-3">
               Jobs List
               {!isLoading && (
@@ -185,43 +185,45 @@ export default function Jobs() {
             </h2>
           </div>
 
-          {isLoading ? (
-            <div className="bg-white border-2 border-charcoal rounded-[24px] py-20 text-center text-[15px] font-bold text-charcoal/60 shadow-[4px_4px_0px_0px_#1c1c1c]">
-              Loading your jobs…
-            </div>
-          ) : filteredAndSortedJobs.length === 0 ? (
-            <div className="bg-white border-2 border-charcoal rounded-[32px] py-20 px-6 text-center shadow-[6px_6px_0px_0px_#1c1c1c] flex flex-col items-center">
-              <h3 className="text-[20px] font-black text-charcoal mb-3">
-                {searchQuery || statusFilter !== "all" || typeFilter !== "all"
-                  ? "No jobs match your filters"
-                  : "No jobs yet"}
-              </h3>
-              <p className="text-[15px] font-bold text-charcoal/60 mb-8 max-w-sm">
-                {searchQuery || statusFilter !== "all" || typeFilter !== "all"
-                  ? "Try adjusting your search or unchecking some filters."
-                  : "Start tracking your job applications and stay organized."}
-              </p>
-              <button 
-                onClick={() => {
-                  setSearchQuery("");
-                  setStatusFilter("all");
-                  setTypeFilter("all");
-                }}
-                className="bg-sage-light text-charcoal border-2 border-charcoal rounded-full px-6 py-3 text-[14px] font-black cursor-pointer shadow-[3px_3px_0px_0px_#1c1c1c] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[1px_1px_0px_0px_#1c1c1c] transition-all uppercase tracking-wide"
+          <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pb-6 pr-1">
+            {isLoading ? (
+              <div className="bg-white border-2 border-charcoal rounded-[24px] py-20 text-center text-[15px] font-bold text-charcoal/60 shadow-[4px_4px_0px_0px_#1c1c1c]">
+                Loading your jobs…
+              </div>
+            ) : filteredAndSortedJobs.length === 0 ? (
+              <div className="bg-white border-2 border-charcoal rounded-[32px] py-20 px-6 text-center shadow-[6px_6px_0px_0px_#1c1c1c] flex flex-col items-center">
+                <h3 className="text-[20px] font-black text-charcoal mb-3">
+                  {searchQuery || statusFilter !== "all" || typeFilter !== "all"
+                    ? "No jobs match your filters"
+                    : "No jobs yet"}
+                </h3>
+                <p className="text-[15px] font-bold text-charcoal/60 mb-8 max-w-sm">
+                  {searchQuery || statusFilter !== "all" || typeFilter !== "all"
+                    ? "Try adjusting your search or unchecking some filters."
+                    : "Start tracking your job applications and stay organized."}
+                </p>
+                <button 
+                  onClick={() => {
+                    setSearchQuery("");
+                    setStatusFilter("all");
+                    setTypeFilter("all");
+                  }}
+                  className="bg-sage-light text-charcoal border-2 border-charcoal rounded-full px-6 py-3 text-[14px] font-black cursor-pointer shadow-[3px_3px_0px_0px_#1c1c1c] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[1px_1px_0px_0px_#1c1c1c] transition-all uppercase tracking-wide"
+                >
+                  Clear Filters
+                </button>
+              </div>
+            ) : (
+              <div
+                className="grid gap-3"
+                style={{ gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))" }}
               >
-                Clear Filters
-              </button>
-            </div>
-          ) : (
-            <div
-              className="grid gap-3"
-              style={{ gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))" }}
-            >
-              {filteredAndSortedJobs.map((job) => (
-                <JobCard key={job.id} job={job} onViewDetails={setSelectedJob} />
-              ))}
-            </div>
-          )}
+                {filteredAndSortedJobs.map((job) => (
+                  <JobCard key={job.id} job={job} onViewDetails={setSelectedJob} />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

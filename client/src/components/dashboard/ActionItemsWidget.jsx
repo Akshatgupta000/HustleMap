@@ -1,67 +1,135 @@
 import { useQuery } from "@tanstack/react-query";
 import { jobsAPI } from "../../lib/api";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle2, ArrowRight, ListTodo, PartyPopper } from "lucide-react";
+import { 
+  Inbox, 
+  CalendarClock, 
+  FileEdit, 
+  MessageSquare, 
+  FolderClock, 
+  Target, 
+  Activity,
+  PartyPopper,
+  ChevronRight,
+  Clock
+} from "lucide-react";
+import { generateActionItems } from "../../lib/generateActionItems";
+
+const ICON_MAP = {
+  interview: CalendarClock,
+  oa: FileEdit,
+  followup: MessageSquare,
+  captured: FolderClock,
+  goal: Target,
+  inactivity: Activity,
+  schedule: Clock
+};
 
 export default function ActionItemsWidget() {
   const navigate = useNavigate();
 
-  const { data: feed, isLoading } = useQuery({
-    queryKey: ["dashboardFeed"],
-    queryFn: () => jobsAPI.getDashboardFeed().then((res) => res.data),
+  const { data: jobs, isLoading: jobsLoading } = useQuery({
+    queryKey: ['jobs'],
+    queryFn: () => jobsAPI.getAll().then((res) => res.data),
   });
+
+  const { data: weeklyProgress, isLoading: weeklyLoading } = useQuery({
+    queryKey: ["weeklyProgress"],
+    queryFn: () => jobsAPI.getWeeklyProgress().then((res) => res.data),
+  });
+
+  const { data: capturedJobs, isLoading: capturedLoading } = useQuery({
+    queryKey: ["capturedJobs"],
+    queryFn: () => jobsAPI.getCaptured().then((res) => res.data),
+  });
+
+  const isLoading = jobsLoading || weeklyLoading || capturedLoading;
 
   if (isLoading) {
     return (
-      <div className="bg-sage-light border border-charcoal rounded-[32px] p-6 min-h-[200px] flex items-center justify-center">
-        <div className="text-sm text-charcoal/60 font-medium">Loading action items...</div>
+      <div className="bg-sage-light border border-charcoal/15 rounded-[24px] p-5 min-h-[140px] flex items-center justify-center">
+        <div className="text-[12.5px] text-charcoal/40 font-medium">Checking tasks...</div>
       </div>
     );
   }
 
-  const actionItems = feed?.actionItems || [];
+  const capturedCount = Array.isArray(capturedJobs) ? capturedJobs.length : 0;
+  const allActionItems = generateActionItems(Array.isArray(jobs) ? jobs : [], weeklyProgress, capturedCount);
+  
+  // Show all items and let the container scroll
+  const displayItems = allActionItems;
+  const hiddenCount = 0;
 
   return (
-    <div className="bg-sage-light border border-charcoal rounded-[32px] overflow-hidden flex flex-col h-full">
-      <div className="px-6 py-5 border-b border-charcoal/20 flex items-center gap-2.5">
-        <ListTodo size={18} className="text-charcoal" />
-        <span className="text-[16px] font-extrabold text-charcoal tracking-tight">Action Items</span>
-        {actionItems.length > 0 && (
-          <span className="ml-1.5 text-[11px] font-extrabold text-white bg-charcoal px-2 py-0.5 rounded-full">
-            {actionItems.length}
+    <div className="bg-sage-light border border-charcoal/15 rounded-[24px] overflow-hidden flex flex-col h-full">
+      {/* Card header */}
+      <div className="px-4 py-3 border-b border-charcoal/10 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Inbox size={14} className="text-charcoal/60" />
+          <span className="text-[13px] font-extrabold text-charcoal tracking-tight">Inbox</span>
+        </div>
+        {allActionItems.length > 0 && (
+          <span className="text-[10px] font-bold text-charcoal/60 bg-charcoal/5 px-2 py-0.5 rounded-full">
+            {allActionItems.length} task{allActionItems.length !== 1 ? 's' : ''}
           </span>
         )}
       </div>
 
-      <div className="p-4 sm:p-5 flex-1 flex flex-col">
-        {actionItems.length === 0 ? (
-          <div className="flex-1 flex flex-col items-center justify-center py-10 text-center">
-            <div className="w-14 h-14 bg-charcoal/10 text-charcoal rounded-[20px] flex items-center justify-center mb-4">
-              <PartyPopper size={28} strokeWidth={2.5} />
-            </div>
-            <p className="text-[16px] font-extrabold text-charcoal">You're all caught up!</p>
-            <p className="text-[14px] text-charcoal/70 mt-1 font-medium">No pending action items right now.</p>
+      <div className="flex-1 flex flex-col overflow-y-auto custom-scrollbar">
+        {displayItems.length === 0 ? (
+          <div className="flex-1 flex flex-col items-center justify-center py-8 text-center px-4">
+            <PartyPopper size={20} className="text-charcoal/30 mb-2" strokeWidth={1.5} />
+            <p className="text-[13.5px] font-bold text-charcoal">You're all caught up 🎉</p>
+            <p className="text-[12px] text-charcoal/50 mt-0.5 font-medium">
+              No urgent tasks right now.
+            </p>
           </div>
         ) : (
-          <div className="flex flex-col gap-3">
-            {actionItems.map((item) => (
-              <div 
-                key={item.id}
-                className="group flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 rounded-[24px] border border-charcoal bg-white hover:bg-charcoal/[0.02] transition-all duration-200 cursor-pointer"
-                onClick={() => navigate(`/jobs/edit/${item.jobId}`)}
-              >
-                <div className="flex items-start gap-3.5">
-                  <CheckCircle2 className="h-5 w-5 text-charcoal/30 group-hover:text-charcoal shrink-0 mt-0.5 transition-colors duration-200" />
-                  <div className="flex flex-col">
-                    <span className="text-[14.5px] font-bold text-charcoal leading-tight transition-colors">{item.description}</span>
-                    <span className="text-[13px] text-charcoal/70 font-medium mt-1 transition-colors">{item.position} at {item.company}</span>
+          <div className="flex flex-col">
+            {displayItems.map((item, index) => {
+              const Icon = ICON_MAP[item.type] || Inbox;
+              return (
+                <div 
+                  key={item.id}
+                  className={`group flex items-start gap-3 p-3.5 hover:bg-white/60 transition-colors cursor-pointer ${
+                    index !== displayItems.length - 1 || hiddenCount > 0 ? 'border-b border-charcoal/[0.06]' : ''
+                  }`}
+                  onClick={() => navigate(item.link || `/jobs/edit/${item.jobId}`)}
+                >
+                  <div className={`mt-0.5 shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${
+                    item.priority === 'high' ? 'bg-charcoal text-white' : 
+                    item.priority === 'medium' ? 'bg-charcoal/10 text-charcoal' : 
+                    'border border-charcoal/15 text-charcoal/60'
+                  }`}>
+                    <Icon size={12} strokeWidth={item.priority === 'high' ? 2.5 : 2} />
+                  </div>
+                  
+                  <div className="flex-1 min-w-0 pr-2">
+                    <p className="text-[13px] font-bold text-charcoal leading-tight truncate mb-0.5">
+                      {item.title}
+                    </p>
+                    <p className="text-[11.5px] text-charcoal/50 font-medium truncate">
+                      {item.description}
+                    </p>
+                  </div>
+                  
+                  <div className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0 flex items-center self-center text-charcoal/40">
+                    <ChevronRight size={14} />
                   </div>
                 </div>
-                <button className="mt-4 sm:mt-0 self-start sm:self-center shrink-0 flex items-center gap-1.5 text-[12.5px] font-bold text-white bg-charcoal group-hover:bg-charcoal/80 px-4 py-2 rounded-full transition-all duration-200">
-                  View <ArrowRight size={14} />
-                </button>
+              );
+            })}
+            
+            {hiddenCount > 0 && (
+              <div 
+                className="p-3 text-center hover:bg-white/60 transition-colors cursor-pointer"
+                onClick={() => navigate('/jobs')}
+              >
+                <span className="text-[11.5px] font-bold text-charcoal/50">
+                  +{hiddenCount} more task{hiddenCount !== 1 ? 's' : ''} →
+                </span>
               </div>
-            ))}
+            )}
           </div>
         )}
       </div>

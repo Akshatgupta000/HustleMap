@@ -52,12 +52,12 @@ export default function TopHeader() {
   const formattedDate = new Date().toLocaleDateString('en-US', dateOptions);
 
   return (
-    <header className="flex items-center justify-between px-6 py-5 lg:px-12 bg-transparent border-b-2 border-charcoal/10">
+    <header className="flex items-center justify-between px-6 py-3.5 lg:px-12 bg-transparent border-b border-charcoal/10">
       <div>
-        <h1 className="text-[20px] sm:text-[22px] font-extrabold text-charcoal tracking-tight leading-none mb-1.5">
+        <h1 className="text-[19px] sm:text-[21px] font-extrabold text-charcoal tracking-tight leading-none mb-1">
           {getPageTitle()}
         </h1>
-        <p className="text-[12px] sm:text-[13px] font-bold text-charcoal/50">
+        <p className="text-[11.5px] sm:text-[12.5px] font-semibold text-charcoal/45">
           {formattedDate}
         </p>
       </div>
@@ -65,8 +65,8 @@ export default function TopHeader() {
       <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3 sm:gap-4">
         {/* Extension ID Block */}
         {user && (
-          <div className="flex items-center gap-2 bg-sage-light border border-charcoal rounded-full px-3 py-1.5 shadow-sm">
-            <span className="text-[11px] font-bold text-charcoal tracking-wide hidden sm:inline">EXTENSION ID</span>
+          <div className="flex items-center gap-2 bg-sage-light border border-charcoal/30 rounded-full px-3 py-1 shadow-sm">
+            <span className="text-[10.5px] font-bold text-charcoal/70 tracking-wide hidden sm:inline">EXT ID</span>
             {user.extensionId ? (
               <div className="flex items-center gap-2">
                 <Badge className="font-mono text-[10px] bg-charcoal text-white rounded-full" variant="secondary">

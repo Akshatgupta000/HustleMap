@@ -80,3 +80,31 @@
 /* Transparent custom scrollbar for Dashboard columns */
 .custom-scrollbar::-webkit-scrollbar { width: 0px; background: transparent; }
 .custom-scrollbar { scrollbar-width: none; }
+
+/* ── Skeleton shimmer loading ── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(0,0,0,0.055) 25%,
+    rgba(0,0,0,0.10)  50%,
+    rgba(0,0,0,0.055) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* ── Progressive reveal animations ── */
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+.fade-slide-in            { animation: fadeSlideIn 0.28s ease-out both; }
+.fade-slide-in-delay-1    { animation: fadeSlideIn 0.28s ease-out 60ms  both; }
+.fade-slide-in-delay-2    { animation: fadeSlideIn 0.28s ease-out 120ms both; }
+.fade-slide-in-delay-3    { animation: fadeSlideIn 0.28s ease-out 180ms both; }
+.fade-slide-in-delay-4    { animation: fadeSlideIn 0.28s ease-out 240ms both; }
+.fade-slide-in-delay-5    { animation: fadeSlideIn 0.28s ease-out 300ms both; }

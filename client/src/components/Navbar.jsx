@@ -3,7 +3,7 @@ import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { clearAuth, getUser } from "../lib/auth";
 import { useState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
-import { LayoutDashboard, Briefcase, LogOut, Puzzle, BarChart3, Inbox, Menu, X, Bell, Mail, ChevronDown, Flame } from "lucide-react";
+import { LayoutDashboard, Briefcase, LogOut, Puzzle, BarChart3, Inbox, Menu, X, Bell, Mail, ChevronDown } from "lucide-react";
 
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
@@ -82,10 +82,10 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
   return (
     <>
       {/* ── Mobile Header ── */}
-      <header className="sticky top-0 z-40 flex h-14 items-center justify-between bg-black px-4 lg:hidden">
+      <header className="sticky top-0 z-40 flex h-13 items-center justify-between bg-black px-4 lg:hidden">
         <Link
           to="/dashboard"
-          className="flex items-center text-[18px] font-extrabold tracking-tight text-white"
+          className="flex items-center text-[17px] font-extrabold tracking-tight text-white"
         >
           HustleMap
         </Link>
@@ -93,9 +93,9 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
           variant="ghost"
           size="sm"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="h-9 w-9 p-0 text-white hover:bg-white/10 hover:text-white"
+          className="h-8 w-8 p-0 text-white hover:bg-white/10 hover:text-white"
         >
-          {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          {isMobileMenuOpen ? <X className="h-4.5 w-4.5" /> : <Menu className="h-4.5 w-4.5" />}
         </Button>
       </header>
 
@@ -110,7 +110,7 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
       {/* ── Top Horizontal Navbar (Desktop) / Slide-over (Mobile) ── */}
       <nav
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-[272px] bg-black transition-transform duration-300 ease-in-out lg:static lg:w-auto lg:mx-6 lg:mt-6 lg:mb-6 lg:h-[64px] lg:flex lg:items-center lg:justify-between lg:px-6 lg:translate-x-0 lg:rounded-[24px] shadow-[4px_4px_0px_0px_#1c1c1c]",
+          "fixed inset-y-0 left-0 z-50 w-[272px] bg-black transition-transform duration-300 ease-in-out lg:static lg:w-auto lg:mx-5 lg:mt-5 lg:mb-0 lg:h-[58px] lg:flex lg:items-center lg:justify-between lg:px-5 lg:translate-x-0 lg:rounded-[20px] shadow-[2px_2px_0px_0px_#2a2a2a]",
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
@@ -119,7 +119,7 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
           <Link
             to="/dashboard"
             onClick={() => setIsMobileMenuOpen(false)}
-            className="flex items-center rounded-full px-2 py-1.5 text-[22px] font-extrabold tracking-tight text-white hover:bg-white/10 transition-all duration-200"
+            className="flex items-center rounded-full px-2 py-1.5 text-[21px] font-extrabold tracking-tight text-white hover:bg-white/10 transition-all duration-200"
           >
             HustleMap
           </Link>
@@ -136,21 +136,21 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
         {/* Desktop Logo */}
         <Link
           to="/dashboard"
-          className="hidden lg:flex items-center px-2 text-[20px] font-extrabold tracking-tight text-white hover:text-white/80 transition-colors"
+          className="hidden lg:flex items-center px-1 text-[18px] font-extrabold tracking-tight text-white hover:text-white/80 transition-colors"
         >
           HustleMap
         </Link>
 
         {/* Navigation Links */}
-        <div className="flex flex-col gap-2 px-6 lg:flex-row lg:items-center lg:gap-1 lg:px-0 lg:mx-auto">
+        <div className="flex flex-col gap-2 px-6 lg:flex-row lg:items-center lg:gap-0.5 lg:px-0 lg:mx-auto">
           <Link
             to="/dashboard"
             onClick={() => setIsMobileMenuOpen(false)}
             className={cn(
-              "flex items-center gap-2 rounded-full px-4 py-2 text-[13px] transition-all duration-200 font-bold",
+              "flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[12.5px] transition-all duration-200 font-bold",
               isActive("/dashboard")
-                ? "bg-white text-black shadow-sm"
-                : "text-white/70 hover:bg-white/10 hover:text-white",
+                ? "bg-white text-black"
+                : "text-white/65 hover:bg-white/10 hover:text-white",
             )}
           >
             Dashboard
@@ -159,10 +159,10 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
             to="/jobs"
             onClick={() => setIsMobileMenuOpen(false)}
             className={cn(
-              "flex items-center gap-2 rounded-full px-4 py-2 text-[13px] transition-all duration-200 font-bold",
+              "flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[12.5px] transition-all duration-200 font-bold",
               isActive("/jobs")
-                ? "bg-white text-black shadow-sm"
-                : "text-white/70 hover:bg-white/10 hover:text-white",
+                ? "bg-white text-black"
+                : "text-white/65 hover:bg-white/10 hover:text-white",
             )}
           >
             My Applications
@@ -171,10 +171,10 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
             to="/analytics"
             onClick={() => setIsMobileMenuOpen(false)}
             className={cn(
-              "flex items-center gap-2 rounded-full px-4 py-2 text-[13px] transition-all duration-200 font-bold",
+              "flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[12.5px] transition-all duration-200 font-bold",
               isActive("/analytics")
-                ? "bg-white text-black shadow-sm"
-                : "text-white/70 hover:bg-white/10 hover:text-white",
+                ? "bg-white text-black"
+                : "text-white/65 hover:bg-white/10 hover:text-white",
             )}
           >
             Analytics
@@ -183,10 +183,10 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
             to="/captured"
             onClick={() => setIsMobileMenuOpen(false)}
             className={cn(
-              "flex items-center gap-2 rounded-full px-4 py-2 text-[13px] transition-all duration-200 font-bold",
+              "flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[12.5px] transition-all duration-200 font-bold",
               isActive("/captured")
-                ? "bg-white text-black shadow-sm"
-                : "text-white/70 hover:bg-white/10 hover:text-white",
+                ? "bg-white text-black"
+                : "text-white/65 hover:bg-white/10 hover:text-white",
             )}
           >
             Captured Jobs
@@ -195,21 +195,21 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
             to="/extension"
             onClick={() => setIsMobileMenuOpen(false)}
             className={cn(
-              "flex items-center gap-2 rounded-full px-4 py-2 text-[13px] transition-all duration-200 font-bold",
+              "flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[12.5px] transition-all duration-200 font-bold",
               isActive("/extension")
-                ? "bg-white text-black shadow-sm"
-                : "text-white/70 hover:bg-white/10 hover:text-white",
+                ? "bg-white text-black"
+                : "text-white/65 hover:bg-white/10 hover:text-white",
             )}
           >
             Extension
           </Link>
         </div>
 
-        {/* Right side icons & Profile (Desktop only, mobile will have it in TopHeader or below nav) */}
+        {/* Right side icons & Profile (Desktop only) */}
         {user && (
-          <div className="hidden lg:flex items-center gap-5">
+          <div className="hidden lg:flex items-center gap-4">
             {/* Action Icons */}
-            <div className="flex items-center gap-4 text-white/50">
+            <div className="flex items-center gap-3.5 text-white/50">
               <ProfileNotesPopover theme="dark" />
               <a 
                 href="https://mail.google.com" 
@@ -218,49 +218,44 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
                 className="flex items-center justify-center hover:text-white transition-colors"
                 title="Open Gmail"
               >
-                <Mail className="h-5 w-5" />
+                <Mail className="h-4.5 w-4.5" />
               </a>
-              <div className="flex items-center gap-1.5 justify-center hover:text-white transition-colors cursor-default relative group" title={`${streak} Day Streak`}>
-                <Flame className={cn("h-5 w-5", streak > 0 ? "text-[#FF9500] fill-[#FF9500]/20" : "text-white/50")} />
-                <span className={cn("text-[14px] font-black tracking-tight", streak > 0 ? "text-[#FF9500]" : "text-white/50")}>
-                  {streak}
-                </span>
-              </div>
+
             </div>
             
-            <div className="h-8 w-[1px] bg-white/20"></div>
+            <div className="h-7 w-[1px] bg-white/15"></div>
             
             {/* User Dropdown */}
             <div className="relative" ref={dropdownRef}>
               <div 
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center gap-3 cursor-pointer group"
+                className="flex items-center gap-2.5 cursor-pointer group"
               >
-                <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center text-black font-extrabold text-sm shrink-0 transition-transform group-hover:scale-105">
+                <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-black font-extrabold text-[13px] shrink-0 transition-transform group-hover:scale-105">
                   {user?.name?.charAt(0).toUpperCase()}
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[14px] font-bold text-white">
+                <div className="flex items-center gap-1">
+                  <span className="text-[13px] font-bold text-white">
                     {user?.name?.split(' ')[0]}
                   </span>
-                  <ChevronDown className="h-4 w-4 text-white/50 group-hover:text-white transition-colors" />
+                  <ChevronDown className="h-3.5 w-3.5 text-white/50 group-hover:text-white transition-colors" />
                 </div>
               </div>
               
               {isDropdownOpen && (
-                <div className="absolute top-full right-0 mt-3 w-56 bg-white border-2 border-charcoal rounded-[24px] shadow-[4px_4px_0px_0px_#1c1c1c] py-1 z-50 overflow-hidden origin-top-right animate-in fade-in zoom-in-95 duration-200">
-                  <div className="px-5 py-3 border-b-2 border-charcoal/10">
-                    <p className="text-[15px] font-extrabold text-charcoal truncate tracking-tight">{user?.name}</p>
-                    <p className="text-[12px] font-bold text-charcoal/60 truncate">{user?.email}</p>
+                <div className="absolute top-full right-0 mt-3 w-52 bg-white border-2 border-charcoal rounded-[20px] shadow-[4px_4px_0px_0px_#1c1c1c] py-1 z-50 overflow-hidden origin-top-right animate-in fade-in zoom-in-95 duration-200">
+                  <div className="px-4 py-3 border-b border-charcoal/10">
+                    <p className="text-[14px] font-extrabold text-charcoal truncate tracking-tight">{user?.name}</p>
+                    <p className="text-[11px] font-bold text-charcoal/55 truncate">{user?.email}</p>
                   </div>
 
-                  <div className="p-2">
+                  <div className="p-1.5">
                     <button 
                       onClick={handleLogout}
-                      className="w-full flex items-center justify-between px-3 py-2 text-[13px] font-bold text-charcoal rounded-[12px] hover:bg-red-50 hover:text-red-600 transition-colors group/logout"
+                      className="w-full flex items-center justify-between px-3 py-2 text-[12.5px] font-bold text-charcoal rounded-[12px] hover:bg-red-50 hover:text-red-600 transition-colors group/logout"
                     >
                       Logout
-                      <LogOut className="h-4 w-4 text-charcoal/40 group-hover/logout:text-red-600 transition-colors" />
+                      <LogOut className="h-3.5 w-3.5 text-charcoal/40 group-hover/logout:text-red-600 transition-colors" />
                     </button>
                   </div>
                 </div>
@@ -281,19 +276,14 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
           >
             <Mail className="h-5 w-5" />
           </a>
-          <div className="flex items-center gap-1.5 justify-center hover:text-white transition-colors cursor-default relative group" title={`${streak} Day Streak`}>
-            <Flame className={cn("h-5 w-5", streak > 0 ? "text-[#FF9500] fill-[#FF9500]/20" : "text-white/50")} />
-            <span className={cn("text-[14px] font-black tracking-tight", streak > 0 ? "text-[#FF9500]" : "text-white/50")}>
-              {streak}
-            </span>
-          </div>
+
         </div>
 
         {/* Mobile Logout (shows at bottom of sidebar) */}
         <div className="p-6 lg:hidden">
            <button 
               onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 text-sm font-bold bg-white text-black rounded-full"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold bg-white text-black rounded-full"
             >
               <LogOut className="h-4 w-4" />
               Logout
