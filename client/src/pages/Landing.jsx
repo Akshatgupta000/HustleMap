@@ -20,11 +20,12 @@ function useFadeIn() {
 }
 
 // ─── Animated section wrapper ─────────────────────────────────────────────────
-function Reveal({ children, delay = 0 }) {
+function Reveal({ children, delay = 0, className = "" }) {
   const [ref, visible] = useFadeIn();
   return (
     <div
       ref={ref}
+      className={className}
       style={{
         transition: `opacity 0.65s ease ${delay}ms, transform 0.65s ease ${delay}ms`,
         opacity: visible ? 1 : 0,
@@ -40,25 +41,25 @@ function Reveal({ children, delay = 0 }) {
 function FeatureCard({ icon: Icon, title, desc, delay }) {
   const [hovered, setHovered] = useState(false);
   return (
-    <Reveal delay={delay}>
+    <Reveal delay={delay} className="h-full">
       <div
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        className={`bg-background-card backdrop-blur-xl border border-border rounded-2xl p-7 cursor-default transition-all duration-300 ${
+        className={`bg-white backdrop-blur-xl border border-charcoal/15 rounded-2xl p-7 cursor-default transition-all duration-300 h-full flex flex-col ${
           hovered
-            ? "shadow-glow -translate-y-1 scale-[1.015] border-brand-500/30"
-            : "shadow-glass"
+            ? "shadow-md -translate-y-1 scale-[1.015] border-charcoal/20"
+            : "shadow-sm"
         }`}
       >
         <div
-          className={`w-10 h-10 rounded-[10px] flex items-center justify-center mb-4 transition-colors duration-300 ${
-            hovered ? "bg-brand-500/20" : "bg-white/5"
+          className={`w-10 h-10 rounded-[10px] flex items-center justify-center mb-4 shrink-0 transition-colors duration-300 ${
+            hovered ? "bg-charcoal/10" : "bg-white/5"
           }`}
         >
-          <Icon size={18} className={`transition-colors duration-300 ${hovered ? "text-brand-400" : "text-slate-600"}`} strokeWidth={1.8} />
+          <Icon size={18} className={`transition-colors duration-300 ${hovered ? "text-charcoal" : "text-charcoal/60"}`} strokeWidth={1.8} />
         </div>
-        <h3 className="text-[15px] font-semibold text-slate-900 mb-2 tracking-tight">{title}</h3>
-        <p className="text-[13.5px] text-slate-600 leading-relaxed m-0">{desc}</p>
+        <h3 className="text-[15px] font-semibold text-charcoal mb-2 tracking-tight shrink-0">{title}</h3>
+        <p className="text-[13.5px] text-charcoal/60 leading-relaxed m-0 flex-1">{desc}</p>
       </div>
     </Reveal>
   );
@@ -69,12 +70,12 @@ function Step({ num, title, desc, delay }) {
   return (
     <Reveal delay={delay}>
       <div className="flex gap-5 items-start">
-        <div className="shrink-0 w-9 h-9 rounded-full bg-gradient-to-br from-brand-600 to-brand-400 text-slate-900 flex items-center justify-center text-[13px] font-bold mt-0.5 shadow-glow">
+        <div className="shrink-0 w-9 h-9 rounded-full bg-gradient-to-br from-charcoal to-charcoal text-white flex items-center justify-center text-[13px] font-bold mt-0.5 shadow-md">
           {num}
         </div>
         <div>
-          <h3 className="text-[15px] font-semibold text-slate-900 mb-1.5 tracking-tight">{title}</h3>
-          <p className="text-[13.5px] text-slate-600 leading-relaxed m-0">{desc}</p>
+          <h3 className="text-[15px] font-semibold text-charcoal mb-1.5 tracking-tight">{title}</h3>
+          <p className="text-[13.5px] text-charcoal/60 leading-relaxed m-0">{desc}</p>
         </div>
       </div>
     </Reveal>
@@ -127,13 +128,13 @@ export default function Landing() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-background font-[inherit]">
+    <div className="min-h-screen bg-sage font-[inherit]">
 
       {/* ── HEADER ── */}
-      <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
+      <header className="sticky top-0 z-50 border-b border-charcoal/15 bg-sage/80 backdrop-blur-xl supports-[backdrop-filter]:bg-sage/60">
         <div className="max-w-[1080px] mx-auto px-6 h-[58px] flex items-center justify-between">
           <Link to="/" className="flex items-center no-underline group">
-            <span className="text-[18px] font-bold text-slate-900 tracking-tight">HustleMap</span>
+            <span className="text-[18px] font-bold text-charcoal tracking-tight">HustleMap</span>
           </Link>
 
           {/* Desktop Nav */}
@@ -142,19 +143,19 @@ export default function Landing() {
               <a
                 key={href}
                 href={href}
-                className="text-[13.5px] text-slate-600 font-medium no-underline px-2.5 py-[5px] rounded-lg transition-all hover:text-slate-900 hover:bg-white/10"
+                className="text-[13.5px] text-charcoal/60 font-medium no-underline px-2.5 py-[5px] rounded-lg transition-all hover:text-charcoal hover:bg-white/10"
               >
                 {label}
               </a>
             ))}
             <Link
               to="/login"
-              className="text-[13.5px] text-slate-600 font-medium no-underline px-2.5 py-[5px] rounded-lg transition-colors hover:text-slate-900 hover:bg-white/10"
+              className="text-[13.5px] text-charcoal/60 font-medium no-underline px-2.5 py-[5px] rounded-lg transition-colors hover:text-charcoal hover:bg-white/10"
             >
               Login
             </Link>
             <Link to="/register" className="no-underline ml-1">
-              <button className="bg-white text-slate-900 border border-slate-900 rounded-lg px-[15px] py-[7px] text-[13.5px] font-semibold cursor-pointer tracking-tight transition-all hover:bg-slate-50 hover:shadow-sm">
+              <button className="bg-white text-charcoal border border-charcoal rounded-lg px-[15px] py-[7px] text-[13.5px] font-semibold cursor-pointer tracking-tight transition-all hover:bg-sage-light hover:shadow-sm">
                 Get started for free
               </button>
             </Link>
@@ -165,19 +166,19 @@ export default function Landing() {
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="md:hidden p-1.5 rounded-lg hover:bg-white/[0.06] transition-colors"
           >
-            {isMobileMenuOpen ? <X size={20} className="text-slate-900" /> : <Menu size={20} className="text-slate-900" />}
+            {isMobileMenuOpen ? <X size={20} className="text-charcoal" /> : <Menu size={20} className="text-charcoal" />}
           </button>
         </div>
 
         {/* Mobile Nav Overlay */}
         {isMobileMenuOpen && (
-          <div className="md:hidden absolute top-[58px] left-0 right-0 bg-background/95 backdrop-blur-xl border-b border-border shadow-glass px-6 py-6 flex flex-col gap-4 animate-in slide-in-from-top duration-200">
+          <div className="md:hidden absolute top-[58px] left-0 right-0 bg-sage/95 backdrop-blur-xl border-b border-charcoal/15 shadow-sm px-6 py-6 flex flex-col gap-4 animate-in slide-in-from-top duration-200">
             {[["#features", "Features"], ["#how-it-works", "How it Works"]].map(([href, label]) => (
               <a
                 key={href}
                 href={href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="text-[15px] font-medium text-slate-900 no-underline py-2 border-b border-border/50 hover:text-brand-400 transition-colors"
+                className="text-[15px] font-medium text-charcoal no-underline py-2 border-b border-charcoal/15/50 hover:text-charcoal/60 transition-colors"
               >
                 {label}
               </a>
@@ -185,12 +186,12 @@ export default function Landing() {
             <Link
               to="/login"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="text-[15px] font-medium text-slate-900 no-underline py-2 border-b border-border/50 hover:text-brand-400 transition-colors"
+              className="text-[15px] font-medium text-charcoal no-underline py-2 border-b border-charcoal/15/50 hover:text-charcoal/60 transition-colors"
             >
               Login
             </Link>
             <Link to="/register" onClick={() => setIsMobileMenuOpen(false)} className="no-underline pt-2">
-              <button className="w-full bg-white text-slate-900 border border-slate-900 rounded-xl py-3 text-[15px] font-bold cursor-pointer tracking-tight transition-all hover:bg-slate-50">
+              <button className="w-full bg-white text-charcoal border border-charcoal rounded-xl py-3 text-[15px] font-bold cursor-pointer tracking-tight transition-all hover:bg-sage-light">
                 Get started for free
               </button>
             </Link>
@@ -205,16 +206,16 @@ export default function Landing() {
         <div className="max-w-[720px] mx-auto px-6 relative z-10">
 
           <Reveal delay={80}>
-            <h1 className="text-[clamp(36px,6vw,62px)] font-extrabold text-slate-900 leading-[1.1] tracking-[-2px] mb-5">
+            <h1 className="text-[clamp(36px,6vw,62px)] font-extrabold text-charcoal leading-[1.1] tracking-[-2px] mb-5">
               Track jobs.{" "}
-              <span className="relative inline-block text-slate-900">
+              <span className="relative inline-block text-charcoal">
                 <span className="relative z-10">Learn faster.</span>
               </span>
             </h1>
           </Reveal>
 
           <Reveal delay={140}>
-            <p className="text-[17px] text-slate-600 leading-[1.7] mx-auto mb-9 max-w-[520px]">
+            <p className="text-[17px] text-charcoal/60 leading-[1.7] mx-auto mb-9 max-w-[520px]">
               Manage every application, rate interview difficulty, and log real questions by round. Build your Interview Summary and improve with each opportunity.
             </p>
           </Reveal>
@@ -222,25 +223,17 @@ export default function Landing() {
           <Reveal delay={200}>
             <div className="flex justify-center items-center gap-3 flex-wrap">
               <Link to="/register" className="no-underline">
-                <button className="inline-flex items-center gap-[7px] bg-white text-slate-900 border border-slate-900 rounded-xl px-[22px] py-[11px] text-[14.5px] font-bold cursor-pointer tracking-tight transition-all hover:bg-slate-50 hover:shadow-sm hover:scale-[1.02]">
+                <button className="inline-flex items-center gap-[7px] bg-white text-charcoal border border-charcoal rounded-xl px-[22px] py-[11px] text-[14.5px] font-bold cursor-pointer tracking-tight transition-all hover:bg-sage-light hover:shadow-sm hover:scale-[1.02]">
                   Get started for free <ArrowRight size={15} />
                 </button>
               </Link>
-              <a
-                href="https://github.com/Akshatgupta000/HustleMap"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-[7px] bg-white text-slate-900 border border-slate-900 rounded-xl px-5 py-[11px] text-[14.5px] font-medium no-underline transition-all hover:bg-slate-50 hover:shadow-sm hover:scale-[1.02]"
-              >
-                <Github size={15} /> View on GitHub
-              </a>
             </div>
           </Reveal>
 
           <Reveal delay={280}>
             <div className="mt-10 flex justify-center gap-7 flex-wrap">
               {["✓ Free forever", "✓ No setup", "✓ Built for job seekers"].map((text) => (
-                <span key={text} className="text-[13px] text-slate-600 font-medium">{text}</span>
+                <span key={text} className="text-[13px] text-charcoal/60 font-medium">{text}</span>
               ))}
             </div>
           </Reveal>
@@ -257,11 +250,11 @@ export default function Landing() {
         <div className="max-w-[1080px] mx-auto">
           <Reveal delay={0}>
             <div className="text-center mb-14">
-              <p className="text-[12.5px] font-semibold text-brand-400 tracking-[1px] uppercase mb-2.5">Features</p>
-              <h2 className="text-[clamp(26px,4vw,38px)] font-extrabold text-slate-900 tracking-tight mx-auto mb-3.5 max-w-[500px]">
+              <p className="text-[12.5px] font-semibold text-charcoal/60 tracking-[1px] uppercase mb-2.5">Features</p>
+              <h2 className="text-[clamp(26px,4vw,38px)] font-extrabold text-charcoal tracking-tight mx-auto mb-3.5 max-w-[500px]">
                 Everything you need to land the job
               </h2>
-              <p className="text-[15.5px] text-slate-600 max-w-[440px] mx-auto leading-relaxed">
+              <p className="text-[15.5px] text-charcoal/60 max-w-[440px] mx-auto leading-relaxed">
                 One organized workspace for your entire job search journey.
               </p>
             </div>
@@ -302,14 +295,14 @@ export default function Landing() {
           {/* Header */}
           <Reveal delay={0}>
             <div className="text-center mb-14">
-              <div className="inline-flex items-center gap-[7px] bg-brand-500/10 border border-brand-500/20 rounded-full px-[13px] py-[5px] mb-5 shadow-glow">
-                <div className="w-[7px] h-[7px] rounded-full bg-brand-400" />
-                <span className="text-[12px] font-semibold text-brand-400 tracking-[0.5px] uppercase">Chrome Extension</span>
+              <div className="inline-flex items-center gap-[7px] bg-charcoal/5 border border-charcoal/15 rounded-full px-[13px] py-[5px] mb-5 shadow-md">
+                <div className="w-[7px] h-[7px] rounded-full bg-charcoal/40" />
+                <span className="text-[12px] font-semibold text-charcoal/60 tracking-[0.5px] uppercase">Chrome Extension</span>
               </div>
-              <h2 className="text-[clamp(26px,4vw,38px)] font-extrabold text-slate-900 tracking-tight mx-auto mb-3.5 max-w-[600px]">
+              <h2 className="text-[clamp(26px,4vw,38px)] font-extrabold text-charcoal tracking-tight mx-auto mb-3.5 max-w-[600px]">
                 Save Jobs Instantly with our Chrome Extension
               </h2>
-              <p className="text-[15.5px] text-slate-600 max-w-[460px] mx-auto leading-relaxed">
+              <p className="text-[15.5px] text-charcoal/60 max-w-[460px] mx-auto leading-relaxed">
                 Capture jobs from LinkedIn, Indeed, and Glassdoor directly into HustleMap in seconds.
               </p>
             </div>
@@ -344,8 +337,8 @@ export default function Landing() {
           </div>
 
           <Reveal delay={0}>
-            <div className="bg-background-card backdrop-blur-xl border border-border rounded-2xl p-8 mb-10 shadow-glass">
-              <p className="text-[12px] font-semibold text-brand-400 tracking-[1px] uppercase mb-6 text-center">How it works</p>
+            <div className="bg-white backdrop-blur-xl border border-charcoal/15 rounded-2xl p-8 mb-10 shadow-sm">
+              <p className="text-[12px] font-semibold text-charcoal/60 tracking-[1px] uppercase mb-6 text-center">How it works</p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-0">
                 {[
                   {
@@ -366,21 +359,21 @@ export default function Landing() {
                 ].map(({ num, label, sub }, i) => (
                   <div key={num} className="flex sm:flex-row flex-col items-center gap-3 sm:gap-0 w-full sm:w-auto">
                     <div className="flex flex-col items-center text-center px-6 flex-1 min-w-[160px]">
-                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-brand-600 to-brand-400 text-slate-900 flex items-center justify-center text-[13px] font-bold mb-2.5 shadow-glow">
+                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-charcoal to-charcoal text-white flex items-center justify-center text-[13px] font-bold mb-2.5 shadow-md">
                         {num}
                       </div>
-                      <p className="text-[13.5px] font-semibold text-slate-900 mb-1 tracking-tight">{label}</p>
-                      <p className="text-[12.5px] text-slate-600 leading-relaxed">{sub}</p>
+                      <p className="text-[13.5px] font-semibold text-charcoal mb-1 tracking-tight">{label}</p>
+                      <p className="text-[12.5px] text-charcoal/60 leading-relaxed">{sub}</p>
                     </div>
                     {i < 2 && (
-                      <div className="hidden sm:flex items-center text-slate-900/30">
+                      <div className="hidden sm:flex items-center text-charcoal/30">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                           <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
                         </svg>
                       </div>
                     )}
                     {i < 2 && (
-                      <div className="flex sm:hidden items-center text-slate-900/30">
+                      <div className="flex sm:hidden items-center text-charcoal/30">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                           <line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>
                         </svg>
@@ -401,20 +394,12 @@ export default function Landing() {
                 rel="noopener noreferrer"
                 className="no-underline"
               >
-                <button className="inline-flex items-center gap-[7px] bg-white text-slate-900 border border-slate-900 rounded-xl px-[22px] py-[11px] text-[14.5px] font-bold cursor-pointer tracking-tight transition-all hover:bg-slate-50 hover:shadow-sm hover:scale-[1.02]">
+                <button className="inline-flex items-center gap-[7px] bg-white text-charcoal border border-charcoal rounded-xl px-[22px] py-[11px] text-[14.5px] font-bold cursor-pointer tracking-tight transition-all hover:bg-sage-light hover:shadow-sm hover:scale-[1.02]">
                   <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
                   </svg>
                   Get Extension
                 </button>
-              </a>
-              <a
-                href="https://github.com/Akshatgupta000/HustleMap"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-[7px] bg-white text-slate-900 border border-slate-900 rounded-xl px-5 py-[11px] text-[14.5px] font-medium no-underline transition-all hover:bg-slate-50 hover:shadow-sm hover:scale-[1.02]"
-              >
-                <Github size={15} /> View Source
               </a>
             </div>
           </Reveal>
@@ -432,10 +417,10 @@ export default function Landing() {
         <div className="max-w-[1080px] mx-auto">
           <Reveal delay={0}>
             <div className="text-center mb-[52px]">
-              <h2 className="text-[clamp(24px,4vw,36px)] font-extrabold text-slate-900 tracking-tight mb-3">
+              <h2 className="text-[clamp(24px,4vw,36px)] font-extrabold text-charcoal tracking-tight mb-3">
                 Learn from every interview
               </h2>
-              <p className="text-[15.5px] text-slate-600 max-w-[460px] mx-auto leading-relaxed">
+              <p className="text-[15.5px] text-charcoal/60 max-w-[460px] mx-auto leading-relaxed">
                 Build a structured record with difficulty ratings and real questions. Reflect and improve with each round.
               </p>
             </div>
@@ -466,16 +451,16 @@ export default function Landing() {
               },
             ].map(({ icon: Icon, title, desc, bullets, delay }) => (
               <Reveal key={title} delay={delay}>
-                <div className="bg-background-card backdrop-blur-xl border border-border rounded-2xl p-7 h-full shadow-glass transition-all hover:border-slate-900/10 hover:shadow-glow">
-                  <div className="mb-4 inline-flex items-center justify-center w-[38px] h-[38px] rounded-[10px] bg-slate-50 border border-slate-200">
-                    <Icon size={18} className="text-slate-900" strokeWidth={1.8} />
+                <div className="bg-white backdrop-blur-xl border border-charcoal/15 rounded-2xl p-7 h-full shadow-sm transition-all hover:border-charcoal/10 hover:shadow-md">
+                  <div className="mb-4 inline-flex items-center justify-center w-[38px] h-[38px] rounded-[10px] bg-sage-light border border-charcoal/10">
+                    <Icon size={18} className="text-charcoal" strokeWidth={1.8} />
                   </div>
-                  <h3 className="text-[15px] font-bold text-slate-900 mb-2.5 tracking-tight">{title}</h3>
-                  <p className="text-[13.5px] text-slate-600 leading-relaxed mb-4">{desc}</p>
+                  <h3 className="text-[15px] font-bold text-charcoal mb-2.5 tracking-tight">{title}</h3>
+                  <p className="text-[13.5px] text-charcoal/60 leading-relaxed mb-4">{desc}</p>
                   <ul className="list-none p-0 m-0 flex flex-col gap-2">
                     {bullets.map((b) => (
-                      <li key={b} className="flex items-start gap-2.5 text-[13px] text-slate-600">
-                        <CheckCircle size={13} className="text-brand-400 mt-0.5 shrink-0" />
+                      <li key={b} className="flex items-start gap-2.5 text-[13px] text-charcoal/60">
+                        <CheckCircle size={13} className="text-charcoal/60 mt-0.5 shrink-0" />
                         <span>{b}</span>
                       </li>
                     ))}
@@ -497,8 +482,8 @@ export default function Landing() {
         <div className="max-w-[560px] mx-auto">
           <Reveal delay={0}>
             <div className="text-center mb-[52px]">
-              <p className="text-[12.5px] font-semibold text-brand-400 tracking-[1px] uppercase mb-2.5">How it Works</p>
-              <h2 className="text-[clamp(24px,4vw,36px)] font-extrabold text-slate-900 tracking-tight">
+              <p className="text-[12.5px] font-semibold text-charcoal/60 tracking-[1px] uppercase mb-2.5">How it Works</p>
+              <h2 className="text-[clamp(24px,4vw,36px)] font-extrabold text-charcoal tracking-tight">
                 Up and running in minutes
               </h2>
             </div>
@@ -511,14 +496,14 @@ export default function Landing() {
               desc="Create an account in seconds. No credit card or setup required."
               delay={0}
             />
-            <div className="ml-[18px] w-px h-4 border-l-2 border-dashed border-brand-500/30" />
+            <div className="ml-[18px] w-px h-4 border-l-2 border-dashed border-charcoal/20" />
             <Step
               num={2}
               title="Add your applications"
               desc="Start logging job applications with company, position, status, and notes."
               delay={80}
             />
-            <div className="ml-[18px] w-px h-4 border-l-2 border-dashed border-brand-500/30" />
+            <div className="ml-[18px] w-px h-4 border-l-2 border-dashed border-charcoal/20" />
             <Step
               num={3}
               title="Track and improve"
@@ -532,21 +517,13 @@ export default function Landing() {
 
 
       {/* ── FOOTER ── */}
-      <footer className="border-t border-border py-8 px-6 bg-background">
+      <footer className="border-t border-charcoal/15 py-8 px-6 bg-sage">
         <div className="max-w-[1080px] mx-auto flex flex-col md:flex-row justify-between items-center gap-6 text-center md:text-left">
           <div className="flex items-center">
-            <span className="text-[16px] font-bold text-slate-900">HustleMap</span>
+            <span className="text-[16px] font-bold text-charcoal">HustleMap</span>
           </div>
           <div className="flex gap-5 items-center">
-            <a
-              href="https://github.com/Akshatgupta000/HustleMap"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[13px] text-slate-600 no-underline flex items-center gap-1.5 hover:text-slate-900 transition-colors"
-            >
-              <Github size={13} /> GitHub
-            </a>
-            <span className="text-[13px] text-slate-600">Built with React · Node.js · MongoDB</span>
+            <span className="text-[13px] text-charcoal/60">Built with React · Node.js · MongoDB</span>
           </div>
         </div>
       </footer>

@@ -65,33 +65,32 @@ export default function BrowserExtension() {
   ];
 
   return (
-    <div className="flex flex-col gap-6 max-w-4xl mx-auto animate-in fade-in duration-500">
+    <div className="flex flex-col gap-4 max-w-3xl mx-auto w-full animate-in fade-in duration-500 pb-8">
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-3 mb-1">
-            <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center shadow-sm">
-              <Puzzle size={20} className="text-slate-900" />
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-sage-light border border-charcoal/15 rounded-[24px] p-4 sm:p-5 shadow-sm">
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center gap-2 mb-0.5">
+            <div className="w-8 h-8 rounded-[10px] bg-white border border-charcoal/10 flex items-center justify-center shadow-sm shrink-0">
+              <Puzzle size={16} className="text-charcoal" />
             </div>
-            <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+            <h1 className="text-[18px] font-black text-charcoal tracking-tight leading-none">
               Browser Extension
             </h1>
           </div>
-          <p className="text-[14px] text-slate-500 leading-relaxed max-w-2xl">
-            Capture job listings directly from LinkedIn, Indeed, and Glassdoor without manual data entry. 
-            Our extension saves structured details and screenshots directly to your HustleMap dashboard.
+          <p className="text-[12.5px] font-medium text-charcoal/60 leading-relaxed max-w-lg">
+            Capture job listings directly from LinkedIn, Indeed, and Glassdoor without manual data entry.
           </p>
         </div>
 
         {/* Extension ID Button Block */}
         {user && (
-          <div className="shrink-0 self-start bg-white border border-slate-200 rounded-xl p-3 shadow-sm flex items-center gap-3">
+          <div className="shrink-0 bg-white border border-charcoal/15 rounded-[16px] p-2.5 shadow-sm flex items-center gap-3">
             <div className="flex flex-col">
-              <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Your EXT ID</span>
+              <span className="text-[9px] font-black text-charcoal/40 uppercase tracking-widest leading-none mb-1">Your EXT ID</span>
               {user.extensionId ? (
-                <span className="font-mono text-[13px] font-bold text-slate-900">{user.extensionId}</span>
+                <span className="font-mono text-[12px] font-extrabold text-charcoal leading-none">{user.extensionId}</span>
               ) : (
-                <span className="text-[12px] font-medium text-slate-400">Not generated</span>
+                <span className="text-[11px] font-bold text-charcoal/40 leading-none">Not generated</span>
               )}
             </div>
             {user.extensionId ? (
@@ -100,15 +99,15 @@ export default function BrowserExtension() {
                   navigator.clipboard.writeText(user.extensionId);
                   toast.success("Extension ID copied");
                 }}
-                className="w-8 h-8 flex items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition-colors"
+                className="w-7 h-7 flex items-center justify-center bg-charcoal/5 hover:bg-charcoal/10 text-charcoal rounded-lg transition-colors cursor-pointer"
                 title="Copy ID"
               >
-                <Copy size={14} />
+                <Copy size={12} strokeWidth={2.5} />
               </button>
             ) : (
               <button
                 onClick={ensureExtensionId}
-                className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-bold rounded-lg transition-colors"
+                className="px-3 py-1.5 bg-charcoal hover:bg-charcoal/90 text-white text-[10px] font-extrabold rounded-lg transition-colors cursor-pointer uppercase tracking-wider"
               >
                 Generate
               </button>
@@ -118,65 +117,62 @@ export default function BrowserExtension() {
       </div>
 
       {/* Main Content Card */}
-      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-        <div className="px-6 py-5 border-b border-slate-200/50">
-          <h2 className="text-[16px] font-bold text-slate-900 tracking-tight flex items-center gap-2">
-            HustleMap Job Capture Setup Guide
+      <div className="bg-white border border-charcoal/15 rounded-[24px] overflow-hidden shadow-sm flex flex-col">
+        <div className="px-5 py-4 border-b border-charcoal/10 bg-sage-light/50">
+          <h2 className="text-[14px] font-extrabold text-charcoal tracking-tight flex items-center gap-2">
+            Setup Guide
           </h2>
         </div>
         
-        <div className="p-6 sm:p-8">
-          <div className="grid gap-8">
-            <div className="grid gap-6">
-              {steps.map((step, index) => (
-                <div key={index} className="flex gap-5 items-start group">
-                  <div className="shrink-0 w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-500 shadow-sm transition-all group-hover:bg-slate-100 group-hover:border-slate-900/30 group-hover:text-slate-900">
-                    <step.icon size={18} strokeWidth={2} />
-                  </div>
-                  <div className="flex flex-col gap-1.5 pt-0.5">
-                    <h3 className="text-[14.5px] font-bold text-slate-900 tracking-tight">
-                      {step.title}
-                    </h3>
-                    <p className="text-[13.5px] text-slate-500 leading-relaxed">
-                      {step.description}
-                    </p>
-                  </div>
+        <div className="p-5 sm:p-6 flex flex-col gap-5">
+          <div className="grid gap-4">
+            {steps.map((step, index) => (
+              <div key={index} className="flex gap-3.5 items-start group">
+                <div className="shrink-0 w-8 h-8 rounded-[10px] bg-charcoal/5 border border-charcoal/10 flex items-center justify-center text-charcoal/50 transition-all group-hover:bg-charcoal/[0.07] group-hover:text-charcoal group-hover:border-charcoal/20">
+                  <step.icon size={14} strokeWidth={2.5} />
                 </div>
-              ))}
-            </div>
+                <div className="flex flex-col gap-0.5 pt-1">
+                  <h3 className="text-[13px] font-extrabold text-charcoal tracking-tight leading-tight">
+                    {step.title}
+                  </h3>
+                  <p className="text-[12px] font-medium text-charcoal/60 leading-snug">
+                    {step.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
 
-            <div className="mt-4 p-5 bg-accent-yellow/5 border border-accent-yellow/20 rounded-2xl flex gap-4 items-center shadow-sm">
-              <div className="shrink-0 w-9 h-9 rounded-full bg-white border border-accent-yellow/30 flex items-center justify-center text-accent-yellow shadow-sm">
-                <Settings size={16} />
-              </div>
-              <div className="flex-1">
-                <p className="text-[13px] font-bold text-accent-yellow tracking-tight">Setup your Extension ID</p>
-                <p className="text-[12.5px] text-accent-yellow/80 leading-relaxed">
-                  After installing, copy your unique <strong className="text-accent-yellow font-bold">Extension ID</strong> using the button at the top right of this page and paste it into the extension settings.
-                </p>
-              </div>
+          <div className="mt-2 p-4 bg-sage-light border border-charcoal/15 rounded-[16px] flex gap-3.5 items-center">
+            <div className="shrink-0 w-8 h-8 rounded-full bg-white border border-charcoal/20 flex items-center justify-center text-charcoal shadow-sm">
+              <Settings size={14} strokeWidth={2.5} />
             </div>
+            <div className="flex-1">
+              <p className="text-[13px] font-extrabold text-charcoal tracking-tight leading-tight">Setup your Extension ID</p>
+              <p className="text-[12px] font-medium text-charcoal/60 leading-snug mt-0.5">
+                After installing, copy your <strong className="text-charcoal font-extrabold">Extension ID</strong> from the top right and paste it into the extension settings.
+              </p>
+            </div>
+          </div>
 
-            <div className="pt-6 border-t border-slate-200/50 flex flex-col sm:flex-row items-center justify-between gap-5">
-              <div>
-                <p className="text-[14px] font-bold text-slate-900 mb-1">Get the latest version</p>
-                <p className="text-[13px] text-slate-500">The extension source code is available on GitHub.</p>
-              </div>
-              <a 
-                href="https://github.com/Akshatgupta000/HustleMap-extension" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto"
+          <div className="pt-5 mt-1 border-t border-charcoal/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="text-center sm:text-left">
+              <p className="text-[13px] font-extrabold text-charcoal mb-0.5">Get the latest version</p>
+              <p className="text-[12px] font-medium text-charcoal/60">Source code available on GitHub.</p>
+            </div>
+            <a 
+              href="https://github.com/Akshatgupta000/HustleMap-extension" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto"
+            >
+              <button 
+                className="w-full sm:w-auto bg-charcoal hover:bg-charcoal/90 text-white font-bold flex items-center justify-center gap-2 h-9 px-5 rounded-[12px] transition-all cursor-pointer text-[12px] shadow-[2px_2px_0px_0px_#1c1c1c] active:translate-y-[2px] active:translate-x-[2px] active:shadow-none"
               >
-                <Button 
-                  variant="default"
-                  className="w-full sm:w-auto bg-slate-900 hover:brightness-110 text-white font-bold flex items-center justify-center gap-2 h-11 px-6 rounded-xl shadow-sm transition-all hover:scale-[1.02]"
-                >
-                  View Extension on GitHub
-                  <ExternalLink size={16} />
-                </Button>
-              </a>
-            </div>
+                View on GitHub
+                <ExternalLink size={14} strokeWidth={2.5} />
+              </button>
+            </a>
           </div>
         </div>
       </div>

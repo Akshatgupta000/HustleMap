@@ -48,24 +48,24 @@ export default function Login({ onLoginSuccess }) {
   const isPending = loginMutation.isPending;
 
   return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-6 relative overflow-hidden">
+      <div className="min-h-screen bg-sage flex items-center justify-center p-6 relative overflow-hidden">
 
       <div className="w-full max-w-[420px] relative z-10">
         {/* Logo mark */}
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center no-underline">
-            <span className="text-[24px] font-bold text-slate-900 tracking-tight">HustleMap</span>
+            <span className="text-[24px] font-bold text-charcoal tracking-tight">HustleMap</span>
           </Link>
         </div>
 
         {/* Card */}
-        <div className="bg-white border border-border rounded-[20px] shadow-sm overflow-hidden">
+        <div className="bg-white border border-charcoal/15 rounded-[20px] shadow-sm overflow-hidden">
           {/* Card header */}
-          <div className="px-6 sm:px-8 pt-8 pb-6 border-b border-border/50">
-            <h1 className="text-[22px] font-extrabold text-slate-900 tracking-tight mb-1.5">
+          <div className="px-6 sm:px-8 pt-8 pb-6 border-b border-charcoal/15/50">
+            <h1 className="text-[22px] font-extrabold text-charcoal tracking-tight mb-1.5">
               Welcome back
             </h1>
-            <p className="text-[13.5px] text-slate-600">
+            <p className="text-[13.5px] text-charcoal/60">
               Sign in to your HustleMap account
             </p>
           </div>
@@ -74,7 +74,7 @@ export default function Login({ onLoginSuccess }) {
           <div className="px-6 sm:px-8 pt-7 pb-8">
             <form onSubmit={handleSubmit} className="flex flex-col gap-[18px]">
               <div>
-                <label className="block text-[13px] font-semibold text-slate-900 mb-[7px] tracking-tight">
+                <label className="block text-[13px] font-semibold text-charcoal mb-[7px] tracking-tight">
                   Email
                 </label>
                 <Input
@@ -87,7 +87,7 @@ export default function Login({ onLoginSuccess }) {
               </div>
 
               <div>
-                <label className="block text-[13px] font-semibold text-slate-900 mb-[7px] tracking-tight">
+                <label className="block text-[13px] font-semibold text-charcoal mb-[7px] tracking-tight">
                   Password
                 </label>
                 <Input
@@ -104,20 +104,20 @@ export default function Login({ onLoginSuccess }) {
                 disabled={isPending}
                 className={`mt-1 w-full rounded-[11px] py-[11px] px-5 text-[14.5px] font-bold tracking-tight transition-all border ${
                   isPending
-                    ? "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
-                    : "bg-slate-900 text-white border-slate-900 cursor-pointer shadow-sm hover:bg-slate-800 hover:scale-[1.02]"
+                    ? "bg-charcoal/5 text-charcoal/40 border-charcoal/15 cursor-not-allowed"
+                    : "bg-charcoal text-white border-charcoal cursor-pointer shadow-sm hover:bg-charcoal/90 hover:scale-[1.02]"
                 }`}
               >
                 {isPending ? "Signing in…" : "Sign In"}
               </button>
             </form>
 
-            <div className="mt-[22px] pt-5 border-t border-border/50 text-center">
-              <p className="text-[13px] text-slate-600">
+            <div className="mt-[22px] pt-5 border-t border-charcoal/15/50 text-center">
+              <p className="text-[13px] text-charcoal/60">
                 Don't have an account?{" "}
                 <Link
                   to="/register"
-                  className="text-slate-900 font-semibold no-underline hover:underline"
+                  className="text-charcoal font-semibold no-underline hover:underline"
                 >
                   Create one free
                 </Link>
