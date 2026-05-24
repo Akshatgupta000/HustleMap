@@ -223,7 +223,7 @@ export default function Landing() {
       <section className="relative overflow-hidden pt-14 sm:pt-18 pb-20 sm:pb-28 text-center bg-sage">
         
         {/* Left Avatar Group - Hand-drawn illustrations peeking from bottom-left (Sized up for impact) */}
-        <div className="hidden sm:block absolute bottom-0 left-0 w-[180px] sm:w-[260px] md:w-[320px] lg:w-[380px] xl:w-[420px] select-none pointer-events-none z-10 transition-all duration-500 transform origin-bottom-left hover:scale-[1.03] hover:rotate-1">
+        <div className="absolute bottom-0 left-0 w-[100px] sm:w-[260px] md:w-[320px] lg:w-[380px] xl:w-[420px] select-none pointer-events-none z-0 sm:z-10 opacity-35 sm:opacity-100 transition-all duration-500 transform origin-bottom-left hover:scale-[1.03] hover:rotate-1">
           <img 
             src="/avatar_left.png" 
             alt="Hand-drawn creative professional avatars" 
@@ -232,7 +232,7 @@ export default function Landing() {
         </div>
 
         {/* Right Avatar Group - Hand-drawn illustrations peeking from bottom-right (Sized up for impact) */}
-        <div className="hidden sm:block absolute bottom-0 right-0 w-[150px] sm:w-[220px] md:w-[270px] lg:w-[320px] xl:w-[360px] select-none pointer-events-none z-10 transition-all duration-500 transform origin-bottom-right hover:scale-[1.03] hover:-rotate-1">
+        <div className="absolute bottom-0 right-0 w-[85px] sm:w-[220px] md:w-[270px] lg:w-[320px] xl:w-[360px] select-none pointer-events-none z-0 sm:z-10 opacity-35 sm:opacity-100 transition-all duration-500 transform origin-bottom-right hover:scale-[1.03] hover:-rotate-1">
           <img 
             src="/avatar_right.png" 
             alt="Hand-drawn team member avatars" 
