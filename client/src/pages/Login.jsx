@@ -23,7 +23,7 @@ export default function Login({ onLoginSuccess }) {
       if (response.data.token) {
         console.log("[Login] Token received and being stored.");
         setAuth(response.data.token, response.data.user);
-        toast.success("Logged in successfully!");
+
         if (onLoginSuccess) onLoginSuccess();
         navigate("/dashboard");
       } else {

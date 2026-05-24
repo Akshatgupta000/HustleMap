@@ -71,7 +71,7 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
   const handleLogout = () => {
     clearAuth();
     queryClient.clear();
-    toast.success("Logged out successfully");
+    
     if (onLogout) onLogout();
     window.history.replaceState(null, "", "/");
     navigate("/", { replace: true });
