@@ -50,8 +50,8 @@ export default function Dashboard() {
 
   // ── Shared: Welcome banner ────────────────────────────────────
   const WelcomeBanner = () => (
-    <div className="bg-sage-light border border-charcoal/30 rounded-[20px] py-3 px-5 sm:px-6 flex items-center justify-between relative shrink-0">
-      <div className="relative z-10 flex-1">
+    <div className="bg-sage-light border border-charcoal/30 rounded-[20px] py-4 px-5 sm:px-6 flex items-center justify-between relative shrink-0 overflow-hidden min-h-[100px]">
+      <div className="relative z-10 flex-1 max-w-[70%] sm:max-w-[75%]">
         <div className="flex items-center gap-2.5 mb-0.5">
           <h1 className="text-xl sm:text-2xl font-extrabold text-charcoal tracking-tight leading-none">
             Hi, {user?.name ? user.name.split(' ')[0] : 'there'}
@@ -63,11 +63,11 @@ export default function Dashboard() {
             : 'Welcome to HustleMap — let\'s get your search started.'}
         </p>
       </div>
-      <div className="relative z-10 shrink-0">
+      <div className="absolute right-0 sm:right-2 bottom-0 top-0 w-28 sm:w-40 z-0 opacity-90 mix-blend-multiply flex justify-end pointer-events-none">
         <img
-          src="/avatar.png"
+          src={`https://api.dicebear.com/9.x/notionists/svg?seed=${encodeURIComponent(user?.name || 'Hustler')}&backgroundColor=transparent`}
           alt="User Avatar"
-          className="w-12 h-12 sm:w-14 sm:h-14 object-contain drop-shadow-sm transition-transform hover:scale-105 mix-blend-multiply"
+          className="w-full h-full object-contain object-right scale-[0.9]"
           onError={(e) => { e.target.style.display = 'none'; }}
         />
       </div>
