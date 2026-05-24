@@ -65,7 +65,7 @@ export default function Dashboard() {
       </div>
       <div className="absolute right-0 sm:right-2 bottom-0 top-0 w-28 sm:w-40 z-0 opacity-90 mix-blend-multiply flex justify-end pointer-events-none">
         <img
-          src={`https://api.dicebear.com/9.x/notionists/svg?seed=${encodeURIComponent(user?.name || 'Hustler')}&backgroundColor=transparent`}
+          src={`https://api.dicebear.com/9.x/notionists/svg?seed=${encodeURIComponent(user?.name || 'Hustler')}&backgroundColor=transparent&mouth=smile`}
           alt="User Avatar"
           className="w-full h-full object-contain object-right scale-[0.9]"
           onError={(e) => { e.target.style.display = 'none'; }}
