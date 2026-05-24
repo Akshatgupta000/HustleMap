@@ -68,7 +68,7 @@ export default function BrowserExtension() {
     <div className="flex flex-col lg:flex-row gap-5 max-w-[1000px] mx-auto w-full animate-in fade-in duration-500 pb-8">
       
       {/* Left Column: Setup Guide (70%) */}
-      <div className="lg:w-[70%] w-full flex flex-col">
+      <div className="lg:w-[70%] w-full flex flex-col order-2 lg:order-1">
         {/* Main Content Card */}
         <div className="bg-white border border-charcoal/15 rounded-[24px] overflow-hidden shadow-sm flex flex-col h-full">
           <div className="px-5 py-3 border-b border-charcoal/10 bg-sage-light/50 flex items-center justify-between">
@@ -125,7 +125,7 @@ export default function BrowserExtension() {
       </div>
 
       {/* Right Column: Heading Box (30%) */}
-      <div className="lg:w-[30%] w-full flex flex-col">
+      <div className="lg:w-[30%] w-full flex flex-col order-1 lg:order-2">
         {/* Header Section */}
         <div className="flex flex-col gap-6 bg-sage-light border border-charcoal/15 rounded-[24px] p-5 shadow-sm h-fit">
           <div className="flex flex-col gap-3">

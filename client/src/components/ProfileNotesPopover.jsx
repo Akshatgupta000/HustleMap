@@ -92,7 +92,13 @@ export default function ProfileNotesPopover({ theme = "light" }) {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-3 w-[320px] sm:w-[380px] bg-white border-2 border-charcoal rounded-[24px] shadow-[6px_6px_0px_0px_#1c1c1c] p-5 z-50 overflow-hidden flex flex-col gap-4 origin-top-right animate-in fade-in zoom-in-95 duration-200">
+        <>
+          {/* Mobile backdrop */}
+          <div 
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 sm:hidden" 
+            onClick={() => setIsOpen(false)} 
+          />
+          <div className="fixed sm:absolute top-[15%] sm:top-full right-4 left-4 sm:right-0 sm:left-auto sm:mt-3 w-auto sm:w-[380px] bg-white border-2 border-charcoal rounded-[24px] shadow-[6px_6px_0px_0px_#1c1c1c] p-5 z-50 overflow-hidden flex flex-col gap-4 origin-top-right animate-in fade-in zoom-in-95 duration-200">
           <div className="flex items-center justify-between">
             <h3 className="text-[18px] font-extrabold text-charcoal tracking-tight">Master Profile</h3>
             {isLoading && <Loader2 className="h-4 w-4 animate-spin text-charcoal/40" />}
@@ -166,7 +172,8 @@ export default function ProfileNotesPopover({ theme = "light" }) {
             )}
           </button>
         </div>
-      )}
+      </>
+    )}
     </div>
   );
 }

@@ -59,62 +59,20 @@ function Reveal({ children, delay = 0, className = "", variant = "up" }) {
   );
 }
 
-// ─── Pushpin SVG Component (Hand-drawn look) ──────────────────────────────────
-function Pushpin({ color = "#0f78eb", className = "" }) {
-  return (
-    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className={`w-11 h-11 drop-shadow-[0_6px_8px_rgba(28,28,28,0.15)] ${className}`}>
-      {/* Needle shadow */}
-      <path d="M 20,23 L 26,30" stroke="rgba(28,28,28,0.25)" strokeWidth="3" strokeLinecap="round" />
-      {/* Needle */}
-      <path d="M 20,23 L 20,30" stroke="#1c1c1c" strokeWidth="3" strokeLinecap="round" />
-      {/* Pin base flange */}
-      <path d="M 12,23 L 28,23 C 28,23 25,20 20,20 C 15,20 12,23 12,23 Z" fill="#1c1c1c" />
-      {/* Pin Body / Stem */}
-      <path d="M 14,20 L 26,20 L 24,14 L 16,14 Z" fill={color} stroke="#1c1c1c" strokeWidth="2.5" strokeLinejoin="round" />
-      {/* Pin Cap / Head (slanted slightly for hand-drawn charm) */}
-      <ellipse cx="20" cy="10" rx="9" ry="5.5" fill={color} stroke="#1c1c1c" strokeWidth="2.5" transform="rotate(-3 20 10)" />
-      {/* Highlight reflection */}
-      <path d="M 15,9 C 16,7.5 19,7 21,8" stroke="white" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 // ─── Feature card ─────────────────────────────────────────────────────────────
-function FeatureCard({ icon: Icon, title, desc, delay, num = "01", color = "blue" }) {
-  const [hovered, setHovered] = useState(false);
-  
-  const colors = {
-    blue: { pin: "#0f78eb", bg: "bg-[#f4f9ff]", text: "text-[#0f78eb]" },
-    orange: { pin: "#eb7c0f", bg: "bg-[#fffdf5]", text: "text-[#eb7c0f]" },
-    pink: { pin: "#eb0f88", bg: "bg-[#fff5fa]", text: "text-[#eb0f88]" },
-    green: { pin: "#10b981", bg: "bg-[#f5fdf9]", text: "text-[#10b981]" }
-  }[color] || { pin: "#0f78eb", bg: "bg-[#f4f9ff]", text: "text-[#0f78eb]" };
-
+function FeatureCard({ icon: Icon, title, desc, delay, num = "01" }) {
   return (
-    <Reveal delay={delay} className="h-full pt-6">
+    <Reveal delay={delay} className="h-full">
       <div
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        className={`relative ${colors.bg} border-[2.5px] border-charcoal rounded-2xl p-8 pt-10 pb-9 cursor-default transition-all duration-500 h-full flex flex-col ${
-          hovered
-            ? "shadow-[6px_6px_0px_0px_rgba(28,28,28,1)] -translate-y-2.5 scale-[1.02] z-20"
-            : "shadow-[4px_4px_0px_0px_rgba(28,28,28,1)]"
-        }`}
+        className="relative bg-white/75 backdrop-blur-md border-[2.5px] border-charcoal rounded-2xl p-8 pb-9 cursor-default transition-all duration-500 h-full flex flex-col shadow-[4px_4px_0px_0px_rgba(28,28,28,1)] hover:shadow-[6px_6px_0px_0px_rgba(28,28,28,1)] hover:-translate-y-2.5 hover:scale-[1.02] hover:z-20 group"
       >
-        {/* Pinned Thumbtack */}
-        <div className={`absolute -top-[22px] left-1/2 -translate-x-1/2 z-30 transition-transform duration-500 ${hovered ? "scale-110 -translate-y-1" : ""}`}>
-          <Pushpin color={colors.pin} />
-        </div>
-
         {/* Card Header (Number & Icon) */}
         <div className="flex justify-between items-center mb-6 shrink-0">
-          <span className={`text-[32px] font-black font-sans leading-none tracking-tight select-none opacity-85 ${colors.text}`}>
+          <span className="text-[32px] font-black font-sans leading-none tracking-tight select-none text-charcoal/30">
             {num}
           </span>
           <div
-            className={`w-12 h-12 rounded-[12px] flex items-center justify-center border-2 border-charcoal/10 transition-colors duration-300 ${
-              hovered ? "bg-charcoal/5" : "bg-white/40"
-            }`}
+            className="w-12 h-12 rounded-[12px] flex items-center justify-center border-2 border-charcoal/10 bg-sage-light/40 group-hover:bg-sage-light/80 transition-colors duration-300"
           >
             <Icon size={22} className="text-charcoal/70" strokeWidth={1.8} />
           </div>
@@ -265,7 +223,7 @@ export default function Landing() {
       <section className="relative overflow-hidden pt-14 sm:pt-18 pb-20 sm:pb-28 text-center bg-sage">
         
         {/* Left Avatar Group - Hand-drawn illustrations peeking from bottom-left (Sized up for impact) */}
-        <div className="absolute bottom-0 left-0 w-[180px] sm:w-[260px] md:w-[320px] lg:w-[380px] xl:w-[420px] select-none pointer-events-none z-10 transition-all duration-500 transform origin-bottom-left hover:scale-[1.03] hover:rotate-1">
+        <div className="hidden sm:block absolute bottom-0 left-0 w-[180px] sm:w-[260px] md:w-[320px] lg:w-[380px] xl:w-[420px] select-none pointer-events-none z-10 transition-all duration-500 transform origin-bottom-left hover:scale-[1.03] hover:rotate-1">
           <img 
             src="/avatar_left.png" 
             alt="Hand-drawn creative professional avatars" 
@@ -274,7 +232,7 @@ export default function Landing() {
         </div>
 
         {/* Right Avatar Group - Hand-drawn illustrations peeking from bottom-right (Sized up for impact) */}
-        <div className="absolute bottom-0 right-0 w-[150px] sm:w-[220px] md:w-[270px] lg:w-[320px] xl:w-[360px] select-none pointer-events-none z-10 transition-all duration-500 transform origin-bottom-right hover:scale-[1.03] hover:-rotate-1">
+        <div className="hidden sm:block absolute bottom-0 right-0 w-[150px] sm:w-[220px] md:w-[270px] lg:w-[320px] xl:w-[360px] select-none pointer-events-none z-10 transition-all duration-500 transform origin-bottom-right hover:scale-[1.03] hover:-rotate-1">
           <img 
             src="/avatar_right.png" 
             alt="Hand-drawn team member avatars" 
@@ -366,18 +324,24 @@ export default function Landing() {
               title="Smart Kanban Board"
               desc="Organize every application in one clean board. Update statuses, add contacts, attach notes, and manage your full pipeline in one responsive workspace."
               delay={0}
+              num="01"
+              color="blue"
             />
             <FeatureCard
               icon={Star}
               title="Personal Question Bank"
               desc="Build a structured personal prep database. Rate round difficulty, save real interview questions, and record detailed answers for study."
               delay={80}
+              num="02"
+              color="orange"
             />
             <FeatureCard
               icon={BarChart2}
               title="Conversion Analytics"
               desc="Visualize your success rates. Track conversion rates from Applied to Offer, find resume bottlenecks, and monitor weekly trend statistics."
               delay={160}
+              num="03"
+              color="green"
             />
           </div>
         </div>
@@ -408,82 +372,81 @@ export default function Landing() {
             </div>
           </Reveal>
 
-          {/* Feature Cards Grid */}
-          <div className="grid gap-6 mb-16" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
-            <FeatureCard
-              icon={ChromeIcon}
-              title="Instant Job Clipping"
-              desc="Extract job details automatically from any webpage. Avoid tedious form-filling and build your board instantly."
-              delay={0}
-            />
-            <FeatureCard
-              icon={CameraIcon}
-              title="Visual Screenshots"
-              desc="Save the exact job posting screenshot to retain full requirements, descriptions, and salary context even after the post expires."
-              delay={80}
-            />
-            <FeatureCard
-              icon={MonitorIcon}
-              title="Universal Support"
-              desc="Built to work seamlessly across LinkedIn, Indeed, Glassdoor, and other major hiring platforms."
-              delay={160}
-            />
-            <FeatureCard
-              icon={UploadIcon}
-              title="Automatic Pipeline Sync"
-              desc="Saves postings directly to your HustleMap dashboard as 'Saved' applications, ready for tracking and interview logging."
-              delay={240}
-            />
-          </div>
-
-          <Reveal delay={0}>
-            <div className="bg-white backdrop-blur-xl border border-charcoal/15 rounded-3xl p-10 mb-12 shadow-sm">
-              <p className="text-[13.5px] font-bold text-charcoal/60 tracking-[1.5px] uppercase mb-8 text-center">How it works</p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-0">
-                {[
-                  {
-                    num: "1",
-                    label: "Click the extension",
-                    sub: "Open HustleMap in your browser toolbar"
-                  },
-                  {
-                    num: "2",
-                    label: "Select the job area",
-                    sub: "Draw a box over the listing you want"
-                  },
-                  {
-                    num: "3",
-                    label: "Save to HustleMap",
-                    sub: "It lands in your dashboard instantly"
-                  },
-                ].map(({ num, label, sub }, i) => (
-                  <div key={num} className="flex sm:flex-row flex-col items-center gap-4 sm:gap-0 w-full sm:w-auto">
-                    <div className="flex flex-col items-center text-center px-8 flex-1 min-w-[180px]">
-                      <div className="w-11 h-11 rounded-full bg-gradient-to-br from-charcoal to-charcoal text-white flex items-center justify-center text-[15px] font-bold mb-3 shadow-md">
-                        {num}
-                      </div>
-                      <p className="text-[16px] font-bold text-charcoal mb-1.5 tracking-tight">{label}</p>
-                      <p className="text-[14px] text-charcoal/60 leading-relaxed">{sub}</p>
-                    </div>
-                    {i < 2 && (
-                      <div className="hidden sm:flex items-center text-charcoal/30">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-                        </svg>
-                      </div>
-                    )}
-                    {i < 2 && (
-                      <div className="flex sm:hidden items-center text-charcoal/30">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                          <line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>
-                        </svg>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
+          {/* Connected Path Timeline Flowchart */}
+          <div className="relative my-20 px-4">
+            
+            {/* Desktop Horizontal Wavy Dashed Path */}
+            <div className="hidden md:block absolute top-[52px] left-[12%] right-[12%] h-[10px] z-0 pointer-events-none">
+              <svg width="100%" height="30" viewBox="0 0 100 20" preserveAspectRatio="none" fill="none" className="text-charcoal/20">
+                <path d="M 0,10 C 25,2 75,18 100,10" stroke="currentColor" strokeWidth="2.5" strokeDasharray="6 5" fill="none" />
+              </svg>
             </div>
-          </Reveal>
+
+            {/* Mobile Vertical Dashed Path */}
+            <div className="md:hidden absolute left-[38px] top-6 bottom-6 w-[2.5px] z-0 pointer-events-none">
+              <div className="h-full border-l-[2.5px] border-dashed border-charcoal/20" />
+            </div>
+
+            {/* Grid Flow */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-6 relative z-10">
+              {[
+                {
+                  icon: MonitorIcon,
+                  num: "01",
+                  title: "1. Universal Support",
+                  desc: "Visit LinkedIn, Indeed, Glassdoor, or any company hiring page.",
+                  delay: 0
+                },
+                {
+                  icon: ChromeIcon,
+                  num: "02",
+                  title: "2. Instant Clip",
+                  desc: "Open the extension and clip job details without tedious copy-pasting.",
+                  delay: 80
+                },
+                {
+                  icon: CameraIcon,
+                  num: "03",
+                  title: "3. Capture Screenshot",
+                  desc: "Instantly capture the visual requirements before they expire.",
+                  delay: 160
+                },
+                {
+                  icon: UploadIcon,
+                  num: "04",
+                  title: "4. Sync to Kanban",
+                  desc: "The listing automatically lands in your Kanban board as 'Saved'.",
+                  delay: 240
+                }
+              ].map(({ icon: Icon, num, title, desc, delay }) => (
+                <Reveal key={num} delay={delay} className="h-full">
+                  <div className="flex md:flex-col items-start md:items-center gap-6 md:gap-4 text-left md:text-center group">
+                    
+                    {/* Badge Container */}
+                    <div className="w-14 h-14 rounded-full bg-white border-[2.5px] border-charcoal flex items-center justify-center relative z-10 shrink-0 shadow-[3px_3px_0px_0px_rgba(28,28,28,1)] transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[5px_5px_0px_0px_rgba(28,28,28,1)] group-hover:scale-105 bg-gradient-to-br from-white to-sage-light/20">
+                      <Icon size={20} className="text-charcoal" strokeWidth={2} />
+                      
+                      {/* Floating mini number bubble */}
+                      <span className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-charcoal text-white text-[10px] font-bold flex items-center justify-center border-2 border-white shadow-sm font-sans">
+                        {num}
+                      </span>
+                    </div>
+
+                    {/* Text Container */}
+                    <div className="flex-1 md:mt-2">
+                      <h3 className="text-[17px] font-extrabold text-charcoal mb-2 tracking-tight transition-colors group-hover:text-charcoal/80">
+                        {title}
+                      </h3>
+                      <p className="text-[14px] text-charcoal/60 leading-relaxed max-w-[220px] md:mx-auto">
+                        {desc}
+                      </p>
+                    </div>
+
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
 
           {/* CTAs */}
           <Reveal delay={80}>
@@ -555,28 +518,21 @@ export default function Landing() {
                 num: "03",
                 color: "blue"
               },
-            ].map(({ icon: Icon, title, desc, bullets, delay, num, color }) => {
-              const colors = {
-                blue: { pin: "#0f78eb", bg: "bg-[#f4f9ff]", text: "text-[#0f78eb]" },
-                orange: { pin: "#eb7c0f", bg: "bg-[#fffdf5]", text: "text-[#eb7c0f]" },
-                green: { pin: "#10b981", bg: "bg-[#f5fdf9]", text: "text-[#10b981]" }
-              }[color];
-              
+            ].map(({ icon: Icon, title, desc, bullets, delay, num }) => {
               return (
-                <Reveal key={title} delay={delay} className="h-full pt-6">
-                  <div className={`relative ${colors.bg} border-[2.5px] border-charcoal rounded-2xl p-8 pt-10 pb-9 cursor-default transition-all duration-500 h-full flex flex-col justify-between shadow-[4px_4px_0px_0px_rgba(28,28,28,1)] hover:shadow-[6px_6px_0px_0px_rgba(28,28,28,1)] hover:-translate-y-2.5 hover:scale-[1.02] hover:z-20`}>
+                <Reveal key={title} delay={delay} className="h-full">
+                  <div
+                    className="relative bg-white/75 backdrop-blur-md border-[2.5px] border-charcoal rounded-2xl p-8 pb-9 cursor-default transition-all duration-500 h-full flex flex-col justify-between shadow-[4px_4px_0px_0px_rgba(28,28,28,1)] hover:shadow-[6px_6px_0px_0px_rgba(28,28,28,1)] hover:-translate-y-2.5 hover:scale-[1.02] hover:z-20 group"
+                  >
                     <div>
-                      {/* Pinned Thumbtack */}
-                      <div className="absolute -top-[22px] left-1/2 -translate-x-1/2 z-30 transition-transform duration-500 hover:scale-110">
-                        <Pushpin color={colors.pin} />
-                      </div>
-                      
                       {/* Card Header */}
                       <div className="flex justify-between items-center mb-6 shrink-0">
-                        <span className={`text-[32px] font-black font-sans leading-none tracking-tight select-none opacity-85 ${colors.text}`}>
+                        <span className="text-[32px] font-black font-sans leading-none tracking-tight select-none text-charcoal/30">
                           {num}
                         </span>
-                        <div className="w-12 h-12 rounded-[12px] flex items-center justify-center border-2 border-charcoal/10 bg-white/40">
+                        <div
+                          className="w-12 h-12 rounded-[12px] flex items-center justify-center border-2 border-charcoal/10 bg-sage-light/40 group-hover:bg-sage-light/80 transition-colors duration-300"
+                        >
                           <Icon size={22} className="text-charcoal/70" strokeWidth={1.8} />
                         </div>
                       </div>

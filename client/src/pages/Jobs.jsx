@@ -40,6 +40,7 @@ export default function Jobs() {
   const queryClient = useQueryClient();
   const [selectedJob, setSelectedJob] = useState(null);
   const [isConfirmingClear, setIsConfirmingClear] = useState(false);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   const { data: jobs, isLoading } = useQuery({
     queryKey: ["jobs"],
@@ -121,16 +122,29 @@ export default function Jobs() {
         </h2>
         
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
-          {/* Search */}
-          <div className="relative w-full sm:w-[250px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-charcoal/50" />
-            <Input
-              type="text"
-              placeholder="Search company or role..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 h-10 bg-white border-2 border-charcoal rounded-[12px] font-bold text-[13px] text-charcoal placeholder:text-charcoal/40 focus:ring-0 focus:border-charcoal shadow-[2px_2px_0px_0px_#1c1c1c] w-full"
-            />
+          {/* Search & Mobile Filter Toggle row */}
+          <div className="flex items-center gap-3 w-full sm:w-[320px]">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-charcoal/50" />
+              <Input
+                type="text"
+                placeholder="Search company or role..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 h-10 bg-white border-2 border-charcoal rounded-[12px] font-bold text-[13px] text-charcoal placeholder:text-charcoal/40 focus:ring-0 focus:border-charcoal shadow-[2px_2px_0px_0px_#1c1c1c] w-full"
+              />
+            </div>
+            
+            {/* Mobile Filter Toggle */}
+            <button
+              onClick={() => setShowMobileFilters(!showMobileFilters)}
+              className={cn(
+                "lg:hidden flex items-center justify-center h-10 px-4 rounded-[12px] border-2 border-charcoal font-black text-[12px] uppercase tracking-wide cursor-pointer transition-all shadow-[2px_2px_0px_0px_#1c1c1c] shrink-0",
+                showMobileFilters ? "bg-charcoal text-white shadow-none translate-x-[2px] translate-y-[2px]" : "bg-white text-charcoal"
+              )}
+            >
+              {showMobileFilters ? "Hide Filters" : "Filters"}
+            </button>
           </div>
 
           <Link to="/jobs/new" className="no-underline w-full sm:w-auto shrink-0">
@@ -143,7 +157,10 @@ export default function Jobs() {
 
       <div className="flex flex-col lg:flex-row gap-6 flex-1 min-h-0 pt-2">
         {/* ── Left Sidebar Filters ── */}
-        <aside className="w-full lg:w-[180px] shrink-0 flex flex-col gap-4 overflow-y-auto custom-scrollbar lg:overflow-visible">
+        <aside className={cn(
+          "w-full lg:w-[180px] shrink-0 flex-col gap-4 lg:flex overflow-y-auto custom-scrollbar lg:overflow-visible transition-all duration-300 bg-sage-light/50 lg:bg-transparent p-4 lg:p-0 rounded-[20px] lg:rounded-none border border-charcoal/15 lg:border-none",
+          showMobileFilters ? "flex animate-in slide-in-from-top duration-200" : "hidden"
+        )}>
           
           {/* Status Filter */}
           <div className="flex flex-col gap-1">

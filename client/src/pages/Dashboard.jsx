@@ -77,7 +77,7 @@ export default function Dashboard() {
   // ── STATE 1: Loading ──────────────────────────────────────────
   if (!isDataLoaded) {
     return (
-      <div className="w-full max-w-[1400px] mx-auto bg-sage px-5 pb-5 pt-0 rounded-[32px] flex-1 h-full min-h-0 overflow-y-auto custom-scrollbar flex flex-col gap-4">
+      <div className="w-full max-w-[1400px] mx-auto bg-sage px-3 sm:px-5 pb-5 pt-0 rounded-[20px] sm:rounded-[32px] flex-1 h-full min-h-0 overflow-y-auto custom-scrollbar flex flex-col gap-4">
         <WelcomeBanner />
         <DashboardSkeleton />
       </div>
@@ -87,7 +87,7 @@ export default function Dashboard() {
   // ── STATE 2: First-time user (no jobs yet) ────────────────────
   if (!hasJobs) {
     return (
-      <div className="w-full max-w-[1400px] mx-auto bg-sage px-5 pb-5 pt-0 rounded-[32px] flex-1 h-full min-h-0 overflow-y-auto custom-scrollbar flex flex-col gap-4">
+      <div className="w-full max-w-[1400px] mx-auto bg-sage px-3 sm:px-5 pb-5 pt-0 rounded-[20px] sm:rounded-[32px] flex-1 h-full min-h-0 overflow-y-auto custom-scrollbar flex flex-col gap-4">
         <WelcomeBanner />
         <div className="fade-slide-in w-full max-w-xl mx-auto flex flex-col gap-4 pt-2">
           <QuickAddBar />
@@ -99,10 +99,10 @@ export default function Dashboard() {
 
   // ── STATE 3: Returning user — full progressive dashboard ──────
   return (
-    <div className="flex flex-col lg:flex-row gap-5 w-full max-w-[1400px] mx-auto bg-sage px-5 pb-5 pt-0 rounded-[32px] flex-1 h-full min-h-0 overflow-hidden">
+    <div className="flex flex-col lg:flex-row gap-5 w-full max-w-[1400px] mx-auto bg-sage px-3 sm:px-5 pb-5 pt-0 rounded-[20px] sm:rounded-[32px] flex-1 lg:h-full lg:overflow-hidden overflow-y-auto custom-scrollbar">
 
       {/* ── Left Content Area ── */}
-      <div className="flex-1 flex flex-col gap-4 min-w-0 h-full min-h-0">
+      <div className="flex-1 flex flex-col gap-4 min-w-0 lg:h-full lg:min-h-0">
 
         {/* Welcome Banner */}
         <div className="fade-slide-in shrink-0">
@@ -110,10 +110,10 @@ export default function Dashboard() {
         </div>
 
         {/* ── 2-Column Internal Grid ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 lg:min-h-0">
 
           {/* ── Column 1: Quick Add, Weekly Goal, Captured Jobs, Upcoming Interviews ── */}
-          <div className="flex flex-col gap-4 h-full min-h-0 overflow-y-auto pb-0 custom-scrollbar">
+          <div className="flex flex-col gap-4 lg:h-full lg:min-h-0 lg:overflow-y-auto pb-0 custom-scrollbar">
             <div className="shrink-0 fade-slide-in-delay-1">
               <QuickAddBar />
             </div>
@@ -173,7 +173,7 @@ export default function Dashboard() {
           </div>
 
           {/* ── Column 2: Recent Activity ── */}
-          <div className="flex flex-col gap-4 h-full min-h-0 overflow-hidden">
+          <div className="flex flex-col gap-4 lg:h-full lg:min-h-0 lg:overflow-hidden">
             <div className="flex-1 flex flex-col min-h-0 fade-slide-in-delay-2">
               <RecentActivityFeed />
             </div>
@@ -182,7 +182,7 @@ export default function Dashboard() {
       </div>
 
       {/* ── Right Sidebar: Action Items ── */}
-      <div className="w-full lg:w-[300px] xl:w-[340px] shrink-0 flex flex-col gap-4 h-full min-h-0 pb-0 overflow-hidden fade-slide-in-delay-4">
+      <div className="w-full lg:w-[300px] xl:w-[340px] shrink-0 flex flex-col gap-4 lg:h-full lg:min-h-0 pb-0 lg:overflow-hidden fade-slide-in-delay-4">
         <div className="flex-1 flex flex-col min-h-0 fade-slide-in-delay-4">
           <ActionItemsWidget />
         </div>

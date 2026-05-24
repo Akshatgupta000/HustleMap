@@ -61,7 +61,7 @@ export default function ActionItemsWidget() {
   const hiddenCount = 0;
 
   return (
-    <div className="bg-sage-light border border-charcoal/15 rounded-[24px] overflow-hidden flex flex-col h-full">
+    <div className="bg-sage-light border border-charcoal/15 rounded-[24px] overflow-hidden flex flex-col h-full max-h-[300px] lg:max-h-none">
       {/* Card header */}
       <div className="px-4 py-3 border-b border-charcoal/10 flex items-center justify-between">
         <div className="flex items-center gap-2">

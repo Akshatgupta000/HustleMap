@@ -67,9 +67,7 @@ api.interceptors.response.use(
     const requestUrl = error.config?.url || '';
 
     // Do not force-redirect on authentication endpoints themselves
-    const isAuthEndpoint =
-      requestUrl.endsWith('/auth/login') ||
-      requestUrl.endsWith('/auth/register');
+    const isAuthEndpoint = requestUrl.includes('/auth/');
 
     if ((status === 401 || status === 403) && !isAuthEndpoint) {
       if (typeof window !== 'undefined') {
@@ -90,6 +88,9 @@ api.interceptors.response.use(
 export const authAPI = {
   register: (data) => api.post('/auth/register', data),
   login: (data) => api.post('/auth/login', data),
+  forgotPassword: (data) => api.post('/auth/forgot-password', data),
+  verifyOtp: (data) => api.post('/auth/verify-otp', data),
+  resetPassword: (data) => api.post('/auth/reset-password', data),
   getExtensionId: () => api.get('/auth/extension-id'),
   getUserProfile: () => api.get('/auth/profile'),
   updateUserProfile: (data) => api.put('/auth/profile', data, {

@@ -175,7 +175,7 @@ export default function JobForm() {
         <form onSubmit={handleSubmit} className="p-4 flex flex-col gap-3">
 
           {/* Row 1: Company & Position */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className={labelClass}>Company *</label>
               <Input
@@ -198,7 +198,7 @@ export default function JobForm() {
           </div>
 
           {/* Row 2: Location, Type, Status, Date Applied */}
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <div>
               <label className={labelClass}>Location</label>
               <Input
@@ -243,7 +243,7 @@ export default function JobForm() {
           </div>
 
           {/* Row 3: Job URL & Interview Date */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className={labelClass}>Job URL <span className="font-normal text-charcoal/40">(optional)</span></label>
               <Input
@@ -269,7 +269,7 @@ export default function JobForm() {
           </div>
 
           {/* Row 4: Resume & Portfolio */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className={labelClass}>Resume Link <span className="font-normal text-charcoal/40">(optional)</span></label>
               <Input

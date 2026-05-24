@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import User from '../models/User.js';
+import { sendOTPEmail } from '../utils/mailer.js';
 
 // Generate unique extension ID
 function generateExtensionId() {
@@ -204,6 +205,117 @@ export const updateUserProfile = async (req, res, next) => {
     });
   } catch (error) {
     console.error('UpdateUserProfile error:', error);
+    next(error);
+  }
+};
+
+// Request OTP for password reset
+export const forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: 'No accounts found' });
+    }
+
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Store in DB with 15-minute expiry
+    user.resetPasswordOtp = otp;
+    user.resetPasswordOtpExpires = new Date(Date.now() + 15 * 60 * 1000);
+    await user.save();
+
+    // Send email (falls back to console log if SMTP details are missing)
+    await sendOTPEmail(user.email, otp);
+
+    return res.json({ message: 'OTP sent to your email for password reset verification' });
+  } catch (error) {
+    console.error('ForgotPassword error:', error);
+    next(error);
+  }
+};
+
+// Verify OTP without resetting password
+export const verifyOtp = async (req, res, next) => {
+  try {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+      return res.status(400).json({ error: 'Email and OTP are required' });
+    }
+
+    const user = await User.findOne({ email }).select('+resetPasswordOtp +resetPasswordOtpExpires');
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Verify OTP
+    console.log(`[verifyOtp] Comparing DB OTP: "${user.resetPasswordOtp}" (type: ${typeof user.resetPasswordOtp}) with User OTP: "${otp}" (type: ${typeof otp})`);
+    if (!user.resetPasswordOtp || String(user.resetPasswordOtp).trim() !== String(otp).trim()) {
+      console.warn(`[verifyOtp] Mismatch! DB OTP is "${user.resetPasswordOtp}", but User sent "${otp}"`);
+      return res.status(400).json({ error: 'Invalid OTP' });
+    }
+
+    // Check expiration
+    if (new Date() > user.resetPasswordOtpExpires) {
+      return res.status(400).json({ error: 'OTP has expired. Please request a new one' });
+    }
+
+    return res.json({ message: 'OTP verified successfully' });
+  } catch (error) {
+    console.error('VerifyOtp error:', error);
+    next(error);
+  }
+};
+
+// Reset password using OTP
+export const resetPassword = async (req, res, next) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+
+    if (!email || !otp || !newPassword) {
+      return res.status(400).json({ error: 'Email, OTP, and new password are required' });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ error: 'Password must be at least 6 characters long' });
+    }
+
+    // Retrieve user including reset fields
+    const user = await User.findOne({ email }).select('+resetPasswordOtp +resetPasswordOtpExpires');
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Verify OTP
+    console.log(`[resetPassword] Comparing DB OTP: "${user.resetPasswordOtp}" (type: ${typeof user.resetPasswordOtp}) with User OTP: "${otp}" (type: ${typeof otp})`);
+    if (!user.resetPasswordOtp || String(user.resetPasswordOtp).trim() !== String(otp).trim()) {
+      console.warn(`[resetPassword] Mismatch! DB OTP is "${user.resetPasswordOtp}", but User sent "${otp}"`);
+      return res.status(400).json({ error: 'Invalid OTP' });
+    }
+
+    // Check expiration
+    if (new Date() > user.resetPasswordOtpExpires) {
+      return res.status(400).json({ error: 'OTP has expired. Please request a new one' });
+    }
+
+    // Update password (pre-save hook will hash it)
+    user.password = newPassword;
+
+    // Clear OTP fields
+    user.resetPasswordOtp = undefined;
+    user.resetPasswordOtpExpires = undefined;
+    await user.save();
+
+    return res.json({ message: 'Password reset successfully' });
+  } catch (error) {
+    console.error('ResetPassword error:', error);
     next(error);
   }
 };
