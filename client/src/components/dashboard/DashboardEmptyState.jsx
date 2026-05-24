@@ -1,4 +1,4 @@
-import { Briefcase, BarChart2, Bell } from 'lucide-react';
+import { BarChart2, Bell, Briefcase } from 'lucide-react';
 
 const FEATURES = [
   { icon: Briefcase, label: 'Track Applications' },
@@ -10,23 +10,13 @@ export default function DashboardEmptyState() {
   return (
     <div className="fade-slide-in flex flex-col items-center justify-center text-center py-14 px-6 select-none">
 
-      {/* Icon cluster */}
-      <div className="relative mb-7">
-        <div className="w-16 h-16 rounded-[22px] bg-charcoal/6 border border-charcoal/10 flex items-center justify-center">
-          <Briefcase size={30} className="text-charcoal/25" strokeWidth={1.5} />
-        </div>
-        {/* Corner accent dots */}
-        <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-charcoal/8 border border-charcoal/10" />
-        <div className="absolute -bottom-1 -left-1 w-2 h-2 rounded-full bg-charcoal/6" />
-      </div>
-
       {/* Primary heading */}
-      <h2 className="text-[17px] sm:text-[18px] font-extrabold text-charcoal/60 tracking-tight mb-2.5 leading-snug">
+      <h2 className="text-[20px] sm:text-[22px] font-extrabold text-charcoal/60 tracking-tight mb-3 leading-snug">
         Your job search starts here.
       </h2>
 
       {/* Secondary text */}
-      <p className="text-[13px] sm:text-[13.5px] text-charcoal/38 font-medium leading-relaxed max-w-sm mb-8">
+      <p className="text-[14.5px] sm:text-[15px] text-charcoal/38 font-medium leading-relaxed max-w-sm mb-8">
         Add your first application above to unlock analytics,
         activity tracking, and weekly progress insights.
       </p>

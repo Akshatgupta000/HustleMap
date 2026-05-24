@@ -38,43 +38,43 @@ export default function Register({ onRegisterSuccess }) {
   ];
 
   return (
-      <div className="min-h-screen bg-sage flex items-center justify-center p-6 relative overflow-hidden">
-
-      <div className="w-full max-w-[440px] relative z-10">
+      <div className="min-h-screen bg-sage flex items-center justify-center p-4 relative overflow-hidden">
+ 
+      <div className="w-full max-w-[420px] relative z-10 py-3">
         {/* Logo */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-3">
           <Link to="/" className="inline-flex items-center no-underline">
             <span className="text-[24px] font-bold text-charcoal tracking-tight">HustleMap</span>
           </Link>
         </div>
-
+ 
         {/* Card */}
         <div className="bg-white border border-charcoal/15 rounded-[20px] shadow-sm overflow-hidden">
           {/* Header */}
-          <div className="px-6 sm:px-8 pt-8 pb-6 border-b border-charcoal/15/50">
-            <h1 className="text-[22px] font-extrabold text-charcoal tracking-tight mb-1.5">
+          <div className="px-6 sm:px-8 pt-5 pb-4 border-b border-charcoal/15/50">
+            <h1 className="text-[20px] font-extrabold text-charcoal tracking-tight mb-1">
               Create your account
             </h1>
-            <p className="text-[13.5px] text-charcoal/60 mb-[18px]">
+            <p className="text-[13px] text-charcoal/60 mb-2">
               Start tracking your job search for free
             </p>
-
+ 
             {/* Perks row */}
-            <div className="flex flex-col gap-[7px]">
+            <div className="flex flex-col gap-1">
               {perks.map((perk) => (
                 <div key={perk} className="flex items-center gap-2">
-                  <CheckCircle size={13} className="text-charcoal shrink-0" />
-                  <span className="text-[12.5px] text-charcoal/60">{perk}</span>
+                  <CheckCircle size={12} className="text-charcoal shrink-0" />
+                  <span className="text-[12px] text-charcoal/60">{perk}</span>
                 </div>
               ))}
             </div>
           </div>
-
+ 
           {/* Body */}
-          <div className="px-6 sm:px-8 pt-7 pb-8">
-            <form onSubmit={handleSubmit} className="flex flex-col gap-[18px]">
+          <div className="px-6 sm:px-8 pt-4 pb-5">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-3">
               <div>
-                <label className="block text-[13px] font-semibold text-charcoal mb-[7px] tracking-tight">
+                <label className="block text-[12.5px] font-semibold text-charcoal mb-[3px] tracking-tight">
                   Full Name
                 </label>
                 <Input
@@ -85,9 +85,9 @@ export default function Register({ onRegisterSuccess }) {
                   placeholder="John Doe"
                 />
               </div>
-
+ 
               <div>
-                <label className="block text-[13px] font-semibold text-charcoal mb-[7px] tracking-tight">
+                <label className="block text-[12.5px] font-semibold text-charcoal mb-[3px] tracking-tight">
                   Email
                 </label>
                 <Input
@@ -98,9 +98,9 @@ export default function Register({ onRegisterSuccess }) {
                   placeholder="you@example.com"
                 />
               </div>
-
+ 
               <div>
-                <label className="block text-[13px] font-semibold text-charcoal mb-[7px] tracking-tight">
+                <label className="block text-[12.5px] font-semibold text-charcoal mb-[3px] tracking-tight">
                   Password
                 </label>
                 <Input
@@ -111,11 +111,11 @@ export default function Register({ onRegisterSuccess }) {
                   placeholder="••••••••"
                 />
               </div>
-
+ 
               <button
                 type="submit"
                 disabled={isPending}
-                className={`mt-1 w-full rounded-[11px] py-[11px] px-5 text-[14.5px] font-bold tracking-tight transition-all border ${
+                className={`mt-1 w-full rounded-[11px] py-[9.5px] px-5 text-[14px] font-bold tracking-tight transition-all border ${
                   isPending
                     ? "bg-charcoal/5 text-charcoal/40 border-charcoal/15 cursor-not-allowed"
                     : "bg-charcoal text-white border-charcoal cursor-pointer shadow-sm hover:bg-charcoal/90 hover:scale-[1.02]"
@@ -124,9 +124,9 @@ export default function Register({ onRegisterSuccess }) {
                 {isPending ? "Creating account…" : "Create Free Account"}
               </button>
             </form>
-
-            <div className="mt-[22px] pt-5 border-t border-charcoal/15/50 text-center">
-              <p className="text-[13px] text-charcoal/60">
+ 
+            <div className="mt-3.5 pt-3 border-t border-charcoal/15/50 text-center">
+              <p className="text-[12.5px] text-charcoal/60">
                 Already have an account?{" "}
                 <Link
                   to="/login"

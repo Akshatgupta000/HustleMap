@@ -60,7 +60,26 @@ export default function CapturedJobs() {
     );
   }
 
-  if (!capturedJobs.length) return null;
+  if (!capturedJobs.length) {
+    return (
+      <div className="bg-sage-light border border-charcoal/15 rounded-[24px] overflow-hidden flex flex-col h-full shadow-sm">
+        {/* Header */}
+        <div className="px-5 py-4 border-b border-charcoal/10 flex items-center gap-2 shrink-0">
+          <FolderClock size={16} className="text-charcoal/60" />
+          <span className="text-[14px] font-extrabold text-charcoal tracking-tight">Captured Jobs</span>
+        </div>
+        {/* Empty state body */}
+        <div className="flex-1 flex flex-col items-center justify-center text-center px-6 py-10 select-none">
+          <p className="text-[16px] font-extrabold text-charcoal/50 tracking-tight mb-2">
+            Nothing captured yet.
+          </p>
+          <p className="text-[13px] text-charcoal/35 font-medium leading-relaxed max-w-[220px]">
+            Use the Chrome extension to clip jobs from LinkedIn, Indeed, or Glassdoor and they'll appear here.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-sage-light border border-charcoal/15 rounded-[24px] overflow-hidden flex flex-col h-full shadow-sm">

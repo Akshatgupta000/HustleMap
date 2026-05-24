@@ -3,7 +3,7 @@ import { Sparkles, BarChart2, FileText, Star, CheckCircle, ArrowRight, Github, M
 import { useEffect, useRef, useState } from "react";
 
 // ─── Fade-in on scroll hook ───────────────────────────────────────────────────
-function useFadeIn() {
+function useFadeIn(threshold = 0.12) {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
   useEffect(() => {
@@ -11,25 +11,47 @@ function useFadeIn() {
     if (!el) return;
     const obs = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect(); } },
-      { threshold: 0.15 }
+      { threshold }
     );
     obs.observe(el);
     return () => obs.disconnect();
-  }, []);
+  }, [threshold]);
   return [ref, visible];
 }
 
 // ─── Animated section wrapper ─────────────────────────────────────────────────
-function Reveal({ children, delay = 0, className = "" }) {
+// variant: "up" | "left" | "right" | "zoom" | "blur"
+function Reveal({ children, delay = 0, className = "", variant = "up" }) {
   const [ref, visible] = useFadeIn();
+
+  const hidden = {
+    up:    { opacity: 0, transform: "translateY(36px)" },
+    left:  { opacity: 0, transform: "translateX(-48px)" },
+    right: { opacity: 0, transform: "translateX(48px)" },
+    zoom:  { opacity: 0, transform: "scale(0.92)" },
+    blur:  { opacity: 0, filter: "blur(8px)", transform: "translateY(16px)" },
+  }[variant] || { opacity: 0, transform: "translateY(36px)" };
+
+  const shown = {
+    up:    { opacity: 1, transform: "translateY(0)" },
+    left:  { opacity: 1, transform: "translateX(0)" },
+    right: { opacity: 1, transform: "translateX(0)" },
+    zoom:  { opacity: 1, transform: "scale(1)" },
+    blur:  { opacity: 1, filter: "blur(0px)", transform: "translateY(0)" },
+  }[variant] || { opacity: 1, transform: "translateY(0)" };
+
+  const easing = variant === "zoom" ? "cubic-bezier(0.34, 1.56, 0.64, 1)" : "cubic-bezier(0.25, 0.46, 0.45, 0.94)";
+  const duration = variant === "blur" ? "0.8s" : "0.7s";
+
   return (
     <div
       ref={ref}
       className={className}
       style={{
-        transition: `opacity 0.65s ease ${delay}ms, transform 0.65s ease ${delay}ms`,
-        opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(22px)",
+        transition: `opacity ${duration} ${easing} ${delay}ms, transform ${duration} ${easing} ${delay}ms${
+          variant === "blur" ? `, filter ${duration} ${easing} ${delay}ms` : ""
+        }`,
+        ...(visible ? shown : hidden),
       }}
     >
       {children}
@@ -37,29 +59,69 @@ function Reveal({ children, delay = 0, className = "" }) {
   );
 }
 
-// ─── Feature card ─────────────────────────────────────────────────────────────
-function FeatureCard({ icon: Icon, title, desc, delay }) {
-  const [hovered, setHovered] = useState(false);
+// ─── Pushpin SVG Component (Hand-drawn look) ──────────────────────────────────
+function Pushpin({ color = "#0f78eb", className = "" }) {
   return (
-    <Reveal delay={delay} className="h-full">
+    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className={`w-11 h-11 drop-shadow-[0_6px_8px_rgba(28,28,28,0.15)] ${className}`}>
+      {/* Needle shadow */}
+      <path d="M 20,23 L 26,30" stroke="rgba(28,28,28,0.25)" strokeWidth="3" strokeLinecap="round" />
+      {/* Needle */}
+      <path d="M 20,23 L 20,30" stroke="#1c1c1c" strokeWidth="3" strokeLinecap="round" />
+      {/* Pin base flange */}
+      <path d="M 12,23 L 28,23 C 28,23 25,20 20,20 C 15,20 12,23 12,23 Z" fill="#1c1c1c" />
+      {/* Pin Body / Stem */}
+      <path d="M 14,20 L 26,20 L 24,14 L 16,14 Z" fill={color} stroke="#1c1c1c" strokeWidth="2.5" strokeLinejoin="round" />
+      {/* Pin Cap / Head (slanted slightly for hand-drawn charm) */}
+      <ellipse cx="20" cy="10" rx="9" ry="5.5" fill={color} stroke="#1c1c1c" strokeWidth="2.5" transform="rotate(-3 20 10)" />
+      {/* Highlight reflection */}
+      <path d="M 15,9 C 16,7.5 19,7 21,8" stroke="white" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+// ─── Feature card ─────────────────────────────────────────────────────────────
+function FeatureCard({ icon: Icon, title, desc, delay, num = "01", color = "blue" }) {
+  const [hovered, setHovered] = useState(false);
+  
+  const colors = {
+    blue: { pin: "#0f78eb", bg: "bg-[#f4f9ff]", text: "text-[#0f78eb]" },
+    orange: { pin: "#eb7c0f", bg: "bg-[#fffdf5]", text: "text-[#eb7c0f]" },
+    pink: { pin: "#eb0f88", bg: "bg-[#fff5fa]", text: "text-[#eb0f88]" },
+    green: { pin: "#10b981", bg: "bg-[#f5fdf9]", text: "text-[#10b981]" }
+  }[color] || { pin: "#0f78eb", bg: "bg-[#f4f9ff]", text: "text-[#0f78eb]" };
+
+  return (
+    <Reveal delay={delay} className="h-full pt-6">
       <div
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        className={`bg-white backdrop-blur-xl border border-charcoal/15 rounded-2xl p-7 cursor-default transition-all duration-300 h-full flex flex-col ${
+        className={`relative ${colors.bg} border-[2.5px] border-charcoal rounded-2xl p-8 pt-10 pb-9 cursor-default transition-all duration-500 h-full flex flex-col ${
           hovered
-            ? "shadow-md -translate-y-1 scale-[1.015] border-charcoal/20"
-            : "shadow-sm"
+            ? "shadow-[6px_6px_0px_0px_rgba(28,28,28,1)] -translate-y-2.5 scale-[1.02] z-20"
+            : "shadow-[4px_4px_0px_0px_rgba(28,28,28,1)]"
         }`}
       >
-        <div
-          className={`w-10 h-10 rounded-[10px] flex items-center justify-center mb-4 shrink-0 transition-colors duration-300 ${
-            hovered ? "bg-charcoal/10" : "bg-white/5"
-          }`}
-        >
-          <Icon size={18} className={`transition-colors duration-300 ${hovered ? "text-charcoal" : "text-charcoal/60"}`} strokeWidth={1.8} />
+        {/* Pinned Thumbtack */}
+        <div className={`absolute -top-[22px] left-1/2 -translate-x-1/2 z-30 transition-transform duration-500 ${hovered ? "scale-110 -translate-y-1" : ""}`}>
+          <Pushpin color={colors.pin} />
         </div>
-        <h3 className="text-[15px] font-semibold text-charcoal mb-2 tracking-tight shrink-0">{title}</h3>
-        <p className="text-[13.5px] text-charcoal/60 leading-relaxed m-0 flex-1">{desc}</p>
+
+        {/* Card Header (Number & Icon) */}
+        <div className="flex justify-between items-center mb-6 shrink-0">
+          <span className={`text-[32px] font-black font-sans leading-none tracking-tight select-none opacity-85 ${colors.text}`}>
+            {num}
+          </span>
+          <div
+            className={`w-12 h-12 rounded-[12px] flex items-center justify-center border-2 border-charcoal/10 transition-colors duration-300 ${
+              hovered ? "bg-charcoal/5" : "bg-white/40"
+            }`}
+          >
+            <Icon size={22} className="text-charcoal/70" strokeWidth={1.8} />
+          </div>
+        </div>
+
+        <h3 className="text-[18px] font-black text-charcoal mb-3 tracking-tight shrink-0">{title}</h3>
+        <p className="text-[15px] text-charcoal/65 leading-relaxed m-0 flex-1">{desc}</p>
       </div>
     </Reveal>
   );
@@ -68,14 +130,14 @@ function FeatureCard({ icon: Icon, title, desc, delay }) {
 // ─── Step item ────────────────────────────────────────────────────────────────
 function Step({ num, title, desc, delay }) {
   return (
-    <Reveal delay={delay}>
-      <div className="flex gap-5 items-start">
-        <div className="shrink-0 w-9 h-9 rounded-full bg-gradient-to-br from-charcoal to-charcoal text-white flex items-center justify-center text-[13px] font-bold mt-0.5 shadow-md">
+    <Reveal delay={delay} variant="left">
+      <div className="flex gap-6 items-start">
+        <div className="shrink-0 w-11 h-11 rounded-full bg-gradient-to-br from-charcoal to-charcoal text-white flex items-center justify-center text-[15px] font-bold mt-0.5 shadow-md">
           {num}
         </div>
         <div>
-          <h3 className="text-[15px] font-semibold text-charcoal mb-1.5 tracking-tight">{title}</h3>
-          <p className="text-[13.5px] text-charcoal/60 leading-relaxed m-0">{desc}</p>
+          <h3 className="text-[18px] font-bold text-charcoal mb-2 tracking-tight">{title}</h3>
+          <p className="text-[15px] text-charcoal/60 leading-relaxed m-0">{desc}</p>
         </div>
       </div>
     </Reveal>
@@ -132,31 +194,31 @@ export default function Landing() {
 
       {/* ── HEADER ── */}
       <header className="sticky top-0 z-50 border-b border-charcoal/15 bg-sage/80 backdrop-blur-xl supports-[backdrop-filter]:bg-sage/60">
-        <div className="max-w-[1080px] mx-auto px-6 h-[58px] flex items-center justify-between">
+        <div className="max-w-[1200px] mx-auto px-6 h-[76px] flex items-center justify-between">
           <Link to="/" className="flex items-center no-underline group">
-            <span className="text-[18px] font-bold text-charcoal tracking-tight">HustleMap</span>
+            <span className="text-[22px] font-bold text-charcoal tracking-tight">HustleMap</span>
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-1.5">
+          <nav className="hidden md:flex items-center gap-2">
             {[["#features", "Features"], ["#how-it-works", "How it Works"]].map(([href, label]) => (
               <a
                 key={href}
                 href={href}
-                className="text-[13.5px] text-charcoal/60 font-medium no-underline px-2.5 py-[5px] rounded-lg transition-all hover:text-charcoal hover:bg-white/10"
+                className="text-[15px] text-charcoal/60 font-semibold no-underline px-3.5 py-[7px] rounded-lg transition-all hover:text-charcoal hover:bg-white/10"
               >
                 {label}
               </a>
             ))}
             <Link
               to="/login"
-              className="text-[13.5px] text-charcoal/60 font-medium no-underline px-2.5 py-[5px] rounded-lg transition-colors hover:text-charcoal hover:bg-white/10"
+              className="text-[15px] text-charcoal/60 font-semibold no-underline px-3.5 py-[7px] rounded-lg transition-colors hover:text-charcoal hover:bg-white/10"
             >
               Login
             </Link>
             <Link to="/register" className="no-underline ml-1">
-              <button className="bg-white text-charcoal border border-charcoal rounded-lg px-[15px] py-[7px] text-[13.5px] font-semibold cursor-pointer tracking-tight transition-all hover:bg-sage-light hover:shadow-sm">
-                Get started for free
+              <button className="bg-white text-charcoal border border-charcoal rounded-xl px-[18px] py-[9px] text-[14.5px] font-bold cursor-pointer tracking-tight transition-all hover:bg-sage-light hover:shadow-sm">
+                Get started
               </button>
             </Link>
           </nav>
@@ -164,21 +226,21 @@ export default function Landing() {
           {/* Mobile Toggle */}
           <button 
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-1.5 rounded-lg hover:bg-white/[0.06] transition-colors"
+            className="md:hidden p-2 rounded-lg hover:bg-white/[0.06] transition-colors"
           >
-            {isMobileMenuOpen ? <X size={20} className="text-charcoal" /> : <Menu size={20} className="text-charcoal" />}
+            {isMobileMenuOpen ? <X size={24} className="text-charcoal" /> : <Menu size={24} className="text-charcoal" />}
           </button>
         </div>
 
         {/* Mobile Nav Overlay */}
         {isMobileMenuOpen && (
-          <div className="md:hidden absolute top-[58px] left-0 right-0 bg-sage/95 backdrop-blur-xl border-b border-charcoal/15 shadow-sm px-6 py-6 flex flex-col gap-4 animate-in slide-in-from-top duration-200">
+          <div className="md:hidden absolute top-[76px] left-0 right-0 bg-sage/95 backdrop-blur-xl border-b border-charcoal/15 shadow-sm px-6 py-6 flex flex-col gap-4 animate-in slide-in-from-top duration-200">
             {[["#features", "Features"], ["#how-it-works", "How it Works"]].map(([href, label]) => (
               <a
                 key={href}
                 href={href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="text-[15px] font-medium text-charcoal no-underline py-2 border-b border-charcoal/15/50 hover:text-charcoal/60 transition-colors"
+                className="text-[16px] font-bold text-charcoal no-underline py-2 border-b border-charcoal/15/50 hover:text-charcoal/60 transition-colors"
               >
                 {label}
               </a>
@@ -186,13 +248,13 @@ export default function Landing() {
             <Link
               to="/login"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="text-[15px] font-medium text-charcoal no-underline py-2 border-b border-charcoal/15/50 hover:text-charcoal/60 transition-colors"
+              className="text-[16px] font-bold text-charcoal no-underline py-2 border-b border-charcoal/15/50 hover:text-charcoal/60 transition-colors"
             >
               Login
             </Link>
             <Link to="/register" onClick={() => setIsMobileMenuOpen(false)} className="no-underline pt-2">
-              <button className="w-full bg-white text-charcoal border border-charcoal rounded-xl py-3 text-[15px] font-bold cursor-pointer tracking-tight transition-all hover:bg-sage-light">
-                Get started for free
+              <button className="w-full bg-white text-charcoal border border-charcoal rounded-xl py-3.5 text-[16px] font-bold cursor-pointer tracking-tight transition-all hover:bg-sage-light">
+                Get started
               </button>
             </Link>
           </div>
@@ -200,13 +262,51 @@ export default function Landing() {
       </header>
 
       {/* ── HERO ── */}
-      <section className="relative overflow-hidden pt-16 sm:pt-24 pb-12 sm:pb-20 text-center">
+      <section className="relative overflow-hidden pt-14 sm:pt-18 pb-20 sm:pb-28 text-center bg-sage">
+        
+        {/* Left Avatar Group - Hand-drawn illustrations peeking from bottom-left (Sized up for impact) */}
+        <div className="absolute bottom-0 left-0 w-[180px] sm:w-[260px] md:w-[320px] lg:w-[380px] xl:w-[420px] select-none pointer-events-none z-10 transition-all duration-500 transform origin-bottom-left hover:scale-[1.03] hover:rotate-1">
+          <img 
+            src="/avatar_left.png" 
+            alt="Hand-drawn creative professional avatars" 
+            className="w-full h-auto object-contain block filter drop-shadow-[0_4px_12px_rgba(0,0,0,0.04)]" 
+          />
+        </div>
 
+        {/* Right Avatar Group - Hand-drawn illustrations peeking from bottom-right (Sized up for impact) */}
+        <div className="absolute bottom-0 right-0 w-[150px] sm:w-[220px] md:w-[270px] lg:w-[320px] xl:w-[360px] select-none pointer-events-none z-10 transition-all duration-500 transform origin-bottom-right hover:scale-[1.03] hover:-rotate-1">
+          <img 
+            src="/avatar_right.png" 
+            alt="Hand-drawn team member avatars" 
+            className="w-full h-auto object-contain block filter drop-shadow-[0_4px_12px_rgba(0,0,0,0.04)]" 
+          />
+        </div>
 
-        <div className="max-w-[720px] mx-auto px-6 relative z-10">
+        {/* Curvy blue hand-drawn arrow pointing precisely from the left avatar's face to the CTA button */}
+        <div className="hidden sm:block absolute left-[16%] sm:left-[18%] md:left-[21%] lg:left-[23%] bottom-[12%] sm:bottom-[13%] md:bottom-[15%] lg:bottom-[17%] w-[130px] h-[100px] sm:w-[160px] sm:h-[120px] md:w-[200px] md:h-[150px] lg:w-[240px] lg:h-[180px] pointer-events-none select-none z-0">
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full text-[#0f78eb] opacity-90 transition-transform duration-300 hover:scale-105">
+            {/* Smooth curve from bottom-left (avatar face) to top-right (button) */}
+            <path
+              d="M 12,88 C 30,52 55,32 88,25"
+              stroke="currentColor"
+              strokeWidth="3.5"
+              strokeLinecap="round"
+            />
+            {/* Arrowhead pointing precisely to the button */}
+            <path
+              d="M 74,18 L 90,24 L 81,38"
+              stroke="currentColor"
+              strokeWidth="3.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
+
+        <div className="max-w-[840px] mx-auto px-6 relative z-10">
 
           <Reveal delay={80}>
-            <h1 className="text-[clamp(36px,6vw,62px)] font-extrabold text-charcoal leading-[1.1] tracking-[-2px] mb-5">
+            <h1 className="text-[clamp(44px,7vw,72px)] font-extrabold text-charcoal leading-[1.1] tracking-[-2px] mb-6">
               Track jobs.{" "}
               <span className="relative inline-block text-charcoal">
                 <span className="relative z-10">Learn faster.</span>
@@ -215,25 +315,25 @@ export default function Landing() {
           </Reveal>
 
           <Reveal delay={140}>
-            <p className="text-[17px] text-charcoal/60 leading-[1.7] mx-auto mb-9 max-w-[520px]">
-              Manage every application, rate interview difficulty, and log real questions by round. Build your Interview Summary and improve with each opportunity.
+            <p className="text-[19px] text-charcoal/60 leading-[1.7] mx-auto mb-10 max-w-[620px]">
+              The organized way to job hunt, prep, and land offers. Track every application, log interview questions, and use analytics to sharpen your strategy.
             </p>
           </Reveal>
 
           <Reveal delay={200}>
             <div className="flex justify-center items-center gap-3 flex-wrap">
               <Link to="/register" className="no-underline">
-                <button className="inline-flex items-center gap-[7px] bg-white text-charcoal border border-charcoal rounded-xl px-[22px] py-[11px] text-[14.5px] font-bold cursor-pointer tracking-tight transition-all hover:bg-sage-light hover:shadow-sm hover:scale-[1.02]">
-                  Get started for free <ArrowRight size={15} />
+                <button className="inline-flex items-center gap-[9px] bg-white text-charcoal border border-charcoal rounded-xl px-[28px] py-[14px] text-[16.5px] font-bold cursor-pointer tracking-tight transition-all hover:bg-sage-light hover:shadow-sm hover:scale-[1.02]">
+                  Get started <ArrowRight size={17} />
                 </button>
               </Link>
             </div>
           </Reveal>
 
           <Reveal delay={280}>
-            <div className="mt-10 flex justify-center gap-7 flex-wrap">
+            <div className="mt-12 flex justify-center gap-9 flex-wrap">
               {["✓ Free forever", "✓ No setup", "✓ Built for job seekers"].map((text) => (
-                <span key={text} className="text-[13px] text-charcoal/60 font-medium">{text}</span>
+                <span key={text} className="text-[14.5px] text-charcoal/60 font-semibold">{text}</span>
               ))}
             </div>
           </Reveal>
@@ -241,42 +341,42 @@ export default function Landing() {
       </section>
 
       {/* Divider */}
-      <div className="max-w-[1080px] mx-auto px-6">
+      <div className="max-w-[1200px] mx-auto px-6">
         <div className="h-px bg-border" />
       </div>
 
       {/* ── FEATURES ── */}
-      <section id="features" className="py-12 sm:py-[88px] px-6">
-        <div className="max-w-[1080px] mx-auto">
-          <Reveal delay={0}>
-            <div className="text-center mb-14">
-              <p className="text-[12.5px] font-semibold text-charcoal/60 tracking-[1px] uppercase mb-2.5">Features</p>
-              <h2 className="text-[clamp(26px,4vw,38px)] font-extrabold text-charcoal tracking-tight mx-auto mb-3.5 max-w-[500px]">
+      <section id="features" className="pt-20 sm:pt-[120px] pb-12 sm:pb-16 px-6">
+        <div className="max-w-[1200px] mx-auto">
+          <Reveal delay={0} variant="blur">
+            <div className="text-center mb-16">
+              <p className="text-[14px] font-bold text-charcoal/60 tracking-[1.5px] uppercase mb-3">Features</p>
+              <h2 className="text-[clamp(32px,5vw,46px)] font-extrabold text-charcoal tracking-tight mx-auto mb-4.5 max-w-[600px]">
                 Everything you need to land the job
               </h2>
-              <p className="text-[15.5px] text-charcoal/60 max-w-[440px] mx-auto leading-relaxed">
-                One organized workspace for your entire job search journey.
+              <p className="text-[17.5px] text-charcoal/60 max-w-[520px] mx-auto leading-relaxed">
+                A data-driven pipeline and feedback loop designed to help you prepare, track, and land offers.
               </p>
             </div>
           </Reveal>
 
-          <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
+          <div className="grid gap-6" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
             <FeatureCard
               icon={FileText}
-              title="Track Applications"
-              desc="Keep every application in one place with clear status labels, quick notes, and company details."
+              title="Smart Kanban Board"
+              desc="Organize every application in one clean board. Update statuses, add contacts, attach notes, and manage your full pipeline in one responsive workspace."
               delay={0}
             />
             <FeatureCard
               icon={Star}
-              title="Difficulty Ratings"
-              desc="Rate each interview round from 1–5. Spot patterns, compare companies, and prepare smarter next time."
+              title="Personal Question Bank"
+              desc="Build a structured personal prep database. Rate round difficulty, save real interview questions, and record detailed answers for study."
               delay={80}
             />
             <FeatureCard
               icon={BarChart2}
-              title="Interview History"
-              desc="Log real questions by round. Review past interviews to identify what you need to improve."
+              title="Conversion Analytics"
+              desc="Visualize your success rates. Track conversion rates from Applied to Offer, find resume bottlenecks, and monitor weekly trend statistics."
               delay={160}
             />
           </div>
@@ -284,62 +384,62 @@ export default function Landing() {
       </section>
 
       {/* Divider */}
-      <div className="max-w-[1080px] mx-auto px-6">
+      <div className="max-w-[1200px] mx-auto px-6">
         <div className="h-px bg-border" />
       </div>
 
       {/* ── CHROME EXTENSION ── */}
-      <section className="py-12 sm:py-[88px] px-6">
-        <div className="max-w-[1080px] mx-auto">
+      <section className="py-12 sm:py-16 px-6">
+        <div className="max-w-[1200px] mx-auto">
 
           {/* Header */}
-          <Reveal delay={0}>
-            <div className="text-center mb-14">
-              <div className="inline-flex items-center gap-[7px] bg-charcoal/5 border border-charcoal/15 rounded-full px-[13px] py-[5px] mb-5 shadow-md">
-                <div className="w-[7px] h-[7px] rounded-full bg-charcoal/40" />
-                <span className="text-[12px] font-semibold text-charcoal/60 tracking-[0.5px] uppercase">Chrome Extension</span>
+          <Reveal delay={0} variant="left">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-[8px] bg-white border border-charcoal/15 rounded-full px-[16px] py-[6px] mb-6 shadow-md">
+                <div className="w-[8px] h-[8px] rounded-full bg-yellow-400" />
+                <span className="text-[13.5px] font-bold text-charcoal/70 tracking-[1px] uppercase">Chrome Extension</span>
               </div>
-              <h2 className="text-[clamp(26px,4vw,38px)] font-extrabold text-charcoal tracking-tight mx-auto mb-3.5 max-w-[600px]">
+              <h2 className="text-[clamp(32px,5vw,46px)] font-extrabold text-charcoal tracking-tight mx-auto mb-4.5 max-w-[700px]">
                 Save Jobs Instantly with our Chrome Extension
               </h2>
-              <p className="text-[15.5px] text-charcoal/60 max-w-[460px] mx-auto leading-relaxed">
-                Capture jobs from LinkedIn, Indeed, and Glassdoor directly into HustleMap in seconds.
+              <p className="text-[17.5px] text-charcoal/60 max-w-[540px] mx-auto leading-relaxed">
+                Capture job descriptions, titles, and screenshots from major job boards directly into HustleMap in a single click.
               </p>
             </div>
           </Reveal>
 
           {/* Feature Cards Grid */}
-          <div className="grid gap-4 mb-12" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
+          <div className="grid gap-6 mb-16" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
             <FeatureCard
               icon={ChromeIcon}
-              title="One-Click Capture"
-              desc="Draw a rectangle over any job listing and save all details instantly — no copy-pasting required."
+              title="Instant Job Clipping"
+              desc="Extract job details automatically from any webpage. Avoid tedious form-filling and build your board instantly."
               delay={0}
             />
             <FeatureCard
               icon={CameraIcon}
-              title="Screenshot + Context"
-              desc="Save job screenshots so you never lose the original listing — even after it expires."
+              title="Visual Screenshots"
+              desc="Save the exact job posting screenshot to retain full requirements, descriptions, and salary context even after the post expires."
               delay={80}
             />
             <FeatureCard
               icon={MonitorIcon}
-              title="Works Everywhere"
-              desc="Supports LinkedIn, Indeed, and Glassdoor — wherever your job search takes you."
+              title="Universal Support"
+              desc="Built to work seamlessly across LinkedIn, Indeed, Glassdoor, and other major hiring platforms."
               delay={160}
             />
             <FeatureCard
               icon={UploadIcon}
-              title="Seamless Sync"
-              desc="Jobs are automatically saved to your dashboard with status 'Saved' — ready to track."
+              title="Automatic Pipeline Sync"
+              desc="Saves postings directly to your HustleMap dashboard as 'Saved' applications, ready for tracking and interview logging."
               delay={240}
             />
           </div>
 
           <Reveal delay={0}>
-            <div className="bg-white backdrop-blur-xl border border-charcoal/15 rounded-2xl p-8 mb-10 shadow-sm">
-              <p className="text-[12px] font-semibold text-charcoal/60 tracking-[1px] uppercase mb-6 text-center">How it works</p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-0">
+            <div className="bg-white backdrop-blur-xl border border-charcoal/15 rounded-3xl p-10 mb-12 shadow-sm">
+              <p className="text-[13.5px] font-bold text-charcoal/60 tracking-[1.5px] uppercase mb-8 text-center">How it works</p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-0">
                 {[
                   {
                     num: "1",
@@ -357,13 +457,13 @@ export default function Landing() {
                     sub: "It lands in your dashboard instantly"
                   },
                 ].map(({ num, label, sub }, i) => (
-                  <div key={num} className="flex sm:flex-row flex-col items-center gap-3 sm:gap-0 w-full sm:w-auto">
-                    <div className="flex flex-col items-center text-center px-6 flex-1 min-w-[160px]">
-                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-charcoal to-charcoal text-white flex items-center justify-center text-[13px] font-bold mb-2.5 shadow-md">
+                  <div key={num} className="flex sm:flex-row flex-col items-center gap-4 sm:gap-0 w-full sm:w-auto">
+                    <div className="flex flex-col items-center text-center px-8 flex-1 min-w-[180px]">
+                      <div className="w-11 h-11 rounded-full bg-gradient-to-br from-charcoal to-charcoal text-white flex items-center justify-center text-[15px] font-bold mb-3 shadow-md">
                         {num}
                       </div>
-                      <p className="text-[13.5px] font-semibold text-charcoal mb-1 tracking-tight">{label}</p>
-                      <p className="text-[12.5px] text-charcoal/60 leading-relaxed">{sub}</p>
+                      <p className="text-[16px] font-bold text-charcoal mb-1.5 tracking-tight">{label}</p>
+                      <p className="text-[14px] text-charcoal/60 leading-relaxed">{sub}</p>
                     </div>
                     {i < 2 && (
                       <div className="hidden sm:flex items-center text-charcoal/30">
@@ -408,106 +508,135 @@ export default function Landing() {
       </section>
 
       {/* Divider */}
-      <div className="max-w-[1080px] mx-auto px-6">
+      <div className="max-w-[1200px] mx-auto px-6">
         <div className="h-px bg-black/[0.08]" />
       </div>
 
       {/* ── INTERVIEW DETAIL SECTION ── */}
-      <section className="px-6 pb-12 sm:pb-[88px]">
-        <div className="max-w-[1080px] mx-auto">
-          <Reveal delay={0}>
-            <div className="text-center mb-[52px]">
-              <h2 className="text-[clamp(24px,4vw,36px)] font-extrabold text-charcoal tracking-tight mb-3">
-                Learn from every interview
+      <section className="px-6 pb-12 sm:pb-16">
+        <div className="max-w-[1200px] mx-auto">
+          <Reveal delay={0} variant="zoom">
+            <div className="text-center mb-16">
+              <h2 className="text-[clamp(30px,4.5vw,44px)] font-extrabold text-charcoal tracking-tight mb-4">
+                Turn every interview into an edge
               </h2>
-              <p className="text-[15.5px] text-charcoal/60 max-w-[460px] mx-auto leading-relaxed">
-                Build a structured record with difficulty ratings and real questions. Reflect and improve with each round.
+              <p className="text-[17.5px] text-charcoal/60 max-w-[540px] mx-auto leading-relaxed">
+                Build a personal interview playbook — log real questions, rate rounds, and grow smarter with each opportunity.
               </p>
             </div>
           </Reveal>
 
-          <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
+          <div className="grid gap-6" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))" }}>
             {[
               {
                 icon: FileText,
-                title: "Preparation Notes",
-                desc: "Store everything before your interview — company background, technical topics, behavioral questions, salary expectations, and what to ask the interviewer.",
-                bullets: ["Company background & culture", "Technical topics to revise", "Behavioral questions to practice", "Questions to ask the interviewer"],
+                title: "Pre-Interview Prep",
+                desc: "Walk in fully prepared. Store company research, topics to revise, talking points, salary expectations, and your list of questions to ask — all in one place.",
+                bullets: ["Company culture & background notes", "Technical topics to revise", "Behavioral answers to rehearse", "Smart questions to ask the interviewer"],
                 delay: 0,
+                num: "01",
+                color: "green"
               },
               {
                 icon: Star,
-                title: "Difficulty Rating",
-                desc: "Rate each interview round 1–5 to quickly compare experiences and prepare better for future rounds.",
-                bullets: ["Compare difficulty across companies", "Identify patterns in your process", "Track improvement over time", "Build realistic expectations"],
+                title: "Round Difficulty Rating",
+                desc: "Rate the overall difficulty of each process on a 1–5 scale. Spot patterns across companies and calibrate your expectations for future applications.",
+                bullets: ["Per-company difficulty benchmarking", "Track progress across rounds", "Identify your weak interview areas", "Build realistic preparation timelines"],
                 delay: 80,
+                num: "02",
+                color: "orange"
               },
               {
                 icon: BarChart2,
-                title: "Interview Summary",
-                desc: "Log questions by round. Add notes or answers. Review your history to see how you've grown.",
-                bullets: ["Log questions by round type", "Add your notes per question", "Review past summaries", "Identify improvement areas"],
+                title: "Question Bank & Notes",
+                desc: "Log real questions asked in each round with your answers and personal notes. Build a searchable knowledge base you can revisit before your next interview.",
+                bullets: ["Organize questions by round type", "Attach personal notes and answers", "Review past interview transcripts", "Spot recurring themes across companies"],
                 delay: 160,
+                num: "03",
+                color: "blue"
               },
-            ].map(({ icon: Icon, title, desc, bullets, delay }) => (
-              <Reveal key={title} delay={delay}>
-                <div className="bg-white backdrop-blur-xl border border-charcoal/15 rounded-2xl p-7 h-full shadow-sm transition-all hover:border-charcoal/10 hover:shadow-md">
-                  <div className="mb-4 inline-flex items-center justify-center w-[38px] h-[38px] rounded-[10px] bg-sage-light border border-charcoal/10">
-                    <Icon size={18} className="text-charcoal" strokeWidth={1.8} />
+            ].map(({ icon: Icon, title, desc, bullets, delay, num, color }) => {
+              const colors = {
+                blue: { pin: "#0f78eb", bg: "bg-[#f4f9ff]", text: "text-[#0f78eb]" },
+                orange: { pin: "#eb7c0f", bg: "bg-[#fffdf5]", text: "text-[#eb7c0f]" },
+                green: { pin: "#10b981", bg: "bg-[#f5fdf9]", text: "text-[#10b981]" }
+              }[color];
+              
+              return (
+                <Reveal key={title} delay={delay} className="h-full pt-6">
+                  <div className={`relative ${colors.bg} border-[2.5px] border-charcoal rounded-2xl p-8 pt-10 pb-9 cursor-default transition-all duration-500 h-full flex flex-col justify-between shadow-[4px_4px_0px_0px_rgba(28,28,28,1)] hover:shadow-[6px_6px_0px_0px_rgba(28,28,28,1)] hover:-translate-y-2.5 hover:scale-[1.02] hover:z-20`}>
+                    <div>
+                      {/* Pinned Thumbtack */}
+                      <div className="absolute -top-[22px] left-1/2 -translate-x-1/2 z-30 transition-transform duration-500 hover:scale-110">
+                        <Pushpin color={colors.pin} />
+                      </div>
+                      
+                      {/* Card Header */}
+                      <div className="flex justify-between items-center mb-6 shrink-0">
+                        <span className={`text-[32px] font-black font-sans leading-none tracking-tight select-none opacity-85 ${colors.text}`}>
+                          {num}
+                        </span>
+                        <div className="w-12 h-12 rounded-[12px] flex items-center justify-center border-2 border-charcoal/10 bg-white/40">
+                          <Icon size={22} className="text-charcoal/70" strokeWidth={1.8} />
+                        </div>
+                      </div>
+                      
+                      <h3 className="text-[18px] font-black text-charcoal mb-3 tracking-tight">{title}</h3>
+                      <p className="text-[14.5px] text-charcoal/65 leading-relaxed mb-6">{desc}</p>
+                    </div>
+                    
+                    <ul className="list-none p-0 m-0 flex flex-col gap-2.5">
+                      {bullets.map((b) => (
+                        <li key={b} className="flex items-start gap-3 text-[14.5px] text-charcoal/60">
+                          <CheckCircle size={15} className="text-charcoal/60 mt-0.5 shrink-0" />
+                          <span>{b}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                  <h3 className="text-[15px] font-bold text-charcoal mb-2.5 tracking-tight">{title}</h3>
-                  <p className="text-[13.5px] text-charcoal/60 leading-relaxed mb-4">{desc}</p>
-                  <ul className="list-none p-0 m-0 flex flex-col gap-2">
-                    {bullets.map((b) => (
-                      <li key={b} className="flex items-start gap-2.5 text-[13px] text-charcoal/60">
-                        <CheckCircle size={13} className="text-charcoal/60 mt-0.5 shrink-0" />
-                        <span>{b}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </Reveal>
-            ))}
+                </Reveal>
+              );
+            })}
           </div>
         </div>
       </section>
 
       {/* Divider */}
-      <div className="max-w-[1080px] mx-auto px-6">
+      <div className="max-w-[1200px] mx-auto px-6">
         <div className="h-px bg-black/[0.08]" />
       </div>
 
       {/* ── HOW IT WORKS ── */}
-      <section id="how-it-works" className="py-12 sm:py-[88px] px-6">
-        <div className="max-w-[560px] mx-auto">
-          <Reveal delay={0}>
-            <div className="text-center mb-[52px]">
-              <p className="text-[12.5px] font-semibold text-charcoal/60 tracking-[1px] uppercase mb-2.5">How it Works</p>
-              <h2 className="text-[clamp(24px,4vw,36px)] font-extrabold text-charcoal tracking-tight">
+      <section id="how-it-works" className="py-12 sm:py-16 px-6">
+        <div className="max-w-[640px] mx-auto">
+          <Reveal delay={0} variant="right">
+            <div className="text-center mb-10">
+              <p className="text-[14px] font-bold text-charcoal/60 tracking-[1.5px] uppercase mb-3">How it Works</p>
+              <h2 className="text-[clamp(30px,4.5vw,44px)] font-extrabold text-charcoal tracking-tight">
                 Up and running in minutes
               </h2>
             </div>
           </Reveal>
 
-          <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-4">
             <Step
               num={1}
               title="Sign up for free"
-              desc="Create an account in seconds. No credit card or setup required."
+              desc="Create your account instantly. No credit card, no onboarding forms — just your email and you're in."
               delay={0}
             />
-            <div className="ml-[18px] w-px h-4 border-l-2 border-dashed border-charcoal/20" />
+            <div className="ml-[21px] w-px h-4 border-l-2 border-dashed border-charcoal/20" />
             <Step
               num={2}
-              title="Add your applications"
-              desc="Start logging job applications with company, position, status, and notes."
+              title="Build your pipeline"
+              desc="Add applications manually or clip them instantly from LinkedIn, Indeed, and Glassdoor using the Chrome extension."
               delay={80}
             />
-            <div className="ml-[18px] w-px h-4 border-l-2 border-dashed border-charcoal/20" />
+            <div className="ml-[21px] w-px h-4 border-l-2 border-dashed border-charcoal/20" />
             <Step
               num={3}
-              title="Track and improve"
-              desc="Update status as you progress. Rate difficulty, log questions by round, and build your Interview Summary to learn and land the next one."
+              title="Prepare, track, and win"
+              desc="Log interview questions by round, rate difficulty, and review your conversion funnel analytics to sharpen your strategy with every application."
               delay={160}
             />
           </div>
@@ -518,12 +647,12 @@ export default function Landing() {
 
       {/* ── FOOTER ── */}
       <footer className="border-t border-charcoal/15 py-8 px-6 bg-sage">
-        <div className="max-w-[1080px] mx-auto flex flex-col md:flex-row justify-between items-center gap-6 text-center md:text-left">
+        <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-center gap-8 text-center md:text-left">
           <div className="flex items-center">
-            <span className="text-[16px] font-bold text-charcoal">HustleMap</span>
+            <span className="text-[19px] font-bold text-charcoal">HustleMap</span>
           </div>
-          <div className="flex gap-5 items-center">
-            <span className="text-[13px] text-charcoal/60">Built with React · Node.js · MongoDB</span>
+          <div className="flex gap-6 items-center">
+            <span className="text-[14.5px] text-charcoal/60">Built with React · Node.js · MongoDB</span>
           </div>
         </div>
       </footer>
