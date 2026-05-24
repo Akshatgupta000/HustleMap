@@ -253,17 +253,19 @@ export default function JobForm() {
                 className="h-9 text-[13px]"
               />
             </div>
-            <div>
-              <label className={labelClass}>
-                {formData.status === 'online_test' ? 'Online Test Date' : 'Interview Date'}{' '}
-                <span className="font-normal text-charcoal/40">(optional)</span>
-              </label>
-              <Input
-                type="date" value={formData.interview_date}
-                onChange={(e) => setFormData({ ...formData, interview_date: e.target.value })}
-                className="h-9 text-[13px]"
-              />
-            </div>
+            {formData.status !== 'offer' && formData.status !== 'rejected' && (
+              <div>
+                <label className={labelClass}>
+                  {formData.status === 'online_test' ? 'Online Test Date' : 'Interview Date'}{' '}
+                  <span className="font-normal text-charcoal/40">(optional)</span>
+                </label>
+                <Input
+                  type="date" value={formData.interview_date}
+                  onChange={(e) => setFormData({ ...formData, interview_date: e.target.value })}
+                  className="h-9 text-[13px]"
+                />
+              </div>
+            )}
           </div>
 
           {/* Row 4: Resume & Portfolio */}

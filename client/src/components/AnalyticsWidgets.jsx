@@ -75,7 +75,7 @@ export default function AnalyticsWidgets() {
           return (
             <div
               key={index}
-              className="rounded-[24px] border border-charcoal bg-transparent p-5 flex flex-col justify-between min-h-[110px] hover:-translate-y-1 transition-all duration-200"
+              className="rounded-[20px] border border-charcoal bg-transparent p-4 flex flex-col justify-between hover:-translate-y-1 transition-all duration-200"
             >
               <div className="flex items-center justify-between mb-3">
                 <p className="text-[11px] font-extrabold text-charcoal/50 uppercase tracking-wide">

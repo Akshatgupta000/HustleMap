@@ -19,13 +19,13 @@ const STATUS_LABELS = {
 };
 
 const STATUS_COLORS = {
-  saved: "bg-transparent text-charcoal/60 border-charcoal/40",
+  saved: "bg-white text-charcoal border-charcoal",
   applied: "bg-charcoal text-white border-charcoal",
-  online_test: "bg-charcoal/5 text-charcoal border-charcoal",
-  interview: "bg-sage text-charcoal border-charcoal",
-  offer: "bg-accent-green text-white border-accent-green",
+  online_test: "bg-orange-400 text-white border-orange-400",
+  interview: "bg-blue-900 text-white border-blue-900",
+  offer: "bg-green-500 text-white border-green-500",
   rejected: "bg-red-500 text-white border-red-500",
-  withdrawn: "bg-transparent text-charcoal/60 border-charcoal/40",
+  withdrawn: "bg-gray-400 text-white border-gray-400",
 };
 
 const APPLICATION_TYPE_LABELS = {
@@ -81,21 +81,32 @@ export default function JobCard({ job, onViewDetails }) {
   // Check if status is automatically tickable (Rejected or Offer)
   const isAutomatic = job.status === "rejected" || job.status === "offer";
 
+  // Determine if tick should be shown
+  const isTicked = isAutomatic || isManuallyTicked;
+
   // Get tick color based on status
   const getTickColor = () => {
-    if (job.status === "rejected")
-      return { bg: "bg-red-500", border: "border-red-500" };
-    if (job.status === "offer")
-      return { bg: "bg-accent-green", border: "border-accent-green" };
-    if (isManuallyTicked)
-      return { bg: "bg-charcoal", border: "border-charcoal" };
-    return { bg: "bg-white", border: "border-charcoal/40" };
+    if (!isTicked) return { bg: "bg-white", border: "border-charcoal/40" };
+    
+    switch (job.status) {
+      case "online_test":
+        return { bg: "bg-orange-400", border: "border-orange-400" };
+      case "interview":
+        return { bg: "bg-blue-900", border: "border-blue-900" };
+      case "offer":
+        return { bg: "bg-green-500", border: "border-green-500" };
+      case "rejected":
+        return { bg: "bg-red-500", border: "border-red-500" };
+      case "withdrawn":
+        return { bg: "bg-gray-400", border: "border-gray-400" };
+      case "saved":
+      case "applied":
+      default:
+        return { bg: "bg-charcoal", border: "border-charcoal" };
+    }
   };
 
   const tickColor = getTickColor();
-
-  // Determine if tick should be shown
-  const isTicked = isAutomatic || isManuallyTicked;
 
   // Handle manual tick toggle
   const handleTickToggle = (e) => {
@@ -207,7 +218,7 @@ export default function JobCard({ job, onViewDetails }) {
               job.application_type}
           </div>
         )}
-        {job.interview_date && (
+        {job.interview_date && job.status !== 'offer' && job.status !== 'rejected' && (
           <div
             className={cn(
               "text-sm",

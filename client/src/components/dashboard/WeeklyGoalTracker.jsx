@@ -31,7 +31,7 @@ export default function WeeklyGoalTracker() {
     <div className="bg-transparent border border-charcoal/20 rounded-[24px] p-5 overflow-hidden relative">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 relative z-10">
         <div className="flex items-center gap-3.5">
-          <div className={`p-2.5 rounded-[14px] shrink-0 transition-colors bg-charcoal text-white`}>
+          <div className={`p-2.5 rounded-[14px] shrink-0 transition-colors bg-[#FF9500] text-white`}>
             {isComplete ? <Trophy className="h-5 w-5" /> : <Target className="h-5 w-5" />}
           </div>
           <div>
@@ -51,9 +51,9 @@ export default function WeeklyGoalTracker() {
             <span>Progress</span>
             <span>{percent}%</span>
           </div>
-          <div className="h-2 w-full bg-charcoal/8 rounded-full overflow-hidden">
+          <div className="h-3 w-full bg-white border border-charcoal/20 rounded-full p-[2px]">
             <div 
-              className={`h-full rounded-full transition-all duration-1000 ease-out bg-charcoal`}
+              className={`h-full rounded-full transition-all duration-1000 ease-out bg-[#FF9500]`}
               style={{ width: `${percent}%` }}
             />
           </div>
@@ -62,7 +62,7 @@ export default function WeeklyGoalTracker() {
       
       {/* Decorative background elements */}
       {isComplete && (
-        <div className="absolute right-0 top-0 w-64 h-64 bg-charcoal/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+        <div className="absolute right-0 top-0 w-64 h-64 bg-[#FF9500]/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
       )}
     </div>
   );
