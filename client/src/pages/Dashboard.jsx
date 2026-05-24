@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { jobsAPI } from '../lib/api';
 import { getUser } from '../lib/auth';
@@ -12,7 +13,15 @@ import { Calendar, Flame } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function Dashboard() {
-  const user = getUser();
+  const [user, setUser] = useState(getUser());
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setUser(getUser());
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
 
   const { data: jobs, isLoading: jobsLoading } = useQuery({
     queryKey: ['jobs'],
@@ -54,13 +63,13 @@ export default function Dashboard() {
       <div className="relative z-10 flex-1 max-w-[70%] sm:max-w-[75%]">
         <div className="flex items-center gap-2.5 mb-0.5">
           <h1 className="text-xl sm:text-2xl font-extrabold text-charcoal tracking-tight leading-none">
-            Hi, {user?.name ? user.name.split(' ')[0] : 'there'}
+            Hey {user?.name ? user.name.split(' ')[0] : 'there'}, good to see you!
           </h1>
         </div>
         <p className="text-[12.5px] sm:text-[13px] text-charcoal/50 font-medium leading-snug mt-1">
           {hasJobs
-            ? 'Ready to track your job search and conquer your day?'
-            : 'Welcome to HustleMap — let\'s get your search started.'}
+            ? "Ready to lock in some offers today? Let's check your pipeline."
+            : "Welcome to HustleMap — let's get your search started."}
         </p>
       </div>
       <div className="absolute right-0 sm:right-2 bottom-0 top-0 w-28 sm:w-40 z-0 opacity-90 mix-blend-multiply flex justify-end pointer-events-none">
@@ -137,7 +146,7 @@ export default function Dashboard() {
                   </span>
                 </div>
                 {/* Items */}
-                <div className="p-3 flex flex-col gap-2 flex-1 overflow-y-auto custom-scrollbar">
+                <div className="p-3 flex flex-col gap-2 flex-1 overflow-y-auto scrollbar-thin">
                   {upcomingInterviews.map((job) => {
                     let dateLabel = "TBD";
                     if (job.interview_date) {

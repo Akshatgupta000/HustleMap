@@ -186,6 +186,10 @@ export const updateUserProfile = async (req, res, next) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
+    if (req.body.name !== undefined) {
+      user.name = req.body.name;
+    }
+
     if (req.body.generalNotes !== undefined) {
       user.generalNotes = req.body.generalNotes;
     }
@@ -200,6 +204,8 @@ export const updateUserProfile = async (req, res, next) => {
 
     return res.json({
       message: 'Profile updated successfully',
+      name: user.name,
+      email: user.email,
       resumeUrl: user.resumeUrl,
       generalNotes: user.generalNotes
     });

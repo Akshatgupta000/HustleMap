@@ -64,7 +64,7 @@ function FeatureCard({ icon: Icon, title, desc, delay, num = "01" }) {
   return (
     <Reveal delay={delay} className="h-full">
       <div
-        className="relative bg-white/75 backdrop-blur-md border-[2.5px] border-charcoal rounded-2xl p-8 pb-9 cursor-default transition-all duration-500 h-full flex flex-col shadow-[4px_4px_0px_0px_rgba(28,28,28,1)] hover:shadow-[6px_6px_0px_0px_rgba(28,28,28,1)] hover:-translate-y-2.5 hover:scale-[1.02] hover:z-20 group"
+        className="relative bg-white/75 backdrop-blur-md border-[2.5px] border-charcoal rounded-2xl p-8 pb-9 cursor-default transition-all duration-500 h-full flex flex-col shadow-[4px_4px_0px_0px_rgba(28,28,28,1)] hover:shadow-[6px_6px_0px_0px_rgba(28,28,28,1)] hover:-translate-y-2 hover:z-20 group"
       >
         {/* Card Header (Number & Icon) */}
         <div className="flex justify-between items-center mb-6 shrink-0">
@@ -147,10 +147,22 @@ function UploadIcon({ size = 18, className = "", strokeWidth = 1.8 }) {
 export default function Landing() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [zoomScale, setZoomScale] = useState(1);
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const [scrollY, setScrollY] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [isLeftHovered, setIsLeftHovered] = useState(false);
   const [isRightHovered, setIsRightHovered] = useState(false);
+
+  // Fade out the avatars over a longer scroll distance (starts at 100px, ends at 550px)
+  const fadeStart = 100;
+  const fadeEnd = 550;
+  const scrollProgress = scrollY <= fadeStart
+    ? 0
+    : scrollY >= fadeEnd
+      ? 1
+      : (scrollY - fadeStart) / (fadeEnd - fadeStart);
+
+  // Fade out the hand-drawn arrow pointing to the CTA button immediately as user scrolls
+  const arrowOpacity = Math.max(0, 1 - scrollY / 150);
 
   useEffect(() => {
     // Get or initialize baseline DPR in sessionStorage to persist across page refreshes
@@ -165,18 +177,7 @@ export default function Landing() {
       // Inversely scale to completely cancel out the browser's zoom effect on the avatars
       setZoomScale(baseline / currentDpr);
       setIsMobile(window.innerWidth < 640);
-
-      // Fade out the avatars over a longer scroll distance (starts at 100px, ends at 550px)
-      const scrollY = window.scrollY;
-      const fadeStart = 100;
-      const fadeEnd = 550;
-      if (scrollY <= fadeStart) {
-        setScrollProgress(0);
-      } else if (scrollY >= fadeEnd) {
-        setScrollProgress(1);
-      } else {
-        setScrollProgress((scrollY - fadeStart) / (fadeEnd - fadeStart));
-      }
+      setScrollY(window.scrollY);
     };
 
     window.addEventListener('resize', updateScaleAndScroll);
@@ -303,7 +304,14 @@ export default function Landing() {
         </div>
 
         {/* Curvy blue hand-drawn arrow pointing precisely from the left avatar's face to the CTA button */}
-        <div className="hidden sm:block absolute left-[16%] sm:left-[18%] md:left-[21%] lg:left-[23%] bottom-[12%] sm:bottom-[13%] md:bottom-[15%] lg:bottom-[17%] w-[130px] h-[100px] sm:w-[160px] sm:h-[120px] md:w-[200px] md:h-[150px] lg:w-[240px] lg:h-[180px] pointer-events-none select-none z-0">
+        <div 
+          className="hidden sm:block absolute left-[16%] sm:left-[18%] md:left-[21%] lg:left-[23%] bottom-[12%] sm:bottom-[13%] md:bottom-[15%] lg:bottom-[17%] w-[130px] h-[100px] sm:w-[160px] sm:h-[120px] md:w-[200px] md:h-[150px] lg:w-[240px] lg:h-[180px] pointer-events-none select-none z-0"
+          style={{
+            opacity: arrowOpacity,
+            visibility: arrowOpacity <= 0 ? 'hidden' : 'visible',
+            transition: 'opacity 0.15s ease-out',
+          }}
+        >
           <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full text-[#0f78eb] opacity-90 transition-transform duration-300 hover:scale-105">
             {/* Smooth curve from bottom-left (avatar face) to top-right (button) */}
             <path
@@ -368,7 +376,7 @@ export default function Landing() {
       {/* ── FEATURES ── */}
       <section id="features" className="pt-20 sm:pt-[120px] pb-12 sm:pb-16 px-6">
         <div className="max-w-[1200px] mx-auto">
-          <Reveal delay={0} variant="blur">
+          <Reveal delay={0}>
             <div className="text-center mb-16">
               <p className="text-[14px] font-bold text-charcoal/60 tracking-[1.5px] uppercase mb-3">Features</p>
               <h2 className="text-[clamp(32px,5vw,46px)] font-extrabold text-charcoal tracking-tight mx-auto mb-4.5 max-w-[600px]">
@@ -419,7 +427,7 @@ export default function Landing() {
         <div className="max-w-[1200px] mx-auto">
 
           {/* Header */}
-          <Reveal delay={0} variant="left">
+          <Reveal delay={0}>
             <div className="text-center mb-16">
               <div className="inline-flex items-center gap-[8px] bg-white border border-charcoal/15 rounded-full px-[16px] py-[6px] mb-6 shadow-md">
                 <div className="w-[8px] h-[8px] rounded-full bg-yellow-400" />
@@ -485,7 +493,7 @@ export default function Landing() {
                   <div className="flex md:flex-col items-start md:items-center gap-6 md:gap-4 text-left md:text-center group">
                     
                     {/* Badge Container */}
-                    <div className="w-14 h-14 rounded-full bg-white border-[2.5px] border-charcoal flex items-center justify-center relative z-10 shrink-0 shadow-[3px_3px_0px_0px_rgba(28,28,28,1)] transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[5px_5px_0px_0px_rgba(28,28,28,1)] group-hover:scale-105 bg-gradient-to-br from-white to-sage-light/20">
+                    <div className="w-14 h-14 rounded-full bg-white border-[2.5px] border-charcoal flex items-center justify-center relative z-10 shrink-0 shadow-[3px_3px_0px_0px_rgba(28,28,28,1)] transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[5px_5px_0px_0px_rgba(28,28,28,1)] bg-gradient-to-br from-white to-sage-light/20">
                       <Icon size={20} className="text-charcoal" strokeWidth={2} />
                       
                       {/* Floating mini number bubble */}
@@ -540,7 +548,7 @@ export default function Landing() {
       {/* ── INTERVIEW DETAIL SECTION ── */}
       <section className="px-6 pb-12 sm:pb-16">
         <div className="max-w-[1200px] mx-auto">
-          <Reveal delay={0} variant="zoom">
+          <Reveal delay={0}>
             <div className="text-center mb-16">
               <h2 className="text-[clamp(30px,4.5vw,44px)] font-extrabold text-charcoal tracking-tight mb-4">
                 Turn every interview into an edge
@@ -584,7 +592,7 @@ export default function Landing() {
               return (
                 <Reveal key={title} delay={delay} className="h-full">
                   <div
-                    className="relative bg-white/75 backdrop-blur-md border-[2.5px] border-charcoal rounded-2xl p-8 pb-9 cursor-default transition-all duration-500 h-full flex flex-col justify-between shadow-[4px_4px_0px_0px_rgba(28,28,28,1)] hover:shadow-[6px_6px_0px_0px_rgba(28,28,28,1)] hover:-translate-y-2.5 hover:scale-[1.02] hover:z-20 group"
+                    className="relative bg-white/75 backdrop-blur-md border-[2.5px] border-charcoal rounded-2xl p-8 pb-9 cursor-default transition-all duration-500 h-full flex flex-col justify-between shadow-[4px_4px_0px_0px_rgba(28,28,28,1)] hover:shadow-[6px_6px_0px_0px_rgba(28,28,28,1)] hover:-translate-y-2 hover:z-20 group"
                   >
                     <div>
                       {/* Card Header */}
@@ -627,7 +635,7 @@ export default function Landing() {
       {/* ── HOW IT WORKS ── */}
       <section id="how-it-works" className="py-12 sm:py-16 px-6">
         <div className="max-w-[640px] mx-auto">
-          <Reveal delay={0} variant="right">
+          <Reveal delay={0}>
             <div className="text-center mb-10">
               <p className="text-[14px] font-bold text-charcoal/60 tracking-[1.5px] uppercase mb-3">How it Works</p>
               <h2 className="text-[clamp(30px,4.5vw,44px)] font-extrabold text-charcoal tracking-tight">
