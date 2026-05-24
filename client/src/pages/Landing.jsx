@@ -608,7 +608,7 @@ export default function Landing() {
             <span className="text-[19px] font-bold text-charcoal">HustleMap</span>
           </div>
           <div className="flex gap-6 items-center">
-            <span className="text-[14.5px] text-charcoal/60">Built with React · Node.js · MongoDB</span>
+            <span className="text-[14.5px] text-charcoal/60">Empowering your daily hustle. Built by Akshat.</span>
           </div>
         </div>
       </footer>
