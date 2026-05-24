@@ -146,6 +146,48 @@ function UploadIcon({ size = 18, className = "", strokeWidth = 1.8 }) {
 // ─── Main component ───────────────────────────────────────────────────────────
 export default function Landing() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [zoomScale, setZoomScale] = useState(1);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isLeftHovered, setIsLeftHovered] = useState(false);
+  const [isRightHovered, setIsRightHovered] = useState(false);
+
+  useEffect(() => {
+    // Get or initialize baseline DPR in sessionStorage to persist across page refreshes
+    let baseline = parseFloat(sessionStorage.getItem('baselineDpr'));
+    if (isNaN(baseline)) {
+      baseline = window.devicePixelRatio || 1;
+      sessionStorage.setItem('baselineDpr', baseline.toString());
+    }
+
+    const updateScaleAndScroll = () => {
+      const currentDpr = window.devicePixelRatio || 1;
+      // Inversely scale to completely cancel out the browser's zoom effect on the avatars
+      setZoomScale(baseline / currentDpr);
+      setIsMobile(window.innerWidth < 640);
+
+      // Fade out the avatars over a longer scroll distance (starts at 100px, ends at 550px)
+      const scrollY = window.scrollY;
+      const fadeStart = 100;
+      const fadeEnd = 550;
+      if (scrollY <= fadeStart) {
+        setScrollProgress(0);
+      } else if (scrollY >= fadeEnd) {
+        setScrollProgress(1);
+      } else {
+        setScrollProgress((scrollY - fadeStart) / (fadeEnd - fadeStart));
+      }
+    };
+
+    window.addEventListener('resize', updateScaleAndScroll);
+    window.addEventListener('scroll', updateScaleAndScroll);
+    updateScaleAndScroll();
+
+    return () => {
+      window.removeEventListener('resize', updateScaleAndScroll);
+      window.removeEventListener('scroll', updateScaleAndScroll);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-sage font-[inherit]">
@@ -223,20 +265,40 @@ export default function Landing() {
       <section className="relative overflow-hidden pt-14 sm:pt-18 pb-20 sm:pb-28 text-center bg-sage">
         
         {/* Left Avatar Group - Hand-drawn illustrations peeking from bottom-left (Sized up for impact) */}
-        <div className="absolute bottom-0 left-0 w-[100px] sm:w-[260px] md:w-[320px] lg:w-[380px] xl:w-[420px] select-none pointer-events-none z-0 sm:z-10 opacity-35 sm:opacity-100 transition-all duration-500 transform origin-bottom-left hover:scale-[1.03] hover:rotate-1">
+        <div 
+          className="fixed bottom-0 left-0 w-[100px] sm:w-[260px] md:w-[320px] lg:w-[380px] xl:w-[420px] select-none pointer-events-none z-0 sm:z-10 origin-bottom-left"
+          style={{
+            transform: `scale(${zoomScale * (isLeftHovered ? 1.03 : 1)}) rotate(${isLeftHovered ? 1 : 0}deg)`,
+            opacity: (1 - scrollProgress) * (isMobile ? 0.35 : 1.0),
+            visibility: scrollProgress >= 1 ? 'hidden' : 'visible',
+            transition: 'opacity 0.2s ease-out, transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          }}
+        >
           <img 
             src="/avatar_left.png" 
             alt="Hand-drawn creative professional avatars" 
-            className="w-full h-auto object-contain block filter drop-shadow-[0_4px_12px_rgba(0,0,0,0.04)]" 
+            className="w-full h-auto object-contain block filter drop-shadow-[0_4px_12px_rgba(0,0,0,0.04)] pointer-events-auto cursor-pointer" 
+            onMouseEnter={() => setIsLeftHovered(true)}
+            onMouseLeave={() => setIsLeftHovered(false)}
           />
         </div>
 
         {/* Right Avatar Group - Hand-drawn illustrations peeking from bottom-right (Sized up for impact) */}
-        <div className="absolute bottom-0 right-0 w-[85px] sm:w-[220px] md:w-[270px] lg:w-[320px] xl:w-[360px] select-none pointer-events-none z-0 sm:z-10 opacity-35 sm:opacity-100 transition-all duration-500 transform origin-bottom-right hover:scale-[1.03] hover:-rotate-1">
+        <div 
+          className="fixed bottom-0 right-0 w-[85px] sm:w-[220px] md:w-[270px] lg:w-[320px] xl:w-[360px] select-none pointer-events-none z-0 sm:z-10 origin-bottom-right"
+          style={{
+            transform: `scale(${zoomScale * (isRightHovered ? 1.03 : 1)}) rotate(${isRightHovered ? -1 : 0}deg)`,
+            opacity: (1 - scrollProgress) * (isMobile ? 0.35 : 1.0),
+            visibility: scrollProgress >= 1 ? 'hidden' : 'visible',
+            transition: 'opacity 0.2s ease-out, transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          }}
+        >
           <img 
             src="/avatar_right.png" 
             alt="Hand-drawn team member avatars" 
-            className="w-full h-auto object-contain block filter drop-shadow-[0_4px_12px_rgba(0,0,0,0.04)]" 
+            className="w-full h-auto object-contain block filter drop-shadow-[0_4px_12px_rgba(0,0,0,0.04)] pointer-events-auto cursor-pointer" 
+            onMouseEnter={() => setIsRightHovered(true)}
+            onMouseLeave={() => setIsRightHovered(false)}
           />
         </div>
 
