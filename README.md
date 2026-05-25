@@ -21,7 +21,8 @@ A full‑stack job application tracker with analytics, interview prep, and a Chr
 - **Upcoming interviews visibility**: Upcoming interview items and “days until interview” style countdowns for planning.
 - **Analytics dashboard**: High-signal metrics (totals, pipeline counts) plus trend visuals (charts/graphs via Recharts).
 - **Prioritized Action Items Widget**: Dynamic, client-side task generator that prioritizes actions (upcoming interviews within 72 hours, pending Online Assessments, follow-up alerts, inactivity reminders, weekly goals).
-- **Browser Extension Setup Guide**: A step-by-step interactive setup instructions page (available at `/extension`) where users can generate and copy their unique **Extension ID** to link their extension to their account.
+- **Browser Extension Setup Guide**: A step-by-step interactive setup instructions page (available at `/extension`) featuring a high-quality video walkthrough and an elegant UI for generating and copying your unique **Extension ID** to link your extension.
+- **Smooth UX & Navigation**: Intelligent scroll restoration management and auto-scroll to top behavior on page loads for a premium feel.
 - **Redesigned Chrome Extension Popup**: Aesthetic styling matching the web app (Sage Green / Charcoal) with simplified configuration (no manual API URL storage required).
 - **Enhanced Data Management**: Clear and safe data cleaning options like **Delete All Jobs** and **Clear All Captured Jobs** with confirmation prompts.
 - **OCR fallback (backend)**: The backend includes an OCR fallback using `tesseract.js` for screenshot capture flows when structured data isn’t available.
