@@ -25,7 +25,8 @@ A full‑stack job application tracker with analytics, interview prep, and a Chr
 - **Redesigned Chrome Extension Popup**: Aesthetic styling matching the web app (Sage Green / Charcoal) with simplified configuration (no manual API URL storage required).
 - **Enhanced Data Management**: Clear and safe data cleaning options like **Delete All Jobs** and **Clear All Captured Jobs** with confirmation prompts.
 - **OCR fallback (backend)**: The backend includes an OCR fallback using `tesseract.js` for screenshot capture flows when structured data isn’t available.
-- **Authentication & Landing Page**: JWT-based sign up, login, session preservation, and a sleek modern landing page.
+- **Authentication & Landing Page**: Sleek, responsive landing page with scroll-animations and feature showcases. Secure JWT-based sign-up, login, and session preservation.
+- **Dashboard & User Profile**: Interactive dashboard view featuring progress tracking, user profile management, and comprehensive activity widgets.
 - **Dark mode**: **Not currently implemented** in the frontend codebase (planned / optional enhancement).
 
 ---
