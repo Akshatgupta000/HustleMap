@@ -165,6 +165,12 @@ export default function Landing() {
   const arrowOpacity = Math.max(0, 1 - scrollY / 150);
 
   useEffect(() => {
+    // Scroll to top on load and prevent browser from restoring scroll position
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+
     // Get or initialize baseline DPR in sessionStorage to persist across page refreshes
     let baseline = parseFloat(sessionStorage.getItem('baselineDpr'));
     if (isNaN(baseline)) {
@@ -187,6 +193,9 @@ export default function Landing() {
     return () => {
       window.removeEventListener('resize', updateScaleAndScroll);
       window.removeEventListener('scroll', updateScaleAndScroll);
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'auto';
+      }
     };
   }, []);
 
