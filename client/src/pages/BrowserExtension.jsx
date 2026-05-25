@@ -75,7 +75,7 @@ export default function BrowserExtension() {
             controls 
             preload="metadata"
           >
-            <source src="/install-guide.mp4" type="video/mp4" />
+            <source src="https://drive.google.com/uc?export=download&id=1O3qImRLlv4wUx1xRz3fUNrENskJqQJvr" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         </div>
