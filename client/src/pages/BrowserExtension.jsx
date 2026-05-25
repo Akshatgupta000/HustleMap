@@ -132,7 +132,8 @@ export default function BrowserExtension() {
               Setup Guide
             </h2>
             <a 
-              href="https://github.com/Akshatgupta000/HustleMap-extension/archive/refs/heads/main.zip" 
+              href="/hustlemap-extension.zip" 
+              download="hustlemap-extension.zip"
             >
               <button 
                 className="bg-charcoal hover:bg-charcoal/90 text-white font-bold flex items-center justify-center gap-1.5 px-3 py-2 rounded-[8px] transition-all cursor-pointer text-[12px] shadow-[1px_1px_0px_0px_#1c1c1c] active:translate-y-[1px] active:translate-x-[1px] active:shadow-none uppercase tracking-wide"
