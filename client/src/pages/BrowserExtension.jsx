@@ -65,35 +65,27 @@ export default function BrowserExtension() {
   ];
 
   return (
-    <div className="flex flex-col lg:flex-row gap-5 max-w-[1000px] mx-auto w-full animate-in fade-in duration-500 pb-8 px-4 sm:px-0">
+    <div className="flex flex-col lg:flex-row gap-6 max-w-[1150px] mx-auto w-full animate-in fade-in duration-500 pb-8 px-4 sm:px-0">
       
-      {/* Left Column: Video Setup Guide (65%) */}
-      <div className="lg:w-[65%] w-full flex flex-col gap-5 order-1 lg:order-2 self-start">
+      {/* Left Column: Video Setup Guide */}
+      <div className="lg:w-[58%] w-full flex flex-col gap-5 order-1 lg:order-2 self-start">
         <div className="border border-charcoal/15 rounded-[24px] overflow-hidden shadow-sm flex flex-col w-full">
           <video 
             className="w-full h-auto outline-none" 
             controls 
             preload="metadata"
           >
-            <source src="https://drive.google.com/uc?export=download&id=1O3qImRLlv4wUx1xRz3fUNrENskJqQJvr" type="video/mp4" />
+            <source src="https://res.cloudinary.com/dxm904hac/video/upload/v1779728330/Video_Project_1_1_s2cuhz.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         </div>
 
         {/* Browser Extension Header Box (Moved Below Video) */}
-        <div className="flex flex-col gap-4 bg-sage-light border border-charcoal/15 rounded-[20px] p-5 shadow-sm shrink-0">
-          <div className="flex flex-row items-start gap-4">
-            <div className="w-10 h-10 rounded-[12px] bg-white border border-charcoal/10 flex items-center justify-center shadow-sm shrink-0 mt-0.5 overflow-hidden p-1.5">
-              <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <h1 className="text-[20px] font-black text-charcoal tracking-tight leading-none">
-                Extension ID
-              </h1>
-              <p className="text-[13px] font-medium text-charcoal/60 leading-relaxed">
-                Capture job listings directly from LinkedIn, Indeed, and Glassdoor without manual data entry.
-              </p>
-            </div>
+        <div className="flex flex-col gap-4 bg-sage-light border border-charcoal/15 rounded-[20px] p-5 shadow-sm shrink-0 max-w-[380px]">
+          <div>
+            <h1 className="text-[20px] font-black text-charcoal tracking-tight leading-none">
+              Browser Extension
+            </h1>
           </div>
 
           {/* Extension ID Button Block */}
@@ -130,8 +122,8 @@ export default function BrowserExtension() {
         </div>
       </div>
 
-      {/* Right Column: Info & Setup Steps (35%) */}
-      <div className="lg:w-[35%] w-full flex flex-col order-2 lg:order-1 gap-5 h-auto lg:h-[600px]">
+      {/* Right Column: Info & Setup Steps */}
+      <div className="lg:w-[42%] w-full flex flex-col order-2 lg:order-1 gap-5 h-auto lg:h-[600px]">
 
         {/* Bottom: Setup Guide Steps (Scrollable) */}
         <div className="bg-white border border-charcoal/15 rounded-[24px] overflow-hidden shadow-sm flex flex-col flex-1 min-h-[300px]">
@@ -151,18 +143,18 @@ export default function BrowserExtension() {
             </a>
           </div>
           
-          <div className="p-5 sm:p-5 flex flex-col gap-5 overflow-y-auto custom-scrollbar">
-            <div className="grid gap-6">
+          <div className="p-4 flex flex-col gap-3 overflow-y-auto custom-scrollbar">
+            <div className="grid gap-3">
               {steps.map((step, index) => (
-                <div key={index} className="flex gap-4 items-start group">
-                  <div className="shrink-0 w-10 h-10 rounded-[12px] bg-charcoal/5 border border-charcoal/10 flex items-center justify-center text-charcoal/50 transition-all group-hover:bg-charcoal/[0.07] group-hover:text-charcoal group-hover:border-charcoal/20">
-                    <step.icon size={18} strokeWidth={2.5} />
+                <div key={index} className="flex gap-3 items-start group">
+                  <div className="shrink-0 w-8 h-8 rounded-[8px] bg-charcoal/5 border border-charcoal/10 flex items-center justify-center text-charcoal/50 transition-all group-hover:bg-charcoal/[0.07] group-hover:text-charcoal group-hover:border-charcoal/20">
+                    <step.icon size={15} strokeWidth={2.5} />
                   </div>
                   <div className="flex flex-col pt-0.5">
-                    <h3 className="text-[15px] font-extrabold text-charcoal tracking-tight leading-tight">
+                    <h3 className="text-[13px] font-extrabold text-charcoal tracking-tight leading-tight">
                       {step.title}
                     </h3>
-                    <p className="text-[14px] font-medium text-charcoal/60 leading-snug mt-1">
+                    <p className="text-[12px] font-medium text-charcoal/60 leading-snug mt-0.5">
                       {step.description}
                     </p>
                   </div>
