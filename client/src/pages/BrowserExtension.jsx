@@ -65,78 +65,32 @@ export default function BrowserExtension() {
   ];
 
   return (
-    <div className="flex flex-col lg:flex-row gap-5 max-w-[1000px] mx-auto w-full animate-in fade-in duration-500 pb-8">
+    <div className="flex flex-col lg:flex-row gap-5 max-w-[1000px] mx-auto w-full animate-in fade-in duration-500 pb-8 px-4 sm:px-0">
       
-      {/* Left Column: Setup Guide (70%) */}
-      <div className="lg:w-[70%] w-full flex flex-col order-2 lg:order-1">
-        {/* Main Content Card */}
-        <div className="bg-white border border-charcoal/15 rounded-[24px] overflow-hidden shadow-sm flex flex-col h-full">
-          <div className="px-5 py-3 border-b border-charcoal/10 bg-sage-light/50 flex items-center justify-between">
-            <h2 className="text-[14px] font-extrabold text-charcoal tracking-tight flex items-center gap-2">
-              Setup Guide
-            </h2>
-            <a 
-              href="https://github.com/Akshatgupta000/HustleMap-extension/archive/refs/heads/main.zip" 
-            >
-              <button 
-                className="bg-charcoal hover:bg-charcoal/90 text-white font-bold flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-[8px] transition-all cursor-pointer text-[10px] shadow-[1px_1px_0px_0px_#1c1c1c] active:translate-y-[1px] active:translate-x-[1px] active:shadow-none uppercase tracking-wide"
-              >
-                Download .zip
-                <Download size={12} strokeWidth={2.5} />
-              </button>
-            </a>
-          </div>
-          
-          <div className="p-5 sm:p-6 flex flex-col gap-5 flex-1">
-            <div className="grid gap-3.5 sm:gap-4">
-              {steps.map((step, index) => (
-                <div key={index} className="flex gap-3.5 items-start group">
-                  <div className="shrink-0 w-8 h-8 rounded-[10px] bg-charcoal/5 border border-charcoal/10 flex items-center justify-center text-charcoal/50 transition-all group-hover:bg-charcoal/[0.07] group-hover:text-charcoal group-hover:border-charcoal/20">
-                    <step.icon size={14} strokeWidth={2.5} />
-                  </div>
-                  <div className="flex flex-col pt-0.5">
-                    <h3 className="text-[13px] font-extrabold text-charcoal tracking-tight leading-tight">
-                      {step.title}
-                    </h3>
-                    <p className="text-[12px] font-medium text-charcoal/60 leading-snug mt-0.5">
-                      {step.description}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            
-            <div className="mt-auto pt-3 border-t border-charcoal/10 flex justify-end">
-              <a 
-                href="https://github.com/Akshatgupta000/HustleMap-extension" 
-                target="_blank" 
-                rel="noopener noreferrer"
-              >
-                <button 
-                  className="bg-white border border-charcoal/15 hover:bg-charcoal/5 text-charcoal font-bold flex items-center justify-center gap-1.5 h-7 px-3 rounded-[8px] transition-all cursor-pointer text-[10px] uppercase tracking-wide"
-                >
-                  View Source
-                  <ExternalLink size={12} strokeWidth={2.5} />
-                </button>
-              </a>
-            </div>
-          </div>
+      {/* Left Column: Video Setup Guide (65%) */}
+      <div className="lg:w-[65%] w-full flex flex-col gap-5 order-1 lg:order-2 self-start">
+        <div className="border border-charcoal/15 rounded-[24px] overflow-hidden shadow-sm flex flex-col w-full">
+          <video 
+            className="w-full h-auto outline-none" 
+            controls 
+            preload="metadata"
+          >
+            <source src="/install-guide.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
         </div>
-      </div>
 
-      {/* Right Column: Heading Box (30%) */}
-      <div className="lg:w-[30%] w-full flex flex-col order-1 lg:order-2">
-        {/* Header Section */}
-        <div className="flex flex-col gap-6 bg-sage-light border border-charcoal/15 rounded-[24px] p-5 shadow-sm h-fit">
-          <div className="flex flex-col gap-3">
-            <div className="w-10 h-10 rounded-[12px] bg-white border border-charcoal/10 flex items-center justify-center shadow-sm shrink-0">
-              <Puzzle size={20} className="text-charcoal" />
+        {/* Browser Extension Header Box (Moved Below Video) */}
+        <div className="flex flex-col gap-4 bg-sage-light border border-charcoal/15 rounded-[20px] p-5 shadow-sm shrink-0">
+          <div className="flex flex-row items-start gap-4">
+            <div className="w-10 h-10 rounded-[12px] bg-white border border-charcoal/10 flex items-center justify-center shadow-sm shrink-0 mt-0.5 overflow-hidden p-1.5">
+              <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
             </div>
             <div className="flex flex-col gap-1.5">
               <h1 className="text-[20px] font-black text-charcoal tracking-tight leading-none">
-                Browser Extension
+                Extension ID
               </h1>
-              <p className="text-[12.5px] font-medium text-charcoal/60 leading-relaxed">
+              <p className="text-[13px] font-medium text-charcoal/60 leading-relaxed">
                 Capture job listings directly from LinkedIn, Indeed, and Glassdoor without manual data entry.
               </p>
             </div>
@@ -144,13 +98,13 @@ export default function BrowserExtension() {
 
           {/* Extension ID Button Block */}
           {user && (
-            <div className="shrink-0 bg-white border border-charcoal/15 rounded-[16px] p-3 shadow-sm flex flex-col gap-2">
+            <div className="shrink-0 bg-white border border-charcoal/15 rounded-[12px] p-4 shadow-sm flex flex-col gap-2">
               <div className="flex flex-col">
-                <span className="text-[9px] font-black text-charcoal/40 uppercase tracking-widest leading-none mb-1.5">Your EXT ID</span>
+                <span className="text-[11px] font-black text-charcoal/40 uppercase tracking-widest leading-none mb-1.5">Your EXT ID</span>
                 {user.extensionId ? (
-                  <span className="font-mono text-[13px] font-extrabold text-charcoal leading-none break-all">{user.extensionId}</span>
+                  <span className="font-mono text-[14px] font-extrabold text-charcoal leading-none break-all">{user.extensionId}</span>
                 ) : (
-                  <span className="text-[11px] font-bold text-charcoal/40 leading-none">Not generated</span>
+                  <span className="text-[12px] font-bold text-charcoal/40 leading-none">Not generated</span>
                 )}
               </div>
               {user.extensionId ? (
@@ -159,20 +113,78 @@ export default function BrowserExtension() {
                     navigator.clipboard.writeText(user.extensionId);
                     toast.success("Extension ID copied");
                   }}
-                  className="w-full flex items-center justify-center gap-1.5 py-2 bg-charcoal/5 hover:bg-charcoal/10 text-charcoal rounded-[10px] transition-colors cursor-pointer text-[11px] font-bold"
+                  className="w-full flex items-center justify-center gap-1.5 py-2.5 bg-charcoal hover:bg-charcoal/90 text-white rounded-[8px] transition-colors cursor-pointer text-[13px] font-bold mt-1"
                 >
-                  <Copy size={12} strokeWidth={2.5} /> Copy ID
+                  <Copy size={16} strokeWidth={2.5} /> Copy ID
                 </button>
               ) : (
                 <button
                   onClick={ensureExtensionId}
-                  className="w-full py-2 bg-charcoal hover:bg-charcoal/90 text-white text-[11px] font-extrabold rounded-[10px] transition-colors cursor-pointer uppercase tracking-wider mt-1"
+                  className="w-full py-2.5 bg-charcoal hover:bg-charcoal/90 text-white text-[13px] font-extrabold rounded-[8px] transition-colors cursor-pointer uppercase tracking-wider mt-1"
                 >
                   Generate ID
                 </button>
               )}
             </div>
           )}
+        </div>
+      </div>
+
+      {/* Right Column: Info & Setup Steps (35%) */}
+      <div className="lg:w-[35%] w-full flex flex-col order-2 lg:order-1 gap-5 h-auto lg:h-[600px]">
+
+        {/* Bottom: Setup Guide Steps (Scrollable) */}
+        <div className="bg-white border border-charcoal/15 rounded-[24px] overflow-hidden shadow-sm flex flex-col flex-1 min-h-[300px]">
+          <div className="px-5 py-4 border-b border-charcoal/10 bg-sage-light/50 flex items-center justify-between shrink-0">
+            <h2 className="text-[18px] font-extrabold text-charcoal tracking-tight flex items-center gap-2">
+              Setup Guide
+            </h2>
+            <a 
+              href="https://github.com/Akshatgupta000/HustleMap-extension/archive/refs/heads/main.zip" 
+            >
+              <button 
+                className="bg-charcoal hover:bg-charcoal/90 text-white font-bold flex items-center justify-center gap-1.5 px-3 py-2 rounded-[8px] transition-all cursor-pointer text-[12px] shadow-[1px_1px_0px_0px_#1c1c1c] active:translate-y-[1px] active:translate-x-[1px] active:shadow-none uppercase tracking-wide"
+              >
+                Download .zip
+                <Download size={14} strokeWidth={2.5} />
+              </button>
+            </a>
+          </div>
+          
+          <div className="p-5 sm:p-5 flex flex-col gap-5 overflow-y-auto custom-scrollbar">
+            <div className="grid gap-6">
+              {steps.map((step, index) => (
+                <div key={index} className="flex gap-4 items-start group">
+                  <div className="shrink-0 w-10 h-10 rounded-[12px] bg-charcoal/5 border border-charcoal/10 flex items-center justify-center text-charcoal/50 transition-all group-hover:bg-charcoal/[0.07] group-hover:text-charcoal group-hover:border-charcoal/20">
+                    <step.icon size={18} strokeWidth={2.5} />
+                  </div>
+                  <div className="flex flex-col pt-0.5">
+                    <h3 className="text-[15px] font-extrabold text-charcoal tracking-tight leading-tight">
+                      {step.title}
+                    </h3>
+                    <p className="text-[14px] font-medium text-charcoal/60 leading-snug mt-1">
+                      {step.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <div className="mt-auto p-3 border-t border-charcoal/10 flex justify-end shrink-0 bg-white">
+            <a 
+              href="https://github.com/Akshatgupta000/HustleMap-extension" 
+              target="_blank" 
+              rel="noopener noreferrer"
+            >
+              <button 
+                className="bg-white border border-charcoal/15 hover:bg-charcoal/5 text-charcoal font-bold flex items-center justify-center gap-1.5 h-8 px-4 rounded-[8px] transition-all cursor-pointer text-[12px] uppercase tracking-wide"
+              >
+                View Source
+                <ExternalLink size={14} strokeWidth={2.5} />
+              </button>
+            </a>
+          </div>
         </div>
       </div>
       

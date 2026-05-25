@@ -8,7 +8,7 @@ import { cn } from "../lib/cn";
 // VITE_API_URL handles production vs local base URLs
 const API_BASE = import.meta.env.VITE_API_URL 
   ? import.meta.env.VITE_API_URL.replace(/\/api$/, '') 
-  : "http://localhost:5000";
+  : "http://localhost:5001";
 
 export default function ProfileNotesPopover({ theme = "light" }) {
   const [isOpen, setIsOpen] = useState(false);

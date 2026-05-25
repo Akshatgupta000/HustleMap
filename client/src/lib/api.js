@@ -4,9 +4,9 @@ import axios from 'axios';
 const envUrl = import.meta.env.VITE_API_URL;
 let rawUrl = envUrl;
 
-// For local development, fall back to http://localhost:5000/api if VITE_API_URL is not set
+// For local development, fall back to http://localhost:5001/api if VITE_API_URL is not set
 if (!rawUrl && import.meta.env.DEV) {
-  rawUrl = 'http://localhost:5000/api';
+  rawUrl = 'http://localhost:5001/api';
 }
 
 if (!rawUrl) {
