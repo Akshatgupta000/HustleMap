@@ -2,6 +2,12 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import User from '../models/User.js';
 import { sendOTPEmail } from '../utils/mailer.js';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Generate unique extension ID
 function generateExtensionId() {
@@ -211,6 +217,41 @@ export const updateUserProfile = async (req, res, next) => {
     });
   } catch (error) {
     console.error('UpdateUserProfile error:', error);
+    next(error);
+  }
+};
+
+// Delete Resume
+export const deleteResume = async (req, res, next) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Invalid or missing user context' });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (user.resumeUrl) {
+      const filename = path.basename(user.resumeUrl);
+      const filePath = path.join(__dirname, '..', '..', 'uploads', filename);
+      
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+      
+      user.resumeUrl = undefined;
+      await user.save();
+    }
+
+    return res.json({
+      message: 'Resume deleted successfully',
+      resumeUrl: user.resumeUrl,
+    });
+  } catch (error) {
+    console.error('DeleteResume error:', error);
     next(error);
   }
 };

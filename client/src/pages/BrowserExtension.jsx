@@ -83,9 +83,12 @@ export default function BrowserExtension() {
         {/* Browser Extension Header Box (Moved Below Video) */}
         <div className="flex flex-col gap-4 bg-sage-light border border-charcoal/15 rounded-[20px] p-5 shadow-sm shrink-0 max-w-[380px]">
           <div>
-            <h1 className="text-[20px] font-black text-charcoal tracking-tight leading-none">
+            <h1 className="text-[20px] font-black text-charcoal tracking-tight leading-none mb-2">
               Browser Extension
             </h1>
+            <p className="text-[13px] font-medium text-charcoal/70 leading-snug">
+              Save jobs instantly from <strong>LinkedIn</strong>, <strong>Indeed</strong>, and <strong>Glassdoor</strong>.
+            </p>
           </div>
 
           {/* Extension ID Button Block */}

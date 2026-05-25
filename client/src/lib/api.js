@@ -98,6 +98,7 @@ export const authAPI = {
       'Content-Type': 'multipart/form-data'
     }
   }),
+  deleteResume: () => api.delete('/auth/profile/resume'),
 };
 
 export const jobsAPI = {

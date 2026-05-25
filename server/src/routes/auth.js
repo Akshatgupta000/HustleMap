@@ -7,7 +7,8 @@ import {
   updateUserProfile,
   forgotPassword,
   verifyOtp,
-  resetPassword
+  resetPassword,
+  deleteResume
 } from '../controllers/authController.js';
 import { authenticateToken } from '../middleware/auth.js';
 import { upload } from '../middleware/upload.js';
@@ -23,5 +24,6 @@ router.get('/extension-id', authenticateToken, getExtensionId);
 
 router.get('/profile', authenticateToken, getUserProfile);
 router.put('/profile', authenticateToken, upload.single('resumePdf'), updateUserProfile);
+router.delete('/profile/resume', authenticateToken, deleteResume);
 
 export default router;

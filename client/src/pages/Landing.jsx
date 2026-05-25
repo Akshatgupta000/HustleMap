@@ -446,7 +446,7 @@ export default function Landing() {
                 Save Jobs Instantly with our Chrome Extension
               </h2>
               <p className="text-[17.5px] text-charcoal/60 max-w-[540px] mx-auto leading-relaxed">
-                Capture job descriptions, titles, and screenshots from major job boards directly into HustleMap in a single click.
+                Capture job descriptions, titles, and screenshots directly into HustleMap in a single click. <br/><strong>Supports LinkedIn, Indeed, and Glassdoor.</strong>
               </p>
             </div>
           </Reveal>

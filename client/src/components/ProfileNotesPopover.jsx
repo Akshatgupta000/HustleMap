@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { FileText, UploadCloud, Loader2, Save, ExternalLink } from "lucide-react";
+import { FileText, UploadCloud, Loader2, Save, ExternalLink, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { authAPI } from "../lib/api";
 import { cn } from "../lib/cn";
@@ -17,6 +17,7 @@ export default function ProfileNotesPopover({ theme = "light" }) {
 
   const [notes, setNotes] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
   // Close on click outside
   useEffect(() => {
@@ -54,6 +55,17 @@ export default function ProfileNotesPopover({ theme = "light" }) {
     },
   });
 
+  const deleteResumeMutation = useMutation({
+    mutationFn: () => authAPI.deleteResume(),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["userProfile"]);
+      toast.success("Resume deleted!");
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.error || "Failed to delete resume");
+    },
+  });
+
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -76,6 +88,19 @@ export default function ProfileNotesPopover({ theme = "light" }) {
       formData.append("resumePdf", selectedFile);
     }
     updateProfileMutation.mutate(formData);
+  };
+
+  const handleDeleteResume = () => {
+    setShowConfirmDelete(true);
+  };
+
+  const confirmDelete = () => {
+    deleteResumeMutation.mutate();
+    setShowConfirmDelete(false);
+  };
+
+  const cancelDelete = () => {
+    setShowConfirmDelete(false);
   };
 
   return (
@@ -109,19 +134,53 @@ export default function ProfileNotesPopover({ theme = "light" }) {
             <label className="text-[13px] font-bold text-charcoal tracking-wide uppercase">Resume (PDF)</label>
             
             {profile?.resumeUrl && !selectedFile && (
-              <div className="flex items-center justify-between p-3 bg-sage-light border-2 border-charcoal rounded-[12px] mb-2">
-                <span className="text-[13px] font-bold text-charcoal truncate flex-1">
-                  Current Resume Saved
-                </span>
-                <a 
-                  href={`${API_BASE}${profile.resumeUrl}`} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 text-[11px] font-extrabold bg-charcoal text-white px-4 py-1.5 rounded-full hover:bg-charcoal/90 transition-colors shadow-sm"
-                >
-                  <ExternalLink className="h-3.5 w-3.5" />
-                  View
-                </a>
+              <div className="flex flex-col p-3 bg-sage-light border-2 border-charcoal rounded-[12px] mb-2 overflow-hidden transition-all">
+                {!showConfirmDelete ? (
+                  <div className="flex items-center justify-between">
+                    <span className="text-[13px] font-bold text-charcoal truncate flex-1">
+                      Current Resume Saved
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <a 
+                        href={`${API_BASE}${profile.resumeUrl}`} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 text-[11px] font-extrabold bg-charcoal text-white px-4 py-1.5 rounded-full hover:bg-charcoal/90 transition-colors shadow-sm"
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" />
+                        View
+                      </a>
+                      <button
+                        onClick={handleDeleteResume}
+                        disabled={deleteResumeMutation.isPending}
+                        className="flex items-center justify-center p-1.5 text-red-500 hover:bg-red-50 rounded-full transition-colors disabled:opacity-50"
+                        title="Delete Resume"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between animate-in fade-in zoom-in duration-200">
+                    <span className="text-[13px] font-bold text-red-600 truncate flex-1">
+                      Delete resume?
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={cancelDelete}
+                        className="text-[11px] font-extrabold text-charcoal px-3 py-1.5 border-2 border-charcoal/20 hover:border-charcoal rounded-full transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={confirmDelete}
+                        className="text-[11px] font-extrabold bg-red-500 text-white px-3 py-1.5 border-2 border-red-500 hover:bg-red-600 rounded-full transition-colors"
+                      >
+                        Confirm
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
