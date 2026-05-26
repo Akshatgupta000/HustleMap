@@ -87,7 +87,7 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
       formData.append("name", editedName.trim());
       const response = await authAPI.updateUserProfile(formData);
       
-      const updatedUser = { ...user, name: response.data.name };
+      const updatedUser = { ...user, name: response.data?.name || editedName.trim() };
       setUser(updatedUser);
       setAuth(localStorage.getItem("token"), updatedUser);
       
@@ -276,11 +276,11 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
                   </div>
                 )}
                 <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-black font-extrabold text-[13px] shrink-0 transition-transform group-hover:scale-105">
-                  {user?.name?.charAt(0).toUpperCase()}
+                  {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
                 </div>
                 <div className="flex items-center gap-1">
                   <span className="text-[13px] font-bold text-white">
-                    {user?.name?.split(' ')[0]}
+                    {user?.name ? user.name.split(' ')[0] : 'User'}
                   </span>
                   <ChevronDown className="h-3.5 w-3.5 text-white/50 group-hover:text-white transition-colors" />
                 </div>
