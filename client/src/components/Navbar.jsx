@@ -20,15 +20,7 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
   const storedUser = getUser();
   const [user, setUser] = useState(storedUser);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isEditingName, setIsEditingName] = useState(false);
-  const [editedName, setEditedName] = useState(user?.name || "");
   const dropdownRef = useRef(null);
-
-  useEffect(() => {
-    if (user) {
-      setEditedName(user.name);
-    }
-  }, [user]);
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -70,35 +62,11 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
-        setIsEditingName(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  const handleSaveName = async () => {
-    if (!editedName.trim()) {
-      toast.error("Name cannot be empty");
-      return;
-    }
-    try {
-      const formData = new FormData();
-      formData.append("name", editedName.trim());
-      const response = await authAPI.updateUserProfile(formData);
-      
-      const updatedUser = { ...user, name: response.data?.name || editedName.trim() };
-      setUser(updatedUser);
-      setAuth(localStorage.getItem("token"), updatedUser);
-      
-      window.dispatchEvent(new Event("storage"));
-      toast.success("Name updated successfully!");
-      setIsEditingName(false);
-    } catch (error) {
-      toast.error(error.response?.data?.error || "Failed to update name");
-      console.error("Save name error:", error);
-    }
-  };
 
   const handleLogout = () => {
     clearAuth();
@@ -262,7 +230,6 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
               <div 
                 onClick={() => {
                   setIsDropdownOpen(!isDropdownOpen);
-                  setIsEditingName(false);
                 }}
                 className="flex items-center gap-2.5 cursor-pointer group"
               >
@@ -289,56 +256,9 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
               {isDropdownOpen && (
                 <div className="absolute top-full right-0 mt-3 w-52 bg-white border-2 border-charcoal rounded-[20px] shadow-[4px_4px_0px_0px_#1c1c1c] py-1 z-50 overflow-hidden origin-top-right animate-in fade-in zoom-in-95 duration-200">
                   <div className="px-4 py-3 border-b border-charcoal/10">
-                    {isEditingName ? (
-                      <div className="flex items-center gap-1.5 py-0.5 mb-1">
-                        <input
-                          type="text"
-                          value={editedName}
-                          onChange={(e) => setEditedName(e.target.value)}
-                          className="w-full px-2 py-0.5 text-[13px] font-bold border-2 border-charcoal rounded-[8px] focus:outline-none focus:ring-1 focus:ring-sage text-charcoal bg-white"
-                          autoFocus
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") handleSaveName();
-                            if (e.key === "Escape") {
-                              setIsEditingName(false);
-                              setEditedName(user?.name || "");
-                            }
-                          }}
-                        />
-                        <button 
-                          onClick={handleSaveName}
-                          className="p-1 text-green-600 hover:bg-green-50 rounded transition-colors"
-                          title="Save"
-                        >
-                          <Check className="h-3.5 w-3.5" />
-                        </button>
-                        <button 
-                          onClick={() => {
-                            setIsEditingName(false);
-                            setEditedName(user?.name || "");
-                          }}
-                          className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
-                          title="Cancel"
-                        >
-                          <X className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-between gap-1 group/name mb-1">
-                        <p className="text-[14px] font-extrabold text-charcoal truncate tracking-tight flex-1">{user?.name}</p>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setIsEditingName(true);
-                            setEditedName(user?.name || "");
-                          }}
-                          className="p-1 text-charcoal/40 hover:text-charcoal hover:bg-charcoal/5 rounded transition-all"
-                          title="Edit name"
-                        >
-                          <Pencil className="h-3 w-3" />
-                        </button>
-                      </div>
-                    )}
+                    <div className="flex items-center justify-between gap-1 group/name mb-1">
+                      <p className="text-[14px] font-extrabold text-charcoal truncate tracking-tight flex-1">{user?.name}</p>
+                    </div>
                     <p className="text-[11px] font-bold text-charcoal/55 truncate">{user?.email}</p>
                   </div>
 
