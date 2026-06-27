@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import { useState, useEffect } from "react";
 import { isAuthenticated } from "./lib/auth";
@@ -26,11 +26,46 @@ const futureFlags = {
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      refetchOnWindowFocus: false,
+      refetchOnWindowFocus: true,
+      refetchInterval: 3000, // Background poll every 3 seconds for seamless real-time updates
       retry: 1,
     },
   },
 });
+
+function AutoSyncQueries() {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const handleJobSaved = () => {
+      queryClient.invalidateQueries();
+    };
+
+    window.addEventListener("hustlemap:job_saved", handleJobSaved);
+
+    const handleMessage = (event) => {
+      if (event.data?.type === "HUSTLEMAP_JOB_SAVED") {
+        queryClient.invalidateQueries();
+      }
+    };
+    window.addEventListener("message", handleMessage);
+
+    const handleStorage = (e) => {
+      if (e.key === "hustlemap_last_job_saved") {
+        queryClient.invalidateQueries();
+      }
+    };
+    window.addEventListener("storage", handleStorage);
+
+    return () => {
+      window.removeEventListener("hustlemap:job_saved", handleJobSaved);
+      window.removeEventListener("message", handleMessage);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, [queryClient]);
+
+  return null;
+}
 
 function App() {
   const [isAuth, setIsAuth] = useState(() => isAuthenticated());
@@ -49,6 +84,7 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <AutoSyncQueries />
       <BrowserRouter future={futureFlags}>
         <ScrollToTop />
         <div className="min-h-screen bg-background">

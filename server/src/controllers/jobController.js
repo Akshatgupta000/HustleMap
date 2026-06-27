@@ -777,8 +777,32 @@ export const saveFromExtension = async (req, res) => {
           description: description || '',
           applicationSource: source || 'other',
           jobUrl: url,
-          screenshot: null,  // screenshot not saved — text details only
+          screenshot: screenshot || null,
         };
+
+        // If location or description is missing, enrich using OCR from screenshot if available
+        if ((!jobData.location || !jobData.description) && screenshot) {
+          try {
+            const worker = await createWorker('eng');
+            const {
+              data: { text },
+            } = await worker.recognize(screenshot);
+            await worker.terminate();
+
+            const extracted = parseJobDetails(text);
+            if (!jobData.location && extracted.location) {
+              jobData.location = extracted.location;
+            }
+            if (!jobData.description && extracted.jobDescription) {
+              jobData.description = extracted.jobDescription;
+            }
+            if (extracted.salary) {
+              jobData.salary = extracted.salary;
+            }
+          } catch (ocrErr) {
+            console.warn('OCR enrichment failed:', ocrErr);
+          }
+        }
     } else if (screenshot) {
       // Fallback to OCR
       if (!screenshot) {
@@ -818,7 +842,7 @@ export const saveFromExtension = async (req, res) => {
           location: extracted.location || '',
           salary: extracted.salary || '',
           description: extracted.jobDescription || text,
-          screenshot: null,  // screenshot not saved — text details only
+          screenshot: screenshot || null,
           applicationSource: detectedSource || 'other',
           jobUrl: url,
         };
@@ -830,7 +854,7 @@ export const saveFromExtension = async (req, res) => {
           location: '',
           salary: '',
           description: '',
-          screenshot: null,  // screenshot not saved — text details only
+          screenshot: screenshot || null,
           applicationSource: detectedSource || 'other',
           jobUrl: url,
         };
@@ -860,40 +884,80 @@ export const saveFromExtension = async (req, res) => {
   }
 };
 
-// Simple parser for job details from OCR text
+function cleanLocation(raw) {
+  if (!raw) return null;
+  let loc = raw;
+  if (loc.includes('·')) loc = loc.split('·')[0];
+  if (loc.includes('•')) loc = loc.split('•')[0];
+  if (loc.includes('|')) loc = loc.split('|')[0];
+  loc = loc.replace(/\d+\s+(day|week|month|year|hr|hour)s?\s+ago.*/i, '');
+  loc = loc.replace(/over\s+\d+.*click.*/i, '');
+  loc = loc.replace(/responses\s+managed.*/i, '');
+  loc = loc.trim();
+  return loc.length > 0 ? loc : null;
+}
+
+// Smart parser for job details from OCR text
 function parseJobDetails(text) {
+  if (!text) return { jobTitle: null, company: null, location: null, salary: null, jobDescription: null };
+
   const lines = text
     .split('\n')
     .map((line) => line.trim())
     .filter((line) => line);
+
   const result = {
     jobTitle: null,
     company: null,
     location: null,
     salary: null,
-    jobDescription: null,
+    jobDescription: lines.join('\n'),
   };
 
-  // Look for common patterns
+  // 1. Look for common explicit key-value patterns
   for (const line of lines) {
     const lower = line.toLowerCase();
-    if (lower.includes('job title') || lower.includes('position')) {
+    if ((lower.includes('job title') || lower.includes('position')) && !result.jobTitle) {
       result.jobTitle = line.split(':')[1]?.trim() || line;
     } else if (lower.includes('company') && !result.company) {
       result.company = line.split(':')[1]?.trim() || line;
     } else if (lower.includes('location') && !result.location) {
-      result.location = line.split(':')[1]?.trim() || line;
+      result.location = cleanLocation(line.split(':')[1]?.trim() || line);
     } else if (
-      lower.includes('salary') ||
-      lower.includes('pay') ||
-      lower.includes('$')
+      (lower.includes('salary') || lower.includes('pay') || lower.includes('$')) && !result.salary
     ) {
       result.salary = line.split(':')[1]?.trim() || line;
     }
   }
 
-  // Description as remaining text
-  result.jobDescription = lines.join('\n');
+  // 2. Heuristic search for location if not found explicitly
+  if (!result.location) {
+    for (const line of lines) {
+      const cleaned = cleanLocation(line);
+      if (!cleaned) continue;
+      const lower = cleaned.toLowerCase();
+      if (
+        lower.includes('developer') ||
+        lower.includes('engineer') ||
+        lower.includes('manager') ||
+        lower.includes('full-time') ||
+        lower.includes('part-time') ||
+        lower.includes('apply') ||
+        lower.includes('save')
+      ) {
+        continue;
+      }
+      const hasComma = cleaned.includes(',');
+      const isRemoteOrHybrid = lower.includes('remote') || lower.includes('hybrid') || lower.includes('on-site');
+      const commonCities = ['hyderabad', 'bangalore', 'bengaluru', 'mumbai', 'delhi', 'pune', 'chennai', 'noida', 'gurgaon', 'gurugram', 'london', 'new york', 'san francisco', 'india', 'usa', 'uk', 'ca', 'ny', 'tx', 'telangana'];
+      const matchesCommonCity = commonCities.some((city) => lower.includes(city));
+
+      if (hasComma || isRemoteOrHybrid || matchesCommonCity) {
+        result.location = cleaned;
+        break;
+      }
+    }
+  }
 
   return result;
 }
