@@ -28,16 +28,16 @@ The modern job hunt is fragmented. Engineers manage applications across LinkedIn
 
 ## Product Tour
 
-> **Note:** Screenshots pending capture (See `docs/SCREENSHOT_CHECKLIST.md`).
+> **Note:** The screenshots below demonstrate the core features of HustleMap in action.
 
 | Dashboard & Analytics | Job Pipeline |
 | :---: | :---: |
-| ![Dashboard Placeholder](https://via.placeholder.com/400x250?text=Dashboard+View) | ![Pipeline Placeholder](https://via.placeholder.com/400x250?text=Kanban+Board) |
+| ![Dashboard View](docs/screenshots/dashboard.png) | ![Kanban Board](docs/screenshots/pipeline-kanban.png) |
 | *High-signal metrics and weekly progress tracking.* | *Drag-and-drop pipeline management.* |
 
 | Extension Capture | Interview Prep Hub |
 | :---: | :---: |
-| ![Extension Placeholder](https://via.placeholder.com/400x250?text=Chrome+Extension) | ![Prep Placeholder](https://via.placeholder.com/400x250?text=Interview+Hub) |
+| ![Chrome Extension Capture](docs/screenshots/extension-capture.png) | ![Interview Prep Hub](docs/screenshots/interview-prep.png) |
 | *On-page bounding box capture on LinkedIn/Indeed.* | *Log rounds, questions, and difficulty ratings.* |
 
 ## Architecture
