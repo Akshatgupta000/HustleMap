@@ -1,252 +1,151 @@
-# HustleMap
+<div align="center">
+  <img src="https://via.placeholder.com/150x150?text=HustleMap+Logo" alt="HustleMap Logo" width="120" />
+  <h1>HustleMap</h1>
+  <p><strong>A full-stack, analytics-driven job application tracking platform with a custom Chrome Extension for frictionless data capture.</strong></p>
 
-**Track smarter. Prep better. Get hired.**
-A full‑stack job application tracker with analytics, interview prep, and a Chrome extension for screenshot-based job capture.
-
----
-
-## 📌 Project Title & Tagline
-
-**HustleMap** is your personal command center for job hunting—track applications end‑to‑end, stay on top of interviews, and save postings straight from LinkedIn/Indeed/Glassdoor in seconds.
-
----
-
-## 🚀 Features (UPDATED)
-
-- **Job tracking system**: Create, edit, and manage job applications with rich details (company, role, links, notes, dates, contacts).
-- **Status tracking**: Move jobs through the pipeline (e.g. **Applied**, **Online Test**, **Interview**, **Offer**, **Rejected**, **Withdrawn**, plus **Saved** from captures).
-- **Fast “Quick Add”**: Add a job in seconds with sensible defaults; use the full form when you want deeper details.
-- **Search, filter, sort**: Find jobs quickly by company/role; filter by status & type; sort by date and status.
-- **Interview preparation hub**: Log interview questions, track rounds, rate difficulty, and store preparation notes per job.
-- **Upcoming interviews visibility**: Upcoming interview items and “days until interview” style countdowns for planning.
-- **Analytics dashboard**: High-signal metrics (totals, pipeline counts) plus trend visuals (charts/graphs via Recharts).
-- **Prioritized Action Items Widget**: Dynamic, client-side task generator that prioritizes actions (upcoming interviews within 72 hours, pending Online Assessments, follow-up alerts, inactivity reminders, weekly goals).
-- **Browser Extension Setup Guide**: A step-by-step interactive setup instructions page (available at `/extension`) featuring a high-quality video walkthrough and an elegant UI for generating and copying your unique **Extension ID** to link your extension.
-- **Smooth UX & Navigation**: Intelligent scroll restoration management and auto-scroll to top behavior on page loads for a premium feel.
-- **Redesigned Chrome Extension Popup**: Aesthetic styling matching the web app (Sage Green / Charcoal) with simplified configuration (no manual API URL storage required).
-- **Enhanced Data Management**: Clear and safe data cleaning options like **Delete All Jobs** and **Clear All Captured Jobs** with confirmation prompts.
-- **OCR fallback (backend)**: The backend includes an OCR fallback using `tesseract.js` for screenshot capture flows when structured data isn’t available.
-- **Authentication & Landing Page**: Sleek, responsive landing page with scroll-animations and feature showcases. Secure JWT-based sign-up, login, and session preservation.
-- **Dashboard & User Profile**: Interactive dashboard view featuring progress tracking, user profile management, and comprehensive activity widgets.
-- **Dark mode**: **Not currently implemented** in the frontend codebase (planned / optional enhancement).
+  <a href="#architecture">Architecture</a> •
+  <a href="#features">Features</a> •
+  <a href="#engineering-highlights">Engineering</a> •
+  <a href="#chrome-extension">Extension</a>
+</div>
 
 ---
 
-## 🧩 Chrome Extension (NEW SECTION)
+## Problem Statement
 
-The `hustlemap-extension/` Chrome extension lets you save job posts to HustleMap without copy/pasting details.
+The modern job hunt is fragmented. Engineers manage applications across LinkedIn, Indeed, Glassdoor, and company portals, often resulting in messy spreadsheets, missed follow-ups, and lost interview context. **HustleMap** centralizes the job search pipeline by combining a robust React/Node.js dashboard with a purpose-built Chrome Extension. Instead of manual data entry, users draw a bounding box over a job posting, and the extension instantly captures and syncs the data to the backend via an OCR/AI pipeline.
 
-### What the extension does
+## Features
 
-- Lets you **draw a rectangle** around a job posting on supported sites
-- Captures and **crops a screenshot**
-- Shows a **preview** inside the extension popup
-- Saves the screenshot into HustleMap as a **Captured / Saved** job (with URL + timestamp)
+| Feature | Description |
+|---------|-------------|
+| **Frictionless Capture** | Custom MV3 Chrome Extension allowing users to draw and capture job descriptions directly from supported boards. |
+| **Intelligent Parsing** | Backend pipeline utilizing `tesseract.js` (OCR) and `@google/generative-ai` to extract structured data from screenshots. |
+| **Pipeline Management** | Interactive Kanban board and list views to track applications from *Applied* to *Offer*. |
+| **Interview Prep Hub** | Dedicated modules to log technical questions, track rounds, rate difficulty, and store preparation notes. |
+| **Actionable Analytics** | Real-time dashboards built with `Recharts` displaying conversion funnels, weekly trends, and actionable prioritized tasks. |
+| **Real-time Sync** | Cross-tab synchronization using local storage events and TanStack Query invalidation. |
 
-### How it works (draw → capture → preview → save)
+## Product Tour
 
-1. **Draw**: Click “Save Job to HustleMap” and drag to select the job content.
-2. **Capture**: The extension captures the visible tab and crops it to your selection.
-3. **Preview**: Reopen the popup to see the screenshot + the job URL.
-4. **Save**: Confirm to send it to the HustleMap API and create a captured job in your account.
+> **Note:** Screenshots pending capture (See `docs/SCREENSHOT_CHECKLIST.md`).
 
-### Supported platforms
+| Dashboard & Analytics | Job Pipeline |
+| :---: | :---: |
+| ![Dashboard Placeholder](https://via.placeholder.com/400x250?text=Dashboard+View) | ![Pipeline Placeholder](https://via.placeholder.com/400x250?text=Kanban+Board) |
+| *High-signal metrics and weekly progress tracking.* | *Drag-and-drop pipeline management.* |
 
-- **LinkedIn**
-- **Indeed**
-- **Glassdoor**
+| Extension Capture | Interview Prep Hub |
+| :---: | :---: |
+| ![Extension Placeholder](https://via.placeholder.com/400x250?text=Chrome+Extension) | ![Prep Placeholder](https://via.placeholder.com/400x250?text=Interview+Hub) |
+| *On-page bounding box capture on LinkedIn/Indeed.* | *Log rounds, questions, and difficulty ratings.* |
 
-### How it connects to the main app
+## Architecture
 
-- The extension calls the backend endpoint `POST /api/jobs/save-from-extension` (**no JWT required**).
-- The request includes your **HustleMap Extension ID** (generated on the `/extension` page and stored in the extension settings).
-- In the web app, captured jobs can be viewed and then **converted** by editing them into a normal tracked job.
+```mermaid
+graph TD
+    Client[React Client] -->|REST API / JWT| Backend[Express / Node.js]
+    Extension[Chrome Extension MV3] -->|Extension ID Auth| Backend
+    Backend -->|Mongoose| DB[(MongoDB)]
+    Backend -->|OCR Processing| Tesseract[Tesseract.js]
+    Backend -->|Data Extraction| Gemini[Google Generative AI]
+    
+    subgraph Frontend State
+    Client --> Query[TanStack Query]
+    end
+```
 
-For full extension details, see `hustlemap-extension/README.md`.
+## Technology Stack
 
----
+| Layer | Technologies | Responsibility |
+|-------|--------------|----------------|
+| **Frontend** | React 18, Vite, Tailwind CSS, Radix UI | Component-driven UI, responsive design, accessible primitives. |
+| **State** | TanStack Query, React Router | Server state caching, optimistic updates, client-side routing. |
+| **Backend** | Node.js, Express | RESTful API orchestration, CORS management, request validation. |
+| **Database** | MongoDB, Mongoose | Schema validation, relational mapping (Users ↔ Jobs), aggregations. |
+| **AI / OCR** | Tesseract.js, `@google/generative-ai` | Fallback text extraction and AI-driven structured data parsing. |
+| **Extension** | Manifest V3, Vanilla JS | Content script injection, activeTab screenshotting, seamless POSTing. |
 
-## 🛠 Tech Stack
+## Engineering Highlights
 
-### Frontend (`client/`)
+### 1. Frictionless Extension Communication
+The Chrome Extension bypasses traditional JWT friction. Instead of requiring users to log in within the extension popup, the web app generates a unique **Extension ID**. The extension securely POSTs base64 screenshot payloads directly to the backend using this ID. 
 
-- **React + Vite**
-- **Tailwind CSS**
-- **React Router**
-- **TanStack Query** (server state) + **Axios**
-- **Recharts** (analytics charts/graphs)
-- **Radix UI** (primitives) + **Lucide** (icons) + **React Hot Toast** (toasts)
+### 2. Intelligent Data Extraction Pipeline
+Capturing a screenshot is only half the problem. The backend (`/api/jobs/screenshot`) utilizes `multer` for multipart payload handling, falls back to `tesseract.js` for OCR text extraction, and leverages `@google/generative-ai` to convert raw image data/text into structured JSON (Company, Role, Requirements).
 
-### Backend (`server/`)
+### 3. Cross-Tab State Synchronization
+To ensure the dashboard instantly reflects jobs saved via the extension, the frontend utilizes a custom `AutoSyncQueries` wrapper. It listens to `storage` events (`hustlemap_last_job_saved`) and `window.postMessage`, automatically invalidating TanStack Query caches to re-fetch data in real-time without manual page reloads.
 
-- **Node.js + Express**
-- **MongoDB + Mongoose**
-- **JWT** auth + **bcrypt** password hashing
-- **CORS** + **Morgan** logging
-- **tesseract.js** (OCR support for screenshot capture flows)
+### 4. Robust CORS Strategy
+The Express server implements a dynamic CORS configuration, distinguishing between standard web traffic (verifying against a `CLIENT_URL` whitelist), server-to-server traffic, and `chrome-extension://` origins to ensure maximum security without blocking the MV3 extension.
 
-### State management / APIs
+## API Documentation
 
-- **TanStack Query** handles caching, refetching, and mutations on the frontend.
-- REST API under `/api`:
-  - Auth: `/api/auth/*`
-  - Jobs: `/api/jobs/*` (CRUD, stats, captured jobs, extension endpoints)
-    - `DELETE /api/jobs` – Clear all job applications for the user.
-    - `DELETE /api/jobs/captured` – Clear all captured/saved screenshot jobs for the user.
+*A full breakdown is available in `docs/API.md`.*
 
----
+| Method | Endpoint | Purpose | Auth Required |
+|--------|----------|---------|---------------|
+| `POST` | `/api/jobs/save-from-extension` | Save parsed job from extension. | Extension ID |
+| `POST` | `/api/jobs/screenshot` | Process raw screenshot payload via OCR/AI. | Extension ID |
+| `GET`  | `/api/jobs/dashboard-feed` | Aggregate priority tasks and upcoming interviews. | JWT |
+| `GET`  | `/api/jobs/stats` | Fetch conversion metrics and pipeline counts. | JWT |
 
-## ⚙️ Installation & Setup
+## Installation & Setup
 
 ### Prerequisites
+- Node.js 18+
+- MongoDB instance (local or Atlas)
 
-- Node.js **18+**
-- MongoDB (local) or MongoDB Atlas
-- npm
-
-### 1) Clone repo
-
+### 1. Clone & Install
 ```bash
-git clone <your-repo-url>
+git clone <repository-url>
 cd HustleMap
+
+# Install Backend
+cd server && npm install
+
+# Install Frontend
+cd ../client && npm install
 ```
 
-### 2) Install dependencies
+### 2. Environment Variables
+Create `.env` files based on the `.env.example` templates.
 
-Backend:
-
-```bash
-cd server
-npm install
-```
-
-Frontend:
-
-```bash
-cd ../client
-npm install
-```
-
-### 3) Setup environment variables
-
-Backend (`server/.env`) is **required**:
-
+**`server/.env`**
 ```env
 PORT=5000
 NODE_ENV=development
-JWT_SECRET=replace-with-a-strong-secret
-MONGO_URI=mongodb://localhost:27017/job_tracker
-
-# Optional (recommended in production; can be comma-separated for multiple origins)
-CLIENT_URL=http://localhost:5173
+MONGO_URI=mongodb://localhost:27017/hustlemap
+JWT_SECRET=your_secure_jwt_secret
+# Required if using AI extraction features
+GEMINI_API_KEY=your_gemini_api_key
 ```
 
-Frontend (`client/.env`) is recommended (example exists at `client/.env.example`):
-
+**`client/.env`**
 ```env
 VITE_API_URL=http://localhost:5000/api
 ```
 
-### 4) Run frontend and backend
-
-Backend:
-
+### 3. Run Development Servers
 ```bash
-cd server
-npm run dev
+# Terminal 1 (Backend)
+cd server && npm run dev
+
+# Terminal 2 (Frontend)
+cd client && npm run dev
 ```
 
-Frontend:
+## Chrome Extension Setup
 
-```bash
-cd client
-npm run dev
-```
+1. Open `chrome://extensions` in Google Chrome.
+2. Enable **Developer mode** in the top right.
+3. Click **Load unpacked** and select the `hustlemap-extension` directory.
+4. In the HustleMap web dashboard, navigate to the `/extension` page to generate your **Extension ID**.
+5. Click the extension icon in Chrome, open settings, and paste your ID.
 
-- Frontend: `http://localhost:5173`
-- Backend: `http://localhost:5000`
+## Contributing
+Contributions are welcome. Please ensure that PRs are focused, and that local endpoints (especially the screenshot parsing pipeline) have been verified before submitting.
 
-### More guides
-
-- Local setup walkthrough: `SETUP.md`
-- Production deployment (Vercel + Render): `DEPLOYMENT.md`
-
----
-
-## 🧪 How to Use
-
-### Using the main web app
-
-1. **Register / Login**
-2. **Add jobs**
-   - Use **Quick Add** for fast entry
-   - Use the **full job form** for complete details
-3. **Track status** as you progress (Applied → Interview → Offer, etc.)
-4. **Prep interviews** by logging questions, rounds, and difficulty ratings
-5. **Review analytics** to understand your funnel and weekly activity
-
-### Using the Chrome extension (step-by-step)
-
-1. Open `chrome://extensions` and enable **Developer mode**
-2. Click **Load unpacked** and select the `hustlemap-extension/` folder
-3. Open the extension popup → **Settings** → enter your **HustleMap Extension ID** (generated/copied from your web app's `/extension` setup page) → Save
-4. Open a supported job posting (LinkedIn/Indeed/Glassdoor)
-5. Click the extension → **Save Job to HustleMap** → **draw** a rectangle on the page
-6. Reopen the popup → review the **Preview** → click **Save to HustleMap**
-7. In the web app, view captured jobs and **Convert** them by editing into a normal tracked job
-
----
-
-## 📊 Screenshots / UI Preview
-
-No screenshots are committed in the repo right now. If you add images, a good convention is:
-
-- `docs/screenshots/dashboard.png`
-- `docs/screenshots/job-details.png`
-- `docs/screenshots/analytics.png`
-- `docs/screenshots/extension-preview.png`
-
----
-
-## 📁 Project Structure
-
-```
-HustleMap/
-├── client/                 # React frontend (Vite)
-├── server/                 # Express API + MongoDB (Mongoose)
-├── hustlemap-extension/    # Chrome extension (MV3) for screenshot capture
-├── README.md               # Project overview (this file)
-├── SETUP.md                # Local setup notes
-└── DEPLOYMENT.md           # Production deployment guide
-```
-
----
-
-## 🔮 Future Improvements (optional)
-
-- **Dark mode** toggle + persisted theme
-- **Structured job extraction** from job boards (auto-fill company/title/location instead of screenshot-first)
-- **Notifications/reminders** for follow-ups and interview prep
-- **Richer analytics** (conversion funnel, time-to-decision, source performance)
-- **CSV import/export**
-
----
-
-## 🤝 Contributing
-
-- Fork the repo and create a branch: `git checkout -b feature/my-change`
-- Keep PRs focused (one feature/fix per PR when possible)
-- Verify core flows locally (auth, create/edit job, stats, captured jobs)
-- Open a PR with:
-  - What changed
-  - Why it changed
-  - How to test
-
-Documentation improvements are welcome.
-
----
-
-## 📄 License
-
-No license file is currently present in the repository. If you want this project to be open-source, add a `LICENSE` file (e.g. MIT) and update this section.
-
+## License
+MIT License (Pending addition to repository)

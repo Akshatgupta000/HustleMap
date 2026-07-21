@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { jobsAPI } from "../lib/api";
 import JobCard from "../components/JobCard";
+import KanbanBoard from "../components/KanbanBoard";
 import JobDetailsModal from "../components/JobDetailsModal";
 import { Link } from "react-router-dom";
 import { useState, useMemo, useEffect } from "react";
@@ -41,11 +42,30 @@ export default function Jobs() {
   const [selectedJob, setSelectedJob] = useState(null);
   const [isConfirmingClear, setIsConfirmingClear] = useState(false);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [viewMode, setViewMode] = useState(() => localStorage.getItem("jobsViewMode") || "list");
+
+  useEffect(() => {
+    localStorage.setItem("jobsViewMode", viewMode);
+  }, [viewMode]);
 
   const { data: jobs, isLoading } = useQuery({
     queryKey: ["jobs"],
     queryFn: () => jobsAPI.getAll().then((res) => res.data),
   });
+
+  const kanbanFilteredJobs = useMemo(() => {
+    if (!jobs) return [];
+    return jobs.filter((job) => {
+      const company = (job?.company ?? "").toString();
+      const position = (job?.position ?? "").toString();
+      const matchesSearch =
+        searchQuery === "" ||
+        company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        position.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesType = typeFilter === "all" || job.application_type === typeFilter;
+      return matchesSearch && matchesType;
+    });
+  }, [jobs, searchQuery, typeFilter]);
 
   const clearAllMutation = useMutation({
     mutationFn: () => jobsAPI.deleteAll(),
@@ -147,6 +167,28 @@ export default function Jobs() {
             </button>
           </div>
 
+          {/* View Toggle */}
+          <div className="flex items-center border-2 border-charcoal rounded-[12px] bg-white p-0.5 shadow-[2px_2px_0px_0px_#1c1c1c] overflow-hidden shrink-0 w-full sm:w-auto justify-center">
+            <button
+              onClick={() => setViewMode("list")}
+              className={cn(
+                "px-3 py-1.5 text-[11px] font-black uppercase rounded-[8px] transition-all cursor-pointer flex-1 sm:flex-initial text-center",
+                viewMode === "list" ? "bg-charcoal text-white" : "bg-transparent text-charcoal"
+              )}
+            >
+              List
+            </button>
+            <button
+              onClick={() => setViewMode("kanban")}
+              className={cn(
+                "px-3 py-1.5 text-[11px] font-black uppercase rounded-[8px] transition-all cursor-pointer flex-1 sm:flex-initial text-center",
+                viewMode === "kanban" ? "bg-charcoal text-white" : "bg-transparent text-charcoal"
+              )}
+            >
+              Kanban
+            </button>
+          </div>
+
           <Link to="/jobs/new" className="no-underline w-full sm:w-auto shrink-0">
             <button className="flex items-center justify-center gap-1.5 bg-charcoal text-white border-2 border-charcoal rounded-[12px] px-5 h-10 text-[13px] font-black tracking-wide cursor-pointer shadow-[3px_3px_0px_0px_#1c1c1c] hover:shadow-[1px_1px_0px_0px_#1c1c1c] hover:translate-x-[2px] hover:translate-y-[2px] transition-all w-full uppercase">
               <Plus size={16} strokeWidth={3} /> Add Job
@@ -163,19 +205,28 @@ export default function Jobs() {
         )}>
           
           {/* Status Filter */}
-          <div className="flex flex-col gap-1">
-            <h3 className="text-[11px] font-black text-charcoal tracking-widest uppercase mb-1">Status</h3>
-            <div className="flex flex-col gap-0">
-              {STATUS_FILTERS.map((status) => (
-                <FilterItem
-                  key={status}
-                  label={STATUS_LABELS[status]}
-                  isActive={statusFilter === status}
-                  onClick={() => setStatusFilter(status)}
-                />
-              ))}
+          {viewMode === "list" ? (
+            <div className="flex flex-col gap-1">
+              <h3 className="text-[11px] font-black text-charcoal tracking-widest uppercase mb-1">Status</h3>
+              <div className="flex flex-col gap-0">
+                {STATUS_FILTERS.map((status) => (
+                  <FilterItem
+                    key={status}
+                    label={STATUS_LABELS[status]}
+                    isActive={statusFilter === status}
+                    onClick={() => setStatusFilter(status)}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="flex flex-col gap-1">
+              <h3 className="text-[11px] font-black text-charcoal tracking-widest uppercase mb-1">Status</h3>
+              <span className="text-[11px] font-bold text-charcoal/40 italic">
+                All columns shown
+              </span>
+            </div>
+          )}
 
           <div className="h-[1px] w-full bg-charcoal/10 rounded-full"></div>
 
@@ -255,45 +306,57 @@ export default function Jobs() {
 
         {/* ── Main Content / Results ── */}
         <div className="flex-1 w-full flex flex-col gap-4 min-w-0 h-full min-h-0">
-          <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pb-6 pr-1">
-            {isLoading ? (
-              <div className="bg-white border-2 border-charcoal rounded-[24px] py-20 text-center text-[15px] font-bold text-charcoal/60 shadow-[4px_4px_0px_0px_#1c1c1c]">
-                Loading your jobs…
-              </div>
-            ) : filteredAndSortedJobs.length === 0 ? (
-              <div className="bg-white border-2 border-charcoal rounded-[32px] py-20 px-6 text-center shadow-[6px_6px_0px_0px_#1c1c1c] flex flex-col items-center">
-                <h3 className="text-[20px] font-black text-charcoal mb-3">
-                  {searchQuery || statusFilter !== "all" || typeFilter !== "all"
-                    ? "No jobs match your filters"
-                    : "No jobs yet"}
-                </h3>
-                <p className="text-[15px] font-bold text-charcoal/60 mb-8 max-w-sm">
-                  {searchQuery || statusFilter !== "all" || typeFilter !== "all"
-                    ? "Try adjusting your search or unchecking some filters."
-                    : "Start tracking your job applications and stay organized."}
-                </p>
-                <button 
-                  onClick={() => {
-                    setSearchQuery("");
-                    setStatusFilter("all");
-                    setTypeFilter("all");
-                  }}
-                  className="bg-sage-light text-charcoal border-2 border-charcoal rounded-full px-6 py-3 text-[14px] font-black cursor-pointer shadow-[3px_3px_0px_0px_#1c1c1c] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[1px_1px_0px_0px_#1c1c1c] transition-all uppercase tracking-wide"
+          {viewMode === "list" ? (
+            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pb-6 pr-1">
+              {isLoading ? (
+                <div className="bg-white border-2 border-charcoal rounded-[24px] py-20 text-center text-[15px] font-bold text-charcoal/60 shadow-[4px_4px_0px_0px_#1c1c1c]">
+                  Loading your jobs…
+                </div>
+              ) : filteredAndSortedJobs.length === 0 ? (
+                <div className="bg-white border-2 border-charcoal rounded-[32px] py-20 px-6 text-center shadow-[6px_6px_0px_0px_#1c1c1c] flex flex-col items-center">
+                  <h3 className="text-[20px] font-black text-charcoal mb-3">
+                    {searchQuery || statusFilter !== "all" || typeFilter !== "all"
+                      ? "No jobs match your filters"
+                      : "No jobs yet"}
+                  </h3>
+                  <p className="text-[15px] font-bold text-charcoal/60 mb-8 max-w-sm">
+                    {searchQuery || statusFilter !== "all" || typeFilter !== "all"
+                      ? "Try adjusting your search or unchecking some filters."
+                      : "Start tracking your job applications and stay organized."}
+                  </p>
+                  <button 
+                    onClick={() => {
+                      setSearchQuery("");
+                      setStatusFilter("all");
+                      setTypeFilter("all");
+                    }}
+                    className="bg-sage-light text-charcoal border-2 border-charcoal rounded-full px-6 py-3 text-[14px] font-black cursor-pointer shadow-[3px_3px_0px_0px_#1c1c1c] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[1px_1px_0px_0px_#1c1c1c] transition-all uppercase tracking-wide"
+                  >
+                    Clear Filters
+                  </button>
+                </div>
+              ) : (
+                <div
+                  className="grid gap-3"
+                  style={{ gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))" }}
                 >
-                  Clear Filters
-                </button>
-              </div>
-            ) : (
-              <div
-                className="grid gap-3"
-                style={{ gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))" }}
-              >
-                {filteredAndSortedJobs.map((job) => (
-                  <JobCard key={job.id} job={job} onViewDetails={setSelectedJob} />
-                ))}
-              </div>
-            )}
-          </div>
+                  {filteredAndSortedJobs.map((job) => (
+                    <JobCard key={job.id} job={job} onViewDetails={setSelectedJob} />
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="flex-1 min-h-0 h-full">
+              {isLoading ? (
+                <div className="bg-white border-2 border-charcoal rounded-[24px] py-20 text-center text-[15px] font-bold text-charcoal/60 shadow-[4px_4px_0px_0px_#1c1c1c]">
+                  Loading your jobs…
+                </div>
+              ) : (
+                <KanbanBoard jobs={kanbanFilteredJobs} onViewDetails={setSelectedJob} />
+              )}
+            </div>
+          )}
         </div>
       </div>
 
