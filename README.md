@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://via.placeholder.com/150x150?text=HustleMap+Logo" alt="HustleMap Logo" width="120" />
+  <img src="client/public/logo.png" alt="HustleMap Logo" width="120" />
   <h1>HustleMap</h1>
   <p><strong>A full-stack, analytics-driven job application tracking platform with a custom Chrome Extension for frictionless data capture.</strong></p>
 
@@ -30,15 +30,15 @@ The modern job hunt is fragmented. Engineers manage applications across LinkedIn
 
 > **Note:** The screenshots below demonstrate the core features of HustleMap in action.
 
-| Dashboard & Analytics | Job Pipeline |
+| Dashboard | Job Pipeline |
 | :---: | :---: |
 | ![Dashboard View](docs/screenshots/dashboard.png) | ![Kanban Board](docs/screenshots/pipeline-kanban.png) |
 | *High-signal metrics and weekly progress tracking.* | *Drag-and-drop pipeline management.* |
 
-| Extension Capture | Interview Prep Hub |
+| Extension Capture | Detailed Analytics |
 | :---: | :---: |
-| ![Chrome Extension Capture](docs/screenshots/extension-capture.png) | ![Interview Prep Hub](docs/screenshots/interview-prep.png) |
-| *On-page bounding box capture on LinkedIn/Indeed.* | *Log rounds, questions, and difficulty ratings.* |
+| ![Chrome Extension Capture](docs/screenshots/extension-capture.png) | ![Detailed Analytics](docs/screenshots/interview-prep.png) |
+| *On-page bounding box capture on LinkedIn/Indeed.* | *In-depth metrics, conversion funnels, and activity trends.* |
 
 ## Architecture
 
