@@ -151,6 +151,8 @@ export default function Landing() {
   const [isMobile, setIsMobile] = useState(false);
   const [isLeftHovered, setIsLeftHovered] = useState(false);
   const [isRightHovered, setIsRightHovered] = useState(false);
+  const [imagesLoaded, setImagesLoaded] = useState({ left: false, right: false });
+  const allAssetsLoaded = imagesLoaded.left && imagesLoaded.right;
 
   // Fade out the avatars over a longer scroll distance (starts at 100px, ends at 550px)
   const fadeStart = 100;
@@ -279,7 +281,7 @@ export default function Landing() {
           className="fixed bottom-0 left-0 w-[100px] sm:w-[260px] md:w-[320px] lg:w-[380px] xl:w-[420px] select-none pointer-events-none z-0 sm:z-10 origin-bottom-left"
           style={{
             transform: `scale(${zoomScale * (isLeftHovered ? 1.03 : 1)}) rotate(${isLeftHovered ? 1 : 0}deg)`,
-            opacity: (1 - scrollProgress) * (isMobile ? 0.35 : 1.0),
+            opacity: allAssetsLoaded ? (1 - scrollProgress) * (isMobile ? 0.35 : 1.0) : 0,
             visibility: scrollProgress >= 1 ? 'hidden' : 'visible',
             transition: 'opacity 0.2s ease-out, transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
           }}
@@ -287,9 +289,11 @@ export default function Landing() {
           <img 
             src="/avatar_left.png" 
             alt="Hand-drawn creative professional avatars" 
+            fetchPriority="high"
             className="w-full h-auto object-contain block filter drop-shadow-[0_4px_12px_rgba(0,0,0,0.04)] pointer-events-auto cursor-pointer" 
             onMouseEnter={() => setIsLeftHovered(true)}
             onMouseLeave={() => setIsLeftHovered(false)}
+            onLoad={() => setImagesLoaded(prev => ({ ...prev, left: true }))}
           />
         </div>
 
@@ -298,7 +302,7 @@ export default function Landing() {
           className="fixed bottom-0 right-0 w-[85px] sm:w-[220px] md:w-[270px] lg:w-[320px] xl:w-[360px] select-none pointer-events-none z-0 sm:z-10 origin-bottom-right"
           style={{
             transform: `scale(${zoomScale * (isRightHovered ? 1.03 : 1)}) rotate(${isRightHovered ? -1 : 0}deg)`,
-            opacity: (1 - scrollProgress) * (isMobile ? 0.35 : 1.0),
+            opacity: allAssetsLoaded ? (1 - scrollProgress) * (isMobile ? 0.35 : 1.0) : 0,
             visibility: scrollProgress >= 1 ? 'hidden' : 'visible',
             transition: 'opacity 0.2s ease-out, transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
           }}
@@ -306,9 +310,11 @@ export default function Landing() {
           <img 
             src="/avatar_right.png" 
             alt="Hand-drawn team member avatars" 
+            fetchPriority="high"
             className="w-full h-auto object-contain block filter drop-shadow-[0_4px_12px_rgba(0,0,0,0.04)] pointer-events-auto cursor-pointer" 
             onMouseEnter={() => setIsRightHovered(true)}
             onMouseLeave={() => setIsRightHovered(false)}
+            onLoad={() => setImagesLoaded(prev => ({ ...prev, right: true }))}
           />
         </div>
 
@@ -316,8 +322,8 @@ export default function Landing() {
         <div 
           className="hidden sm:block absolute left-[16%] sm:left-[18%] md:left-[21%] lg:left-[23%] bottom-[12%] sm:bottom-[13%] md:bottom-[15%] lg:bottom-[17%] w-[130px] h-[100px] sm:w-[160px] sm:h-[120px] md:w-[200px] md:h-[150px] lg:w-[240px] lg:h-[180px] pointer-events-none select-none z-0"
           style={{
-            opacity: arrowOpacity,
-            visibility: arrowOpacity <= 0 ? 'hidden' : 'visible',
+            opacity: allAssetsLoaded ? arrowOpacity : 0,
+            visibility: (allAssetsLoaded && arrowOpacity > 0) ? 'visible' : 'hidden',
             transition: 'opacity 0.15s ease-out',
           }}
         >

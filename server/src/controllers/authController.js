@@ -42,7 +42,7 @@ export const register = async (req, res, next) => {
     // Check if user exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ error: 'User already exists' });
+      return res.status(400).json({ error: 'Email already registered' });
     }
 
     // Create user
@@ -95,14 +95,14 @@ export const login = async (req, res, next) => {
     const user = await User.findOne({ email }).select('+password');
     if (!user) {
       console.warn(`[Login] Failed login attempt: User not found (${email})`);
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: 'Email not registered' });
     }
 
     // Verify password
     const isValid = await user.comparePassword(password);
     if (!isValid) {
       console.warn(`[Login] Failed login attempt: Incorrect password for ${email}`);
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: 'Wrong password' });
     }
 
     // Generate JWT
