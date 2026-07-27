@@ -39,6 +39,7 @@ export default function ProfileNotesPopover({ theme = "light" }) {
   // Sync loaded profile data to local state
   useEffect(() => {
     if (profile) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setNotes(profile.generalNotes || "");
     }
   }, [profile]);

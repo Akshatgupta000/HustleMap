@@ -38,6 +38,7 @@ export default function Navbar({ onLogout, isMobileMenuOpen, setIsMobileMenuOpen
   
   const streak = feedData?.streak || 0;
 
+  // eslint-disable-next-line no-unused-vars
   const ensureExtensionId = async () => {
     if (!user) return;
     if (user.extensionId) return;

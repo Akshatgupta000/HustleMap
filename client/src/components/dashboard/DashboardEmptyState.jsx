@@ -23,7 +23,8 @@ export default function DashboardEmptyState() {
 
       {/* Feature hint pills */}
       <div className="flex flex-wrap items-center justify-center gap-2">
-        {FEATURES.map(({ icon: Icon, label }) => (
+        {FEATURES.map((// eslint-disable-next-line no-unused-vars
+            { icon: Icon, label }) => (
           <span
             key={label}
             className="inline-flex items-center gap-1.5 text-[11.5px] font-semibold text-charcoal/35 bg-charcoal/5 border border-charcoal/8 px-3 py-1.5 rounded-full"

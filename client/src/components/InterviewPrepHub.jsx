@@ -20,6 +20,7 @@ export default function InterviewHub({ job, onUpdate }) {
 
   // Sync state when job prop changes
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setInterviewDifficulty(job.interview_difficulty || null);
     if (job.interview_questions && job.interview_questions.length > 0) {
       setInterviewQuestions(

@@ -46,7 +46,7 @@ export const register = async (req, res, next) => {
     }
 
     // Create user
-    const extensionId = generateExtensionId();
+    const extensionId = await getUniqueExtensionId();
     const user = await User.create({ email, password, name, extensionId });
 
     // Generate JWT

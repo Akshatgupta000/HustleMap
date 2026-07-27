@@ -84,6 +84,7 @@ export default function DetailedAnalytics() {
   };
 
   const chartData = Object.entries(safeStats.byStatus || {})
+    // eslint-disable-next-line no-unused-vars
     .filter(([_, count]) => count > 0)
     .sort((a, b) => b[1] - a[1])
     .map(([status, count]) => ({

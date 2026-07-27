@@ -44,6 +44,7 @@ export default function JobCard({ job, onViewDetails }) {
   // Load manual tick from localStorage on mount and when job.id changes
   useEffect(() => {
     const saved = localStorage.getItem(`jobTick_${job.id}`);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsManuallyTicked(saved === "true");
   }, [job.id]);
 

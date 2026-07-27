@@ -12,6 +12,32 @@ import DashboardSkeleton from '../components/dashboard/DashboardSkeleton';
 import { Calendar, Flame } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+// ── Shared: Welcome banner ────────────────────────────────────
+const WelcomeBanner = ({ user, hasJobs }) => (
+  <div className="bg-sage-light border border-charcoal/30 rounded-[20px] py-4 px-5 sm:px-6 flex items-center justify-between relative shrink-0 overflow-hidden min-h-[100px]">
+    <div className="relative z-10 flex-1 max-w-[70%] sm:max-w-[75%]">
+      <div className="flex items-center gap-2.5 mb-0.5">
+        <h1 className="text-xl sm:text-2xl font-extrabold text-charcoal tracking-tight leading-none">
+          Hey {user?.name ? user.name.split(' ')[0] : 'there'}, good to see you!
+        </h1>
+      </div>
+      <p className="text-[12.5px] sm:text-[13px] text-charcoal/50 font-medium leading-snug mt-1">
+        {hasJobs
+          ? "Ready to lock in some offers today? Let's check your pipeline."
+          : "Welcome to HustleMap — let's get your search started."}
+      </p>
+    </div>
+    <div className="absolute right-0 sm:right-2 bottom-0 top-0 w-28 sm:w-40 z-0 opacity-90 mix-blend-multiply flex justify-end pointer-events-none">
+      <img
+        src={`https://api.dicebear.com/9.x/notionists/svg?seed=${encodeURIComponent(user?.name || 'Hustler')}&backgroundColor=transparent&mouth=smile`}
+        alt="User Avatar"
+        className="w-full h-full object-contain object-right scale-[0.9]"
+        onError={(e) => { e.target.style.display = 'none'; }}
+      />
+    </div>
+  </div>
+);
+
 export default function Dashboard() {
   const [user, setUser] = useState(getUser());
 
@@ -33,6 +59,7 @@ export default function Dashboard() {
     queryFn: () => jobsAPI.getDashboardFeed().then((res) => res.data),
   });
 
+  // eslint-disable-next-line no-unused-vars
   const streak = feedData?.streak || 0;
 
   // ── Data readiness gates ──────────────────────────────────────
@@ -57,37 +84,11 @@ export default function Dashboard() {
 
   const hasInterviews = upcomingInterviews.length > 0;
 
-  // ── Shared: Welcome banner ────────────────────────────────────
-  const WelcomeBanner = () => (
-    <div className="bg-sage-light border border-charcoal/30 rounded-[20px] py-4 px-5 sm:px-6 flex items-center justify-between relative shrink-0 overflow-hidden min-h-[100px]">
-      <div className="relative z-10 flex-1 max-w-[70%] sm:max-w-[75%]">
-        <div className="flex items-center gap-2.5 mb-0.5">
-          <h1 className="text-xl sm:text-2xl font-extrabold text-charcoal tracking-tight leading-none">
-            Hey {user?.name ? user.name.split(' ')[0] : 'there'}, good to see you!
-          </h1>
-        </div>
-        <p className="text-[12.5px] sm:text-[13px] text-charcoal/50 font-medium leading-snug mt-1">
-          {hasJobs
-            ? "Ready to lock in some offers today? Let's check your pipeline."
-            : "Welcome to HustleMap — let's get your search started."}
-        </p>
-      </div>
-      <div className="absolute right-0 sm:right-2 bottom-0 top-0 w-28 sm:w-40 z-0 opacity-90 mix-blend-multiply flex justify-end pointer-events-none">
-        <img
-          src={`https://api.dicebear.com/9.x/notionists/svg?seed=${encodeURIComponent(user?.name || 'Hustler')}&backgroundColor=transparent&mouth=smile`}
-          alt="User Avatar"
-          className="w-full h-full object-contain object-right scale-[0.9]"
-          onError={(e) => { e.target.style.display = 'none'; }}
-        />
-      </div>
-    </div>
-  );
-
   // ── STATE 1: Loading ──────────────────────────────────────────
   if (!isDataLoaded) {
     return (
       <div className="w-full max-w-[1400px] mx-auto bg-sage px-3 sm:px-5 pb-5 pt-0 rounded-[20px] sm:rounded-[32px] flex-1 h-full min-h-0 overflow-y-auto custom-scrollbar flex flex-col gap-4">
-        <WelcomeBanner />
+        <WelcomeBanner user={user} hasJobs={hasJobs} />
         <DashboardSkeleton />
       </div>
     );
@@ -97,7 +98,7 @@ export default function Dashboard() {
   if (!hasJobs) {
     return (
       <div className="w-full max-w-[1400px] mx-auto bg-sage px-3 sm:px-5 pb-5 pt-0 rounded-[20px] sm:rounded-[32px] flex-1 h-full min-h-0 overflow-y-auto custom-scrollbar flex flex-col gap-4">
-        <WelcomeBanner />
+        <WelcomeBanner user={user} hasJobs={hasJobs} />
         <div className="fade-slide-in w-full max-w-xl mx-auto flex flex-col gap-4 pt-2">
           <QuickAddBar />
           <DashboardEmptyState />
@@ -115,7 +116,7 @@ export default function Dashboard() {
 
         {/* Welcome Banner */}
         <div className="fade-slide-in shrink-0">
-          <WelcomeBanner />
+          <WelcomeBanner user={user} hasJobs={hasJobs} />
         </div>
 
         {/* ── 2-Column Internal Grid ── */}

@@ -60,6 +60,7 @@ function Reveal({ children, delay = 0, className = "", variant = "up" }) {
 }
 
 // ─── Feature card ─────────────────────────────────────────────────────────────
+// eslint-disable-next-line no-unused-vars
 function FeatureCard({ icon: Icon, title, desc, delay, num = "01" }) {
   return (
     <Reveal delay={delay} className="h-full">
@@ -503,6 +504,7 @@ export default function Landing() {
                   desc: "The listing automatically lands in your Kanban board as 'Saved'.",
                   delay: 240
                 }
+                // eslint-disable-next-line no-unused-vars
               ].map(({ icon: Icon, num, title, desc, delay }) => (
                 <Reveal key={num} delay={delay} className="h-full">
                   <div className="flex md:flex-col items-start md:items-center gap-6 md:gap-4 text-left md:text-center group">
@@ -603,6 +605,7 @@ export default function Landing() {
                 num: "03",
                 color: "blue"
               },
+              // eslint-disable-next-line no-unused-vars
             ].map(({ icon: Icon, title, desc, bullets, delay, num }) => {
               return (
                 <Reveal key={title} delay={delay} className="h-full">

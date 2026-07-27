@@ -25,6 +25,7 @@ export default function WeeklyGoalTracker() {
   const remaining = Math.max(target - applied, 0);
   const isComplete = applied >= target;
   
+  // eslint-disable-next-line no-unused-vars
   const firstName = user?.name ? user.name.split(' ')[0] : 'there';
 
   return (

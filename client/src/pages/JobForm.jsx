@@ -63,6 +63,7 @@ export default function JobForm() {
 
   useEffect(() => {
     if (!isEdit && location.state?.prefill) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData((prev) => ({ ...prev, ...location.state.prefill }));
       
       // Auto-focus the "Job Title" input if coming from Quick Add
@@ -78,6 +79,7 @@ export default function JobForm() {
       const isPlaceholderCompany = job.company === "Captured" || job.company === "Unknown Company";
       const isPlaceholderPosition = job.position === "Job Capture" || job.position === "Captured Job";
 
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData({
         company: fromCaptured && isPlaceholderCompany ? "" : job.company || "",
         position: fromCaptured && isPlaceholderPosition ? "" : job.position || "",

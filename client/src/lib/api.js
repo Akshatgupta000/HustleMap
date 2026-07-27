@@ -31,8 +31,7 @@ if (
   typeof API_URL === 'string' &&
   API_URL.startsWith('http://')
 ) {
-  // eslint-disable-next-line no-console
-  console.warn(
+    console.warn(
     `[api] Mixed-content: frontend is https but VITE_API_URL is http (${API_URL}). Use https in production.`,
   );
 }
