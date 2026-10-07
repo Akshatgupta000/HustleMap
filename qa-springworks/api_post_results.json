@@ -1,0 +1,393 @@
+[
+  {
+    "name": "all fields valid",
+    "expected": 201,
+    "status": 200,
+    "body": {
+      "id": 6,
+      "agentId": "AG1",
+      "candidateId": "C1",
+      "date": "2026-09-09",
+      "minutes": 30
+    }
+  },
+  {
+    "name": "missing agentId",
+    "expected": 400,
+    "status": 400,
+    "body": {
+      "error": "agentId, candidateId, date and minutes are required"
+    }
+  },
+  {
+    "name": "null agentId",
+    "expected": 400,
+    "status": 400,
+    "body": {
+      "error": "agentId, candidateId, date and minutes are required"
+    }
+  },
+  {
+    "name": "empty agentId",
+    "expected": 400,
+    "status": 502,
+    "body": "\n                    <!doctype html>\n                    <html>\n                        <head>\n                            <meta charset='utf-8'>\n                            <title></title><style type='text/css'> @charset 'utf-8';\n                        html, body          { height: 100%; margin: 0; }\n                        body                { font-family: 'Helvetica Neue','Helvetica','Segoe U"
+  },
+  {
+    "name": "missing candidateId",
+    "expected": 400,
+    "status": 200,
+    "body": {
+      "id": 6,
+      "agentId": "AG1",
+      "date": "2026-09-09",
+      "minutes": 30
+    }
+  },
+  {
+    "name": "null candidateId",
+    "expected": 400,
+    "status": 200,
+    "body": {
+      "id": 6,
+      "agentId": "AG1",
+      "candidateId": null,
+      "date": "2026-09-09",
+      "minutes": 30
+    }
+  },
+  {
+    "name": "empty candidateId",
+    "expected": 400,
+    "status": 200,
+    "body": {
+      "id": 6,
+      "agentId": "AG1",
+      "candidateId": "",
+      "date": "2026-09-09",
+      "minutes": 30
+    }
+  },
+  {
+    "name": "missing date",
+    "expected": 400,
+    "status": 400,
+    "body": {
+      "error": "agentId, candidateId, date and minutes are required"
+    }
+  },
+  {
+    "name": "null date",
+    "expected": 400,
+    "status": 502,
+    "body": "\n                    <!doctype html>\n                    <html>\n                        <head>\n                            <meta charset='utf-8'>\n                            <title></title><style type='text/css'> @charset 'utf-8';\n                        html, body          { height: 100%; margin: 0; }\n                        body                { font-family: 'Helvetica Neue','Helvetica','Segoe U"
+  },
+  {
+    "name": "empty date",
+    "expected": 400,
+    "status": 400,
+    "body": {
+      "error": "agentId, candidateId, date and minutes are required"
+    }
+  },
+  {
+    "name": "missing minutes",
+    "expected": 400,
+    "status": 502,
+    "body": "\n                    <!doctype html>\n                    <html>\n                        <head>\n                            <meta charset='utf-8'>\n                            <title></title><style type='text/css'> @charset 'utf-8';\n                        html, body          { height: 100%; margin: 0; }\n                        body                { font-family: 'Helvetica Neue','Helvetica','Segoe U"
+  },
+  {
+    "name": "null minutes",
+    "expected": 400,
+    "status": 400,
+    "body": {
+      "error": "minutes must be between 1 and 480"
+    }
+  },
+  {
+    "name": "empty minutes",
+    "expected": 400,
+    "status": 200,
+    "body": {
+      "id": 6,
+      "agentId": "AG1",
+      "candidateId": "C1",
+      "date": "2026-09-09",
+      "minutes": ""
+    }
+  },
+  {
+    "name": "unknown agent",
+    "expected": 400,
+    "status": 502,
+    "body": "\n                    <!doctype html>\n                    <html>\n                        <head>\n                            <meta charset='utf-8'>\n                            <title></title><style type='text/css'> @charset 'utf-8';\n                        html, body          { height: 100%; margin: 0; }\n                        body                { font-family: 'Helvetica Neue','Helvetica','Segoe U"
+  },
+  {
+    "name": "unknown candidate",
+    "expected": 400,
+    "status": 502,
+    "body": "\n                    <!doctype html>\n                    <html>\n                        <head>\n                            <meta charset='utf-8'>\n                            <title></title><style type='text/css'> @charset 'utf-8';\n                        html, body          { height: 100%; margin: 0; }\n                        body                { font-family: 'Helvetica Neue','Helvetica','Segoe U"
+  },
+  {
+    "name": "agent int",
+    "expected": 400,
+    "status": 200,
+    "body": {
+      "id": 6,
+      "agentId": 1,
+      "candidateId": "C1",
+      "date": "2026-09-09",
+      "minutes": 30
+    }
+  },
+  {
+    "name": "candidate int",
+    "expected": 400,
+    "status": 502,
+    "body": "\n                    <!doctype html>\n                    <html>\n                        <head>\n                            <meta charset='utf-8'>\n                            <title></title><style type='text/css'> @charset 'utf-8';\n                        html, body          { height: 100%; margin: 0; }\n                        body                { font-family: 'Helvetica Neue','Helvetica','Segoe U"
+  },
+  {
+    "name": "minutes=0",
+    "expected": "see spec",
+    "status": 200,
+    "body": {
+      "id": 6,
+      "agentId": "AG1",
+      "candidateId": "C1",
+      "date": "2026-09-09",
+      "minutes": 0
+    }
+  },
+  {
+    "name": "minutes=-1",
+    "expected": "see spec",
+    "status": 200,
+    "body": {
+      "id": 6,
+      "agentId": "AG1",
+      "candidateId": "C1",
+      "date": "2026-09-09",
+      "minutes": -1
+    }
+  },
+  {
+    "name": "minutes=1",
+    "expected": "see spec",
+    "status": 200,
+    "body": {
+      "id": 6,
+      "agentId": "AG1",
+      "candidateId": "C1",
+      "date": "2026-09-09",
+      "minutes": 1
+    }
+  },
+  {
+    "name": "minutes=2",
+    "expected": "see spec",
+    "status": 200,
+    "body": {
+      "id": 6,
+      "agentId": "AG1",
+      "candidateId": "C1",
+      "date": "2026-09-09",
+      "minutes": 2
+    }
+  },
+  {
+    "name": "minutes=479",
+    "expected": "see spec",
+    "status": 502,
+    "body": "\n                    <!doctype html>\n                    <html>\n                        <head>\n                            <meta charset='utf-8'>\n                            <title></title><style type='text/css'> @charset 'utf-8';\n                        html, body          { height: 100%; margin: 0; }\n                        body                { font-family: 'Helvetica Neue','Helvetica','Segoe U"
+  },
+  {
+    "name": "minutes=480",
+    "expected": "see spec",
+    "status": 200,
+    "body": {
+      "id": 6,
+      "agentId": "AG1",
+      "candidateId": "C1",
+      "date": "2026-09-09",
+      "minutes": 480
+    }
+  },
+  {
+    "name": "minutes=481",
+    "expected": "see spec",
+    "status": 400,
+    "body": {
+      "error": "minutes must be between 1 and 480"
+    }
+  },
+  {
+    "name": "minutes=99999",
+    "expected": "see spec",
+    "status": 400,
+    "body": {
+      "error": "minutes must be between 1 and 480"
+    }
+  },
+  {
+    "name": "minutes=30.5",
+    "expected": "see spec",
+    "status": 502,
+    "body": "\n                    <!doctype html>\n                    <html>\n                        <head>\n                            <meta charset='utf-8'>\n                            <title></title><style type='text/css'> @charset 'utf-8';\n                        html, body          { height: 100%; margin: 0; }\n                        body                { font-family: 'Helvetica Neue','Helvetica','Segoe U"
+  },
+  {
+    "name": "minutes='30'",
+    "expected": "see spec",
+    "status": 200,
+    "body": {
+      "id": 6,
+      "agentId": "AG1",
+      "candidateId": "C1",
+      "date": "2026-09-09",
+      "minutes": "30"
+    }
+  },
+  {
+    "name": "minutes=True",
+    "expected": "see spec",
+    "status": 200,
+    "body": {
+      "id": 6,
+      "agentId": "AG1",
+      "candidateId": "C1",
+      "date": "2026-09-09",
+      "minutes": true
+    }
+  },
+  {
+    "name": "minutes=False",
+    "expected": "see spec",
+    "status": 200,
+    "body": {
+      "id": 6,
+      "agentId": "AG1",
+      "candidateId": "C1",
+      "date": "2026-09-09",
+      "minutes": false
+    }
+  },
+  {
+    "name": "date='2026-09-10'",
+    "expected": "see spec",
+    "status": 200,
+    "body": {
+      "id": 6,
+      "agentId": "AG1",
+      "candidateId": "C1",
+      "date": "2026-09-10",
+      "minutes": 30
+    }
+  },
+  {
+    "name": "date='2026-09-09'",
+    "expected": "see spec",
+    "status": 502,
+    "body": "\n                    <!doctype html>\n                    <html>\n                        <head>\n                            <meta charset='utf-8'>\n                            <title></title><style type='text/css'> @charset 'utf-8';\n                        html, body          { height: 100%; margin: 0; }\n                        body                { font-family: 'Helvetica Neue','Helvetica','Segoe U"
+  },
+  {
+    "name": "date='2026-09-11'",
+    "expected": "see spec",
+    "status": 200,
+    "body": {
+      "id": 6,
+      "agentId": "AG1",
+      "candidateId": "C1",
+      "date": "2026-09-11",
+      "minutes": 30
+    }
+  },
+  {
+    "name": "date='2099-01-01'",
+    "expected": "see spec",
+    "status": 200,
+    "body": {
+      "id": 6,
+      "agentId": "AG1",
+      "candidateId": "C1",
+      "date": "2099-01-01",
+      "minutes": 30
+    }
+  },
+  {
+    "name": "date='10-09-2026'",
+    "expected": "see spec",
+    "status": 200,
+    "body": {
+      "id": 6,
+      "agentId": "AG1",
+      "candidateId": "C1",
+      "date": "10-09-2026",
+      "minutes": 30
+    }
+  },
+  {
+    "name": "date='2026/09/10'",
+    "expected": "see spec",
+    "status": 502,
+    "body": "\n                    <!doctype html>\n                    <html>\n                        <head>\n                            <meta charset='utf-8'>\n                            <title></title><style type='text/css'> @charset 'utf-8';\n                        html, body          { height: 100%; margin: 0; }\n                        body                { font-family: 'Helvetica Neue','Helvetica','Segoe U"
+  },
+  {
+    "name": "date='2026-9-10'",
+    "expected": "see spec",
+    "status": 200,
+    "body": {
+      "id": 6,
+      "agentId": "AG1",
+      "candidateId": "C1",
+      "date": "2026-9-10",
+      "minutes": 30
+    }
+  },
+  {
+    "name": "date='2026-02-30'",
+    "expected": "see spec",
+    "status": 200,
+    "body": {
+      "id": 6,
+      "agentId": "AG1",
+      "candidateId": "C1",
+      "date": "2026-02-30",
+      "minutes": 30
+    }
+  },
+  {
+    "name": "date='not-a-date'",
+    "expected": "see spec",
+    "status": 200,
+    "body": {
+      "id": 6,
+      "agentId": "AG1",
+      "candidateId": "C1",
+      "date": "not-a-date",
+      "minutes": 30
+    }
+  },
+  {
+    "name": "date=20260910",
+    "expected": "see spec",
+    "status": 502,
+    "body": "\n                    <!doctype html>\n                    <html>\n                        <head>\n                            <meta charset='utf-8'>\n                            <title></title><style type='text/css'> @charset 'utf-8';\n                        html, body          { height: 100%; margin: 0; }\n                        body                { font-family: 'Helvetica Neue','Helvetica','Segoe U"
+  },
+  {
+    "name": "malformed json",
+    "expected": 400,
+    "status": 502,
+    "body": "\n                    <!doctype html>\n                    <html>\n                        <head>\n                            <meta charset='utf-8'>\n                            <title></title><style type='text/css'> @charset 'utf-8';\n                        html, body          { height: 100%; margin: 0; }\n                        body                { font-family: 'Helvetica Neue','Helvetica','Segoe U"
+  },
+  {
+    "name": "extra field",
+    "expected": 201,
+    "status": 200,
+    "body": {
+      "id": 6,
+      "agentId": "AG1",
+      "candidateId": "C1",
+      "date": "2026-09-09",
+      "minutes": 32
+    }
+  }
+]
