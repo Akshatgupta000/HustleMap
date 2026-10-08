@@ -12,7 +12,6 @@ const IGNORED_DIRS = new Set([
   '.git',
   'uploads',
   'public',
-  'qa-springworks',
   'docs',
   'benchmarks'
 ]);
